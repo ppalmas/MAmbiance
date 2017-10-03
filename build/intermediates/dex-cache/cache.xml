@@ -3,183 +3,21 @@
 
     <item
         is-multidex="true"
-        jar="C:\Users\Paola\.android\build-cache\4965d237e5c30021a2f9df4c54c92e8b1ad7265d\output\jars\classes.jar"
-        jumboMode="true"
-        optimize="true"
-        revision="25.0.0"
-        sha1="4ccbcda5c72027c7f7c14be9ff8640d9cb0d8da0">
-        <dex dex="C:\Users\Paola\Documents\CENTRALE NANTES\2017-2018\INFO\PROJET1\Mambiance-master\app\build\intermediates\transforms\dex\debug\folders\1000\10\classes_4c82ad46236c9322b9dd233c8c59dbc39cd86fce\classes.dex" />
-    </item>
-    <item
-        is-multidex="true"
-        jar="C:\Users\Paola\.android\build-cache\8256fd18005a2b9fa52c0b11ed38d63cd1728feb\output\jars\classes.jar"
-        jumboMode="true"
-        optimize="true"
-        revision="25.0.0"
-        sha1="07daa0b6e1d455c82a38422ffe287c18823d339a">
-        <dex dex="C:\Users\Paola\Documents\CENTRALE NANTES\2017-2018\INFO\PROJET1\Mambiance-master\app\build\intermediates\transforms\dex\debug\folders\1000\10\classes_4c23e1922347a9495883425b1da27db05ce3a83b\classes.dex" />
-    </item>
-    <item
-        is-multidex="true"
-        jar="C:\Users\Paola\.android\build-cache\4207097292ce6108ee5b923211a18affa2c9e8d4\output\jars\classes.jar"
-        jumboMode="true"
-        optimize="true"
-        revision="25.0.0"
-        sha1="53a420cd4f49274db6bd43475f8006ba67ef6bbd">
-        <dex dex="C:\Users\Paola\Documents\CENTRALE NANTES\2017-2018\INFO\PROJET1\Mambiance-master\app\build\intermediates\transforms\dex\debug\folders\1000\10\classes_0c12b03d0ea38b754c582f1f9fa8807103f0aa32\classes.dex" />
-    </item>
-    <item
-        is-multidex="true"
-        jar="C:\Users\Paola\.android\build-cache\4965d237e5c30021a2f9df4c54c92e8b1ad7265d\output\jars\libs\internal_impl-25.0.0.jar"
-        jumboMode="true"
-        optimize="true"
-        revision="25.0.0"
-        sha1="3b61a70884adaf0be3fc06c70c801e3e6df13133">
-        <dex dex="C:\Users\Paola\Documents\CENTRALE NANTES\2017-2018\INFO\PROJET1\Mambiance-master\app\build\intermediates\transforms\dex\debug\folders\1000\10\internal_impl-25.0.0_a08835ccf414c6cd3e5b50386d38850b9e2e3050\classes.dex" />
-    </item>
-    <item
-        is-multidex="true"
-        jar="C:\Users\Paola\.android\build-cache\ebfa385faa4e2744d13a539fa96005adfb5be3f4\output\jars\classes.jar"
-        jumboMode="true"
-        optimize="true"
-        revision="25.0.0"
-        sha1="26674000177e45447a0326a6ad84612761199a13">
-        <dex dex="C:\Users\Paola\Documents\CENTRALE NANTES\2017-2018\INFO\PROJET1\Mambiance-master\app\build\intermediates\transforms\dex\debug\folders\1000\10\classes_c0f9d380e78e5d94514510aeb26d11c559779172\classes.dex" />
-    </item>
-    <item
-        is-multidex="true"
-        jar="C:\Users\Paola\.android\build-cache\1f89a9c62e4562b2ff213ca1078869ab6959945b\output\jars\classes.jar"
-        jumboMode="true"
-        optimize="true"
-        revision="25.0.0"
-        sha1="ec238ad1591078ab040a1febf1e807be422b3d2f">
-        <dex dex="C:\Users\Paola\Documents\CENTRALE NANTES\2017-2018\INFO\PROJET1\Mambiance-master\app\build\intermediates\transforms\dex\debug\folders\1000\10\classes_b5de4479190d52bcc7bfcb7c4e5f6620876d1509\classes.dex" />
-    </item>
-    <item
-        is-multidex="true"
-        jar="C:\Users\Paola\.gradle\caches\modules-2\files-2.1\org.slf4j\slf4j-api\1.7.7\2b8019b6249bb05d81d3a3094e468753e2b21311\slf4j-api-1.7.7.jar"
-        jumboMode="true"
-        optimize="true"
-        revision="25.0.0"
-        sha1="2b8019b6249bb05d81d3a3094e468753e2b21311">
-        <dex dex="C:\Users\Paola\Documents\CENTRALE NANTES\2017-2018\INFO\PROJET1\Mambiance-master\app\build\intermediates\transforms\dex\debug\folders\1000\10\slf4j-api-1.7.7_f3a772ff961320a5c413cd8151c0aafe6405f7cf\classes.dex" />
-    </item>
-    <item
-        is-multidex="true"
-        jar="C:\Users\Paola\.android\build-cache\097187c5e260d0098107db5308ef9b91ca1b6f36\output\jars\classes.jar"
-        jumboMode="true"
-        optimize="true"
-        revision="25.0.0"
-        sha1="d7c42c80f6509b9ea4db28ca7859ffae08ec5741">
-        <dex dex="C:\Users\Paola\Documents\CENTRALE NANTES\2017-2018\INFO\PROJET1\Mambiance-master\app\build\intermediates\transforms\dex\debug\folders\1000\10\classes_69ccfea2d16742c6639cab5e075a0fa2eceaac1b\classes.dex" />
-    </item>
-    <item
-        is-multidex="true"
-        jar="C:\Users\Paola\.android\build-cache\7f3205c82b4924317cead50e56849ef22c045d58\output\jars\libs\internal_impl-25.0.0.jar"
-        jumboMode="true"
-        optimize="true"
-        revision="25.0.0"
-        sha1="f2e3b9bc1ec25f652e8007ce7774c991e38f6a00">
-        <dex dex="C:\Users\Paola\Documents\CENTRALE NANTES\2017-2018\INFO\PROJET1\Mambiance-master\app\build\intermediates\transforms\dex\debug\folders\1000\10\internal_impl-25.0.0_7f58475aa4cfe3d2d2f09eb52d41968d1ac9a045\classes.dex" />
-    </item>
-    <item
-        is-multidex="true"
-        jar="C:\Users\Paola\.android\build-cache\ebfa385faa4e2744d13a539fa96005adfb5be3f4\output\jars\libs\internal_impl-25.0.0.jar"
-        jumboMode="true"
-        optimize="true"
-        revision="25.0.0"
-        sha1="e5343c9d19cb19ff55f6b268c7f3fe8c9d224f6f">
-        <dex dex="C:\Users\Paola\Documents\CENTRALE NANTES\2017-2018\INFO\PROJET1\Mambiance-master\app\build\intermediates\transforms\dex\debug\folders\1000\10\internal_impl-25.0.0_5a6f580d53acc5d9f6841b2cf5f68de5ae768f99\classes.dex" />
-    </item>
-    <item
-        is-multidex="true"
-        jar="C:\Users\Paola\.android\build-cache\7cd6f2ed3c5c76c47b25f429536cfa09ebd51f9a\output\jars\classes.jar"
-        jumboMode="true"
-        optimize="true"
-        revision="25.0.0"
-        sha1="d29714cc76b38157e3cbd034c66e1ec808eb4c19">
-        <dex dex="C:\Users\Paola\Documents\CENTRALE NANTES\2017-2018\INFO\PROJET1\Mambiance-master\app\build\intermediates\transforms\dex\debug\folders\1000\10\classes_e7ed8a6d44c9e4751966f6d99f2ea5e79ab24df9\classes.dex" />
-    </item>
-    <item
-        is-multidex="true"
-        jar="C:\Users\Paola\.android\build-cache\07254746f9449d1237cee2b54f47a44349525ee4\output\jars\classes.jar"
-        jumboMode="true"
-        optimize="true"
-        revision="25.0.0"
-        sha1="8bc45ce1f63d1a391fd38b32a201be5a42f9c95d">
-        <dex dex="C:\Users\Paola\Documents\CENTRALE NANTES\2017-2018\INFO\PROJET1\Mambiance-master\app\build\intermediates\transforms\dex\debug\folders\1000\10\classes_b7356a7006f2ccdf854131868ceca493e6ab5b60\classes.dex" />
-    </item>
-    <item
-        is-multidex="true"
-        jar="C:\Users\Paola\.android\build-cache\7f3205c82b4924317cead50e56849ef22c045d58\output\jars\classes.jar"
-        jumboMode="true"
-        optimize="true"
-        revision="25.0.0"
-        sha1="75b1f366ff0bbc78f8b1f7cf0dc82e7c53afef6a">
-        <dex dex="C:\Users\Paola\Documents\CENTRALE NANTES\2017-2018\INFO\PROJET1\Mambiance-master\app\build\intermediates\transforms\dex\debug\folders\1000\10\classes_ef06b1ee97bac825b65eb642914576c41597696e\classes.dex" />
-    </item>
-    <item
-        is-multidex="true"
-        jar="C:\Users\Paola\.android\build-cache\ad746b725609c4f032d900a5b147242ef4428e9c\output\jars\classes.jar"
-        jumboMode="true"
-        optimize="true"
-        revision="25.0.0"
-        sha1="27817500586893687f35a2d97b2c5c39a6e56011">
-        <dex dex="C:\Users\Paola\Documents\CENTRALE NANTES\2017-2018\INFO\PROJET1\Mambiance-master\app\build\intermediates\transforms\dex\debug\folders\1000\10\classes_93e5cb7e4afd1d71efd9e3e12df18e5795ca19bd\classes.dex" />
-    </item>
-    <item
-        is-multidex="true"
-        jar="C:\Users\Paola\.android\build-cache\5749545db95d01a3f814d5a724c30bfc5f436f82\output\jars\libs\internal_impl-25.0.0.jar"
-        jumboMode="true"
-        optimize="true"
-        revision="25.0.0"
-        sha1="665d21a8a069c96b4d9e8b434f5096d865b4e261">
-        <dex dex="C:\Users\Paola\Documents\CENTRALE NANTES\2017-2018\INFO\PROJET1\Mambiance-master\app\build\intermediates\transforms\dex\debug\folders\1000\10\internal_impl-25.0.0_6c0284fa9dab6e84ca6f2b911e7178fd633f3543\classes.dex" />
-    </item>
-    <item
-        is-multidex="true"
-        jar="C:\Users\Paola\Documents\CENTRALE NANTES\2017-2018\INFO\PROJET1\Mambiance-master\app\build\intermediates\incremental-classes\debug\instant-run-bootstrap.jar"
-        jumboMode="true"
-        optimize="true"
-        revision="25.0.0"
-        sha1="63ae5eb943302e31a0dd4597bee9838ad4d971a5">
-        <dex dex="C:\Users\Paola\Documents\CENTRALE NANTES\2017-2018\INFO\PROJET1\Mambiance-master\app\build\intermediates\transforms\dex\debug\folders\1000\10000\instant-run-bootstrap_fe4c6a49b7f4bc04e939601d747180f7617616fe\classes.dex" />
-    </item>
-    <item
-        is-multidex="true"
-        jar="C:\Users\Paola\AppData\Local\Android\sdk\extras\android\m2repository\com\android\support\support-annotations\25.0.0\support-annotations-25.0.0.jar"
-        jumboMode="true"
-        optimize="true"
-        revision="25.0.0"
-        sha1="a22d2cc94da87b254451fa8ed28afc30b4653773">
-        <dex dex="C:\Users\Paola\Documents\CENTRALE NANTES\2017-2018\INFO\PROJET1\Mambiance-master\app\build\intermediates\transforms\dex\debug\folders\1000\10\support-annotations-25.0.0_1f95fd3d1e31d047795b280707e84ccb1143e411\classes.dex" />
-    </item>
-    <item
-        is-multidex="true"
-        jar="C:\Users\Paola\Documents\CENTRALE NANTES\2017-2018\INFO\PROJET1\Mambiance-master\app\build\intermediates\incremental-runtime-classes\debug\instant-run.jar"
+        jar="/Users/Cyril/Documents/Cours/EI3/PAPPL/MAmbiance/app/build/intermediates/incremental-runtime-classes/debug/instant-run.jar"
         jumboMode="true"
         optimize="true"
         revision="25.0.0"
         sha1="3be78ebc2706b2e1fe2f12d5726887a92d6c183b">
-        <dex dex="C:\Users\Paola\Documents\CENTRALE NANTES\2017-2018\INFO\PROJET1\Mambiance-master\app\build\intermediates\transforms\dex\debug\folders\1000\10000\instant-run_3a228c89bf77e10cf6aab50ed658e109e8fa4ae2\classes.dex" />
+        <dex dex="/Users/Cyril/Documents/Cours/EI3/PAPPL/MAmbiance/app/build/intermediates/transforms/dex/debug/folders/1000/10000/instant-run_3bc3c20927b3726da3be4df653d0da8471c7cdda/classes.dex" />
     </item>
     <item
         is-multidex="true"
-        jar="C:\Users\Paola\.android\build-cache\8256fd18005a2b9fa52c0b11ed38d63cd1728feb\output\jars\libs\internal_impl-25.0.0.jar"
+        jar="/Users/Cyril/Documents/Cours/EI3/PAPPL/MAmbiance/app/build/intermediates/incremental-classes/debug/instant-run-bootstrap.jar"
         jumboMode="true"
         optimize="true"
         revision="25.0.0"
-        sha1="ee5faf4dee5b6a4364bf51587871047dde7c703a">
-        <dex dex="C:\Users\Paola\Documents\CENTRALE NANTES\2017-2018\INFO\PROJET1\Mambiance-master\app\build\intermediates\transforms\dex\debug\folders\1000\10\internal_impl-25.0.0_ad37f46229fad5f65702c94d7dbafadc75143d35\classes.dex" />
-    </item>
-    <item
-        is-multidex="true"
-        jar="C:\Users\Paola\.android\build-cache\5749545db95d01a3f814d5a724c30bfc5f436f82\output\jars\classes.jar"
-        jumboMode="true"
-        optimize="true"
-        revision="25.0.0"
-        sha1="76fb65a4b41ea42dab8a1310ed772a2420c96b52">
-        <dex dex="C:\Users\Paola\Documents\CENTRALE NANTES\2017-2018\INFO\PROJET1\Mambiance-master\app\build\intermediates\transforms\dex\debug\folders\1000\10\classes_5deeeb9c69f3f30071bc022d654f81ea00580f4b\classes.dex" />
+        sha1="fc63d9127a4e66a7b32e6e6619098d89f667f516">
+        <dex dex="/Users/Cyril/Documents/Cours/EI3/PAPPL/MAmbiance/app/build/intermediates/transforms/dex/debug/folders/1000/10000/instant-run-bootstrap_b84d3f3de997caa3002d7d135eb1c6833021159a/classes.dex" />
     </item>
 
 </items>

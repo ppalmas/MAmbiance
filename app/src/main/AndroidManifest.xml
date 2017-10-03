@@ -2,11 +2,11 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="org.fasol.mambiance">
 
-    <uses-permission android:name="android.permission.CAMERA" />
+    <!--<uses-permission android:name="android.permission.CAMERA" /> -->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         android:maxSdkVersion="18"/>
 
-    <uses-feature android:name="android.hardware.camera"
+    <uses-feature android:name="android.hardware.camera.any"
         android:required="true"/>
 
     <!-- Permission needed for OpenStreetMap with osmdroid-->
