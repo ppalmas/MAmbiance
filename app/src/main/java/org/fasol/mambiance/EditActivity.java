@@ -1,6 +1,7 @@
 package org.fasol.mambiance;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -23,6 +24,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
@@ -105,6 +107,8 @@ public class EditActivity extends AppCompatActivity implements LocationListener 
         caract2 = (TextView) findViewById(R.id.caract2);
         caract3 = (TextView) findViewById(R.id.caract3);
 
+
+
         cursor1 = (SeekBar) findViewById(R.id.cursor1);
         cursor2 = (SeekBar) findViewById(R.id.cursor2);
         cursor3 = (SeekBar) findViewById(R.id.cursor3);
@@ -160,94 +164,141 @@ public class EditActivity extends AppCompatActivity implements LocationListener 
         locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, this);
 
         Location location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-        if(location == null) location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        if(location == null) location = locationManager.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER);
 
         lat=(float)location.getLatitude();
         lng=(float)location.getLongitude();
         photo_emp ="";
     }
 
+    /**
+     * Méthode appelée au clic de l'utilisateur sur "valider" le formulaire de
+     * saisie d'une ambiance
+     * Effectue une vérification des informations entrées
+     * Géolocalise l'utilisateur et propose une adresse correspondante
+     * Enregistre les informations dans la base de données
+     */
     private View.OnClickListener saveListener = new View.OnClickListener() {
         @Override
         public void onClick(final View view) {
 
-            if(isFormularyCompleted()) {
+            if(isFormularyNameCompleted()) {
+                if (isFormularyDescriptionCompleted()) {
+                    if (isFormularyPhotoCompleted()) {
 
-                // récupère les adresses possibles de localisation
-                List<Address> l_address = null;
-                Geocoder geocoder = new Geocoder(EditActivity.this);
-                try {
-                    l_address = geocoder.getFromLocation(EditActivity.this.lat,EditActivity.this.lng,1);
-                } catch (IOException e) {
-                    e.printStackTrace();
+
+                        // récupère les adresses possibles de localisation
+                        List<Address> l_address = null;
+                        try {
+                            Geocoder geocoder = new Geocoder(EditActivity.this);
+                            l_address = geocoder.getFromLocation(EditActivity.this.lat, EditActivity.this.lng, 1);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                            Toast.makeText(view.getContext(), "Veuillez allumer votre GPS", Toast.LENGTH_LONG).show();
+                        }
+                        if (l_address != null && !l_address.isEmpty()) {
+
+
+                            // affiche une fenêtre demandant de valider l'adresse calculée
+                            AlertDialog.Builder builderSingle = new AlertDialog.Builder(EditActivity.this);
+                            builderSingle.setTitle("Adresse calculée");
+                            builderSingle.setMessage(l_address.get(0).getAddressLine(0) + " " +
+                                    l_address.get(0).getPostalCode() + " " + l_address.get(0).getLocality());
+                            // bouton recalculer
+                            builderSingle.setNegativeButton(
+                                    "recalculer",
+                                    new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            dialog.dismiss();
+                                        }
+                                    });
+                            // bouton valider l'adresse
+                            final List<Address> finalL_address = l_address;
+                            builderSingle.setPositiveButton(
+                                    "valider",
+                                    new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+
+                                            EditActivity.this.adresse = finalL_address.get(0).getAddressLine(0) + " " +
+                                                    finalL_address.get(0).getPostalCode() + " " + finalL_address.get(0).getLocality();
+
+                                            datasource.open();
+
+                                            Lieu lieu = datasource.createLieu(site_name.getText().toString(), adresse, lat, lng);
+                                            Marqueur marqueur = datasource.createMarqueur(lieu.getLieu_id());
+                                            datasource.createRoseAmbiance(cursor_olfactory.getProgress() / 4.f - 1.f, cursor_visual.getProgress() / 4.f - 1.f,
+                                                    cursor_thermal.getProgress() / 4.f - 1.f, cursor_acoustical.getProgress() / 4.f - 1.f, marqueur.getMarqueur_id());
+                                            datasource.createImage(marqueur.getMarqueur_id(), photo_emp);
+                                            String[] mots = description.getText().toString().split("[\\p{Punct}\\s]+");
+                                            for (int i = 0; i < mots.length; i++) {
+                                                datasource.createMot(mots[i], marqueur.getMarqueur_id());
+                                            }
+                                            datasource.createCurseur(caract1.getText().toString(), cursor1.getProgress(), marqueur.getMarqueur_id());
+                                            datasource.createCurseur(caract2.getText().toString(), cursor2.getProgress(), marqueur.getMarqueur_id());
+                                            datasource.createCurseur(caract3.getText().toString(), cursor3.getProgress(), marqueur.getMarqueur_id());
+
+                                            datasource.close();
+
+                                            dialog.dismiss();
+                                            Toast.makeText(view.getContext(), "Enregistrement effectué !", Toast.LENGTH_LONG).show();
+
+                                            Intent intent = new Intent(EditActivity.this, MainActivity.class);
+                                            startActivity(intent);
+                                        }
+                                    });
+                            builderSingle.show();
+                        } else {
+                            Toast.makeText(view.getContext(), "Impossible de trouver les coordonnées!", Toast.LENGTH_LONG).show();
+                        }
+                    } else {
+                        Toast.makeText(view.getContext(), "Veuillez ajouter une photo.", Toast.LENGTH_LONG).show();
+                    }
+                }else {
+                    Toast.makeText(view.getContext(),"Veuillez ajouter une description de trois mots.",Toast.LENGTH_LONG).show();
                 }
-
-                // affiche une fenêtre demandant de valider l'adresse calculer
-                AlertDialog.Builder builderSingle = new AlertDialog.Builder(EditActivity.this);
-                builderSingle.setTitle("Adresse calculée");
-                builderSingle.setMessage(l_address.get(0).getAddressLine(0)+" " +
-                            l_address.get(0).getPostalCode() +" "+l_address.get(0).getLocality());
-                // bouton recalculer
-                builderSingle.setNegativeButton(
-                        "recalculer",
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
-                            }
-                        });
-                // bouton valider l'adresse
-                final List<Address> finalL_address = l_address;
-                builderSingle.setPositiveButton(
-                        "valider",
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-
-                                EditActivity.this.adresse= finalL_address.get(0).getAddressLine(0)+" " +
-                                        finalL_address.get(0).getPostalCode() +" "+ finalL_address.get(0).getLocality();
-
-                                datasource.open();
-
-                                Lieu lieu = datasource.createLieu(site_name.getText().toString(), adresse, lat,lng);
-                                Marqueur marqueur = datasource.createMarqueur(lieu.getLieu_id());
-                                datasource.createRoseAmbiance(cursor_olfactory.getProgress()/4.f-1.f, cursor_visual.getProgress()/4.f-1.f,
-                                        cursor_thermal.getProgress()/4.f-1.f, cursor_acoustical.getProgress()/4.f-1.f, marqueur.getMarqueur_id());
-                                datasource.createImage(marqueur.getMarqueur_id(), photo_emp);
-                                String [] mots = description.getText().toString().split("[\\p{Punct}\\s]+");
-                                for(int i=0;i<mots.length;i++) {
-                                    datasource.createMot(mots[i], marqueur.getMarqueur_id());
-                                }
-                                datasource.createCurseur(caract1.getText().toString(), cursor1.getProgress(), marqueur.getMarqueur_id());
-                                datasource.createCurseur(caract2.getText().toString(), cursor2.getProgress(), marqueur.getMarqueur_id());
-                                datasource.createCurseur(caract3.getText().toString(), cursor3.getProgress(), marqueur.getMarqueur_id());
-
-                                datasource.close();
-
-                                dialog.dismiss();
-                                Toast.makeText(view.getContext(),"Enregistrement effectué !",Toast.LENGTH_LONG).show();
-
-                                Intent intent = new Intent(EditActivity.this, MainActivity.class);
-                                startActivity(intent);
-                            }
-                        });
-                builderSingle.show();
-
             }
             else{
-                Toast.makeText(view.getContext(),"Le formulaire n'est pas complet !",Toast.LENGTH_LONG).show();
+                Toast.makeText(view.getContext(),"Veuillez ajouter un titre pour l'ambiance.",Toast.LENGTH_LONG).show();
             }
         }
     };
 
-    private boolean isFormularyCompleted(){
-        boolean flag=(!site_name.getText().toString().matches(""))&&(!description.getText().toString().matches(""))&&(photo_emp!=null);
+    /**
+     * Function isFormularyPhotoCompleted
+     * @return boolean : yes if there is a photo
+     */
+    private boolean isFormularyPhotoCompleted(){
+        boolean flag=(photo_emp!=null);
+        return flag;
+    }
+
+    /**
+     * Function isFormularyNameCompleted
+     * @return boolean flag : yes if there is a title/name for the location
+     */
+    private boolean isFormularyNameCompleted(){
+        boolean flag = (!site_name.getText().toString().matches(""));
+        return flag;
+    }
+
+    /**
+     * Function isFormularyDescriptionCompleted
+     * @return boolean flag : yes if there is a description
+     * TODO : méthode qui vérifie que la description est entrée comme il faut (séparateur virugle, 3 mots)
+     */
+    private boolean isFormularyDescriptionCompleted(){
+        boolean flag = (!description.getText().toString().matches(""));
         return flag;
     }
 
     // Gestion photo
     static final int REQUEST_TAKE_PHOTO = 1;
 
+    /**
+     * Méthode appelée au clic de l'utilisateur sur le bouton "Photo"
+     */
     private View.OnClickListener photoListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {

@@ -36,6 +36,7 @@
         </activity>
         <activity android:name=".EditActivity">
 
+
         </activity>
         <activity android:name=".HistoryActivity">
 
@@ -47,9 +48,11 @@
 
         </activity>
 
-        <activity android:name=".InfoActivity">
+        <activity android:name=".InfoActivity"
+            android:windowSoftInputMode="adjustResize">
 
         </activity>
+
 
         <provider
             android:name="android.support.v4.content.FileProvider"

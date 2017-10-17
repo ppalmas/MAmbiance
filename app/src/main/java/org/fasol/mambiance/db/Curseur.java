@@ -89,6 +89,9 @@ public class Curseur extends DataObject {
 
 
     @Override
+    /*
+    Method to save a datasource to a local server
+     */
     public void saveToLocal(LocalDataSource datasource) {
         ContentValues values = new ContentValues();
 

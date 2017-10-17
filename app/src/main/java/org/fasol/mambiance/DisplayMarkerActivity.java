@@ -54,12 +54,18 @@ public class DisplayMarkerActivity extends AppCompatActivity {
     // Layout de la rose des ambiances
     private FrameLayout layout_rose;
 
+
+
     @Override
+    /* Method onCreate
+    Méthode appelée lors de la création de l'activité (displaymarker)
+    * */
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.display_marker_activity);
+        setContentView(R.layout.display_marker_activity); //indique quel fichier layout utiliser
 
-        // Ajout Rose
+        // Ajout de l'élément graphique Rose
+        // Prend en paramètre l'identifiant de la vue layout rose et renvoie la vue
         layout_rose = (FrameLayout)findViewById(R.id.frame_layout_rose_display);
 
         layout_rose.addView(new RoseSurfaceView(this,(SeekBar)findViewById(R.id.cursor_olfactory)
