@@ -20,6 +20,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -43,6 +44,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
+
+
 
 import static org.fasol.mambiance.MainActivity.datasource;
 
@@ -86,6 +89,11 @@ public class EditActivity extends AppCompatActivity implements LocationListener 
     // current latitude, longitude and adress
     private float lat,lng;
     private String adresse;
+
+    // Store the result when asking the user for the location
+    private static final int PERMISSIONS_REQUEST_FINE_LOCATION = 0;
+    private static final int PERMISSIONS_REQUEST_COARSE_LOCATION = 0;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -150,8 +158,30 @@ public class EditActivity extends AppCompatActivity implements LocationListener 
         save.setOnClickListener(saveListener);
 
         locationManager = (LocationManager) getSystemService(this.LOCATION_SERVICE);
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
+
+
+
+      //PROBLEME à ce niveau, au niveau des permissions ?
+        //pas de problème pour utiliser le geocoder. La latitude est nulle
+         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+             if (ActivityCompat.shouldShowRequestPermissionRationale(EditActivity.this,
+                     Manifest.permission.ACCESS_FINE_LOCATION)) {
+                 if (ActivityCompat.shouldShowRequestPermissionRationale(EditActivity.this,
+                         Manifest.permission.ACCESS_COARSE_LOCATION)) {
+
+                 } else {
+                     ActivityCompat.requestPermissions(EditActivity.this,
+                             new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
+                             PERMISSIONS_REQUEST_COARSE_LOCATION);
+                 }
+             } else {
+                 ActivityCompat.requestPermissions(EditActivity.this,
+                         new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                         PERMISSIONS_REQUEST_FINE_LOCATION);
+
+             }
+
+                 // TODO: Consider calling
             //    ActivityCompat#requestPermissions
             // here to request the missing permissions, and then overriding
             //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
@@ -165,10 +195,35 @@ public class EditActivity extends AppCompatActivity implements LocationListener 
 
         Location location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
         if(location == null) location = locationManager.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER);
-
         lat=(float)location.getLatitude();
         lng=(float)location.getLongitude();
         photo_emp ="";
+    }
+
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case PERMISSIONS_REQUEST_FINE_LOCATION: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    // permission was granted, yay! Do the
+                    // contacts-related task you need to do.
+
+                } else {
+
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+                }
+                return;
+            }
+
+            // other 'case' lines to check for other
+            // permissions this app might request
+        }
     }
 
     /**
@@ -250,7 +305,7 @@ public class EditActivity extends AppCompatActivity implements LocationListener 
                                     });
                             builderSingle.show();
                         } else {
-                            Toast.makeText(view.getContext(), "Impossible de trouver les coordonnées!", Toast.LENGTH_LONG).show();
+                            Toast.makeText(view.getContext(), "Impossible de trouver les coordonnées!"+(EditActivity.this.lat), Toast.LENGTH_LONG).show();
                         }
                     } else {
                         Toast.makeText(view.getContext(), "Veuillez ajouter une photo.", Toast.LENGTH_LONG).show();
@@ -428,16 +483,16 @@ public class EditActivity extends AppCompatActivity implements LocationListener 
 
     @Override
     public void onStatusChanged(String s, int i, Bundle bundle) {
-
+        Log.d("Latitude","status");
     }
 
     @Override
     public void onProviderEnabled(String s) {
-
+        Log.d("Latitude","enable");
     }
 
     @Override
     public void onProviderDisabled(String s) {
-
+        Log.d("Latitude","disable");
     }
 }

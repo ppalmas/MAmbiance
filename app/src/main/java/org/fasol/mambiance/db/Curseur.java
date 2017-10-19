@@ -57,24 +57,24 @@ public class Curseur extends DataObject {
     //Setters
     /**
      * setter for the Curseur_id
-     * @param  curseur_id
+     * @param  curseur_id id du curseur
      */
     public void setCurseur_id(long curseur_id) {
         this.curseur_id = curseur_id;
     }
     /**
      * setter for the curseur_libelle
-     * @param curseur_libelle
+     * @param curseur_libelle libelle du curseur
      */
     public void setCurseur_libelle(String curseur_libelle) { this.curseur_libelle = curseur_libelle; }
     /**
      * setter for the curseur_valeur
-     * @param curseur_valeur
+     * @param curseur_valeur valeur du curseur
      */
     public void setCurseur_valeur(int curseur_valeur) { this.curseur_valeur = curseur_valeur; }
     /**
      * setter for the marqueur_id
-     * @param  marqueur_id
+     * @param  marqueur_id id du marqueur
      */
     public void setMarqueur_id(long marqueur_id) { this.marqueur_id = marqueur_id; }
 
