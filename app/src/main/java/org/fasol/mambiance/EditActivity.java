@@ -159,10 +159,6 @@ public class EditActivity extends AppCompatActivity implements LocationListener 
 
         locationManager = (LocationManager) getSystemService(this.LOCATION_SERVICE);
 
-
-
-      //PROBLEME à ce niveau, au niveau des permissions ?
-        //pas de problème pour utiliser le geocoder. La latitude est nulle
          if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
              if (ActivityCompat.shouldShowRequestPermissionRationale(EditActivity.this,
                      Manifest.permission.ACCESS_FINE_LOCATION)) {
@@ -180,14 +176,6 @@ public class EditActivity extends AppCompatActivity implements LocationListener 
                          PERMISSIONS_REQUEST_FINE_LOCATION);
 
              }
-
-                 // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
             return;
         }
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
@@ -209,20 +197,12 @@ public class EditActivity extends AppCompatActivity implements LocationListener 
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-
-                    // permission was granted, yay! Do the
-                    // contacts-related task you need to do.
-
+                    // permission was granted
                 } else {
-
-                    // permission denied, boo! Disable the
-                    // functionality that depends on this permission.
+                    // permission denied
                 }
                 return;
             }
-
-            // other 'case' lines to check for other
-            // permissions this app might request
         }
     }
 
