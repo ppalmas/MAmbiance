@@ -176,13 +176,13 @@ public class EditActivity extends AppCompatActivity implements LocationListener 
                          PERMISSIONS_REQUEST_FINE_LOCATION);
 
              }
-            return;
         }
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
         locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, this);
 
         Location location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-        if(location == null) location = locationManager.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER);
+        //if(location == null) location = locationManager.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER);
+        // Récupérer les précédentes coordonnées n'est pas une bonne solution : proposer de placer la position sur une carte
         lat=(float)location.getLatitude();
         lng=(float)location.getLongitude();
         photo_emp ="";
@@ -218,8 +218,9 @@ public class EditActivity extends AppCompatActivity implements LocationListener 
         public void onClick(final View view) {
 
             if(isFormularyNameCompleted()) {
-                if (isFormularyDescriptionCompleted()) {
-                    if (isFormularyPhotoCompleted()) {
+                if (isFormularyPhotoCompleted()) {
+                    if (isFormularyDescriptionCompleted()) {
+
 
 
                         // récupère les adresses possibles de localisation
@@ -287,11 +288,12 @@ public class EditActivity extends AppCompatActivity implements LocationListener 
                         } else {
                             Toast.makeText(view.getContext(), "Impossible de trouver les coordonnées!"+(EditActivity.this.lat), Toast.LENGTH_LONG).show();
                         }
-                    } else {
-                        Toast.makeText(view.getContext(), "Veuillez ajouter une photo.", Toast.LENGTH_LONG).show();
+
+                    }else {
+                        Toast.makeText(view.getContext(),"Veuillez ajouter une description de trois mots.",Toast.LENGTH_LONG).show();
                     }
-                }else {
-                    Toast.makeText(view.getContext(),"Veuillez ajouter une description de trois mots.",Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(view.getContext(), "Veuillez ajouter une photo.", Toast.LENGTH_LONG).show();
                 }
             }
             else{
@@ -305,7 +307,7 @@ public class EditActivity extends AppCompatActivity implements LocationListener 
      * @return boolean : yes if there is a photo
      */
     private boolean isFormularyPhotoCompleted(){
-        boolean flag=(photo_emp!=null);
+        boolean flag=(photo_emp!="");
         return flag;
     }
 

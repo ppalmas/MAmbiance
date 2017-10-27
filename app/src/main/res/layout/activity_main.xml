@@ -13,23 +13,25 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_weight="0.8"
         android:layout_height="match_parent"
+        android:layout_weight="0.8"
         android:orientation="horizontal">
+
         <ImageButton
             android:id="@+id/btn_user"
             android:layout_width="match_parent"
-            android:layout_weight="0.8"
             android:layout_height="match_parent"
-            android:src="@mipmap/ic_user"
-            android:scaleType="center"/>
+            android:layout_weight="0.8"
+            android:scaleType="center"
+            android:src="@mipmap/ic_user" />
+
         <ImageButton
             android:id="@+id/btn_edit"
             android:layout_width="match_parent"
-            android:layout_weight="0.2"
             android:layout_height="match_parent"
-            android:src="@mipmap/ic_add_marker"
-            android:scaleType="center"/>
+            android:layout_weight="0.2"
+            android:scaleType="center"
+            android:src="@mipmap/ic_add_marker" />
     </LinearLayout>
 
     <LinearLayout
@@ -57,15 +59,17 @@
                 <ImageButton
                     android:id="@+id/btn_info"
                     android:layout_width="match_parent"
-                    android:layout_weight="0.6"
+                    android:layout_weight="0.5"
                     android:layout_height="match_parent"
                     android:src="@mipmap/ic_info"
                     android:scaleType="center"/>
-                <LinearLayout
+                <ImageButton
+                    android:id="@+id/btn_param"
                     android:layout_width="match_parent"
+                    android:layout_weight="0.5"
                     android:layout_height="match_parent"
-                    android:layout_weight="0.4">
-                </LinearLayout>
+                    android:src="@mipmap/ic_parameters"
+                    android:scaleType="center"/>
             </LinearLayout>
         </LinearLayout>
         <ImageButton

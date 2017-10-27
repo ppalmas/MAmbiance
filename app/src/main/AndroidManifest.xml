@@ -53,6 +53,9 @@
             android:windowSoftInputMode="adjustResize">
 
         </activity>
+        <activity android:name=".ParametersActivity">
+
+        </activity>
 
 
         <provider
