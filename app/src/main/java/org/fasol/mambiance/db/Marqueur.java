@@ -6,7 +6,7 @@ import android.content.ContentValues;
 
 public class Marqueur extends DataObject {
 
-	
+	//TODO Ajout utilsiateur_id
 	//Attributes
 	/**
 	 * long id of the object marqueur

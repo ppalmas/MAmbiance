@@ -90,14 +90,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        btn_param.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v){
-                Intent secondeActiv = new Intent(MainActivity.this, ParametersActivity.class);
 
-                startActivity(secondeActiv);
-            }
-        });
 
     }
     /**

@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_main"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="org.fasol.mambiance.UserNewActivity">
+
+    <TextView
+        android:id="@+id/user_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
+        android:text="Nouvel utilisateur"
+        android:textSize="24sp"
+        tools:text="Nouvel utilisateur" />
+
+
+    <LinearLayout
+        android:layout_width="383dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="1">
+
+        <TextView
+            android:id="@+id/text_nom"
+            android:layout_width="161dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.2"
+            android:text="Nom" />
+
+        <EditText
+            android:id="@+id/a_nom"
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="0dp"
+            android:layout_weight="0.2"
+            android:text="" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="383dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="1">
+
+        <TextView
+            android:id="@+id/text_prenom"
+            android:layout_width="161dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.2"
+            android:text="Prenom" />
+
+        <EditText
+            android:id="@+id/a_prenom"
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="0dp"
+            android:layout_weight="0.2"
+            android:text="" />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="383dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="1">
+
+        <TextView
+            android:id="@+id/text_mail"
+            android:layout_width="161dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.2"
+            android:layout_marginLeft="2dp"
+            android:text="Mail" />
+
+        <EditText
+            android:id="@+id/a_mail"
+            android:layout_width="160dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="0dp"
+            android:layout_weight="0.2"
+            android:text="" />
+
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="383dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="1">
+
+        <TextView
+            android:id="@+id/text_pseudo"
+            android:layout_width="161dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.2"
+            android:layout_marginLeft="2dp"
+            android:text="Pseudonyme" />
+
+        <EditText
+            android:id="@+id/a_pseudo"
+            android:layout_width="120dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="0dp"
+            android:layout_weight="0.2"
+            android:text="" />
+
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="383dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="1">
+
+        <TextView
+            android:id="@+id/text_mdp"
+            android:layout_width="161dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.2"
+            android:layout_marginLeft="2dp"
+            android:text="Mot de passe" />
+
+        <EditText
+            android:id="@+id/a_mdp"
+            android:layout_width="160dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="0dp"
+            android:layout_weight="0.2"
+            android:text="" />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="383dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="1">
+
+        <TextView
+            android:id="@+id/text_mdp2"
+            android:layout_width="161dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.2"
+            android:layout_marginLeft="2dp"
+            android:text="Confirmation du mot de passe" />
+
+        <EditText
+            android:id="@+id/a_mdp2"
+            android:layout_width="160dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="0dp"
+            android:layout_weight="0.2"
+            android:text="" />
+
+
+    </LinearLayout>
+
+
+
+    <Button
+        android:id="@+id/button_save"
+        android:layout_width="160dp"
+        android:layout_height="wrap_content"
+        android:text="Enregistrer"
+        android:layout_gravity="center_horizontal"/>
+
+
+
+
+
+
+
+</LinearLayout>

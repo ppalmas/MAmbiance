@@ -10,6 +10,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
+import android.widget.Toast;
 
 import org.fasol.mambiance.MainActivity;
 
@@ -33,6 +34,9 @@ public class LocalDataSource {
     private String[] allColumnsMot = {MySQLiteHelper.COLUMN_ID, MySQLiteHelper.COLUMN_MOTLIBELLE, MySQLiteHelper.COLUMN_MARQUEURID};
     private String[] allColumnsLieu = {MySQLiteHelper.COLUMN_ID, MySQLiteHelper.COLUMN_LIEUNOM, MySQLiteHelper.COLUMN_ADRESSE, MySQLiteHelper.COLUMN_LATITUDE, MySQLiteHelper.COLUMN_LONGITUDE};
     private String[] allColumnsRoseAmbiance = {MySQLiteHelper.COLUMN_ID, MySQLiteHelper.COLUMN_OLFACTORY, MySQLiteHelper.COLUMN_VISUAL, MySQLiteHelper.COLUMN_THERMAL, MySQLiteHelper.COLUMN_ACOUSTICAL, MySQLiteHelper.COLUMN_MARQUEURID};
+    private String[] allColumnsAdresse = {MySQLiteHelper.COLUMN_ID, MySQLiteHelper.COLUMN_NOM, MySQLiteHelper.COLUMN_NUMERO, MySQLiteHelper.COLUMN_RUE, MySQLiteHelper.COLUMN_VILLE, MySQLiteHelper.COLUMN_PAYS, MySQLiteHelper.COLUMN_CODEPOSTAL, MySQLiteHelper.COLUMN_COMPLEMENT, MySQLiteHelper.COLUMN_ADRESSE_LATITUDE, MySQLiteHelper.COLUMN_ADRESSE_LONGITUDE, MySQLiteHelper.COLUMN_GEOM};
+//TODO USER, POSSEDE NOTE
+
 
     //getters
 
@@ -98,10 +102,10 @@ public class LocalDataSource {
         values.put(MySQLiteHelper.COLUMN_LIEUID, lieu_id);
 
         long insertId = database.insert(MySQLiteHelper.TABLE_MARQUEUR, null, values);
-
         Cursor cursor = database.query(MySQLiteHelper.TABLE_MARQUEUR,
                 allColumnsMarqueur, MySQLiteHelper.COLUMN_ID + " = " + insertId, null,
-                null, null, null);
+                null, null, null);//TODO probleme
+
         cursor.moveToFirst();
         Marqueur newMarqueur = cursorToMarqueur(cursor);
         cursor.close();
@@ -214,6 +218,35 @@ public class LocalDataSource {
         cursor.close();
         return newLieu;
     }
+
+    /**
+     * creation a new Lieu in the database
+     *
+     * @param nom       name of the place
+     * @param id_ad id de l'adresse
+     * @param latitude  latitude of the place
+     * @param longitude longitude of the place
+     * @return Lieu is the created Lieu
+     */
+    public Lieu createLieu2(String nom, double latitude, double longitude, Long id_ad) {
+        ContentValues values = new ContentValues();
+        values.put(MySQLiteHelper.COLUMN_LIEUNOM, nom);
+        values.put(MySQLiteHelper.COLUMN_ADRESSEID, id_ad);
+        values.put(MySQLiteHelper.COLUMN_LATITUDE, latitude);
+        values.put(MySQLiteHelper.COLUMN_LONGITUDE, longitude);
+        long insertId = database.insert(MySQLiteHelper.TABLE_LIEU, null, values);
+        Cursor cursor = database.query(
+                MySQLiteHelper.TABLE_LIEU,
+                allColumnsLieu,
+                MySQLiteHelper.COLUMN_ID + " = " + insertId,
+                null, null, null, null);
+        cursor.moveToFirst();
+        Lieu newLieu = cursorToLieu(cursor);//method at the end of the class
+        cursor.close();
+        return newLieu;
+    }
+
+
 
     /**
      * update a Lieu
@@ -877,6 +910,92 @@ public class LocalDataSource {
         r1.setA(cursor.getFloat(4));
         r1.setMarqueur_id(cursor.getLong(5));
         return r1;
+    }
+
+    // --------------------------------- METHODES pour ADRESSE ------------------------------------------
+    /**
+     * creating a new Adresse in the database
+     *
+     * @return Marqueur is the created Marqueur
+     */
+    public Adresse createAdresse(String nom, String numero, String rue, String ville, String codepostal, String pays, String complement, double latitude, double longitude) {
+        ContentValues values = new ContentValues();
+
+
+        values.put(MySQLiteHelper.COLUMN_NOM, nom);
+        values.put(MySQLiteHelper.COLUMN_NUMERO, numero);
+        values.put(MySQLiteHelper.COLUMN_RUE, rue);
+        values.put(MySQLiteHelper.COLUMN_VILLE, ville);
+        values.put(MySQLiteHelper.COLUMN_PAYS, pays);
+        values.put(MySQLiteHelper.COLUMN_CODEPOSTAL, codepostal);
+        values.put(MySQLiteHelper.COLUMN_COMPLEMENT, complement);
+        values.put(MySQLiteHelper.COLUMN_LATITUDE, latitude);
+        values.put(MySQLiteHelper.COLUMN_LONGITUDE, longitude);
+        values.put(MySQLiteHelper.COLUMN_GEOM, "POINT(" + latitude + ", " + longitude + ")");
+
+        long insertId = database.insert(MySQLiteHelper.TABLE_ADRESSE, null, values);
+
+        Cursor cursor = database.query(MySQLiteHelper.TABLE_ADRESSE,
+                allColumnsAdresse, MySQLiteHelper.COLUMN_ID + " = " + insertId, null,
+                null, null, null);
+        cursor.moveToFirst();
+        Adresse newAdresse = cursorToAdresse(cursor);
+        cursor.close();
+        return newAdresse;
+    }
+
+    /**
+     * convert a cursor to an Adresse
+     *
+     * @param cursor
+     * @return Adresse
+     */
+    private Adresse cursorToAdresse(Cursor cursor) {
+        Adresse p1 = new Adresse();
+        p1.setAdresse_id(cursor.getLong(0));
+        p1.setAdresse_nom(cursor.getString(1));
+        p1.setNumero(cursor.getString(2));
+        p1.setRue(cursor.getString(3));
+        p1.setVille(cursor.getString(4));
+        p1.setCodepostal(cursor.getString(5));
+        p1.setPays(cursor.getString(6));
+        p1.setComplement(cursor.getString(7));
+        p1.setLatitude(cursor.getFloat(8));
+        p1.setLongitude(cursor.getFloat(9));
+        p1.setGeom(cursor.getString(10));
+        return p1;
+    }
+
+    /**
+     * Méthode permettant de chercher une adresse dans la base de données et de renvoyer son id
+     * @param code_pos
+     * @param numero
+     * @param pays
+     * @param rue
+     * @param ville
+     * @return id de l'adresse entrée en paramètre
+     */
+
+    public long getAdresseById(String numero, String rue, String ville, String pays, String code_pos){
+
+        //Par défaut l'id vaut -1. Si au sortir de la méthode, l'id vaut -1, alors aucune adresse
+        // ne correspond dans la base de données
+        long id = -1;
+        ArrayList<Adresse> l_adr = new ArrayList<Adresse>();
+        //TODO add OU rue = numero + rue ? Tester
+        Cursor c = database.rawQuery("SELECT id FROM Adressse WHERE rue =" + rue+ "AND ville =" + ville
+                + "AND pays =" + pays + "AND codepostal = " + code_pos + " AND numero =" + numero, new String[]{});
+        c.moveToFirst();
+        if (c.getCount() != 0) {
+            for (int i = 0; i < c.getCount(); i++) {
+                l_adr.add(cursorToAdresse(c));
+                c.moveToNext();
+            }
+            c.close();
+            id = l_adr.get(0).getAdresse_id();
+        }
+
+        return id;
     }
 
     // ---------------------------------------- AUTRES METHODES ----------------------------------------------------

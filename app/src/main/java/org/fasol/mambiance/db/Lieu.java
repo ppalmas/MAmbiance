@@ -11,6 +11,10 @@ public class Lieu extends DataObject {
      */
     private long lieu_id;
     /**
+     * long id of the address
+     */
+    private long address_id;
+    /**
      * float latitude and longitude of the place
      */
     private float latitude, longitude;
@@ -21,7 +25,7 @@ public class Lieu extends DataObject {
     /**
      * String adress of the place
      */
-    private String adresse;
+    private String adresse; //TODO remove
 
 
     //Getters
@@ -95,7 +99,14 @@ public class Lieu extends DataObject {
         this.adresse = adresse;
     }
 
-    //Abstract methods
+    public long getAddress_id() {
+        return address_id;
+    }
+
+    public void setAddress_id(long address_id) {
+        this.address_id = address_id;
+    }
+//Abstract methods
 
     @Override
     public String toString() {
@@ -112,6 +123,7 @@ public class Lieu extends DataObject {
         values.put(MySQLiteHelper.COLUMN_LONGITUDE, this.longitude);
         values.put(MySQLiteHelper.COLUMN_LIEUNOM, this.lieu_nom);
         values.put(MySQLiteHelper.COLUMN_ADRESSE, this.adresse);
+        //TODO ajout adresse_id, enlever nom et adresse
 
         if(this.registredInLocal){
             String str = "_id "+"="+this.lieu_id;

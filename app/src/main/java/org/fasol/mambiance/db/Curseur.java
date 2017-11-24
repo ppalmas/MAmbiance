@@ -25,6 +25,7 @@ public class Curseur extends DataObject {
     private long marqueur_id;
 
 
+
     //Getters
     /**
      * getter for the Curseur_id

@@ -1,6 +1,7 @@
 package org.fasol.mambiance;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -12,15 +13,18 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -30,10 +34,12 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.fasol.mambiance.db.Adresse;
 import org.fasol.mambiance.db.Lieu;
 import org.fasol.mambiance.db.Marqueur;
 
@@ -74,6 +80,8 @@ public class EditActivity extends AppCompatActivity implements LocationListener 
     private SeekBar cursor_visual;
     private Button btn_photo;
     private String photo_emp = null;
+
+
 
     private ImageView mPhotoView; //thumbnail photo
 
@@ -158,24 +166,24 @@ public class EditActivity extends AppCompatActivity implements LocationListener 
         save.setOnClickListener(saveListener);
 
         locationManager = (LocationManager) getSystemService(this.LOCATION_SERVICE);
+//TODO: gérer le problème d'arrêt lorsque l'appli arrive pas à prendre des coordonnées car par allumé etc.
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(EditActivity.this,
+                    Manifest.permission.ACCESS_FINE_LOCATION)) {
+                if (ActivityCompat.shouldShowRequestPermissionRationale(EditActivity.this,
+                        Manifest.permission.ACCESS_COARSE_LOCATION)) {
 
-         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-             if (ActivityCompat.shouldShowRequestPermissionRationale(EditActivity.this,
-                     Manifest.permission.ACCESS_FINE_LOCATION)) {
-                 if (ActivityCompat.shouldShowRequestPermissionRationale(EditActivity.this,
-                         Manifest.permission.ACCESS_COARSE_LOCATION)) {
+                } else {
+                    ActivityCompat.requestPermissions(EditActivity.this,
+                            new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
+                            PERMISSIONS_REQUEST_COARSE_LOCATION);
+                }
+            } else {
+                ActivityCompat.requestPermissions(EditActivity.this,
+                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                        PERMISSIONS_REQUEST_FINE_LOCATION);
 
-                 } else {
-                     ActivityCompat.requestPermissions(EditActivity.this,
-                             new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
-                             PERMISSIONS_REQUEST_COARSE_LOCATION);
-                 }
-             } else {
-                 ActivityCompat.requestPermissions(EditActivity.this,
-                         new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                         PERMISSIONS_REQUEST_FINE_LOCATION);
-
-             }
+            }
         }
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
         locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, this);
@@ -183,8 +191,10 @@ public class EditActivity extends AppCompatActivity implements LocationListener 
         Location location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
         //if(location == null) location = locationManager.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER);
         // Récupérer les précédentes coordonnées n'est pas une bonne solution : proposer de placer la position sur une carte
-        lat=(float)location.getLatitude();
-        lng=(float)location.getLongitude();
+        //TODO régler problème de pas gps => pas de modif de l'activité
+
+        //lat=(float)location.getLatitude();
+        // lng=(float)location.getLongitude();
         photo_emp ="";
     }
 
@@ -220,74 +230,156 @@ public class EditActivity extends AppCompatActivity implements LocationListener 
             if(isFormularyNameCompleted()) {
                 if (isFormularyPhotoCompleted()) {
                     if (isFormularyDescriptionCompleted()) {
-
-
-
-                        // récupère les adresses possibles de localisation
                         List<Address> l_address = null;
-                        try {
-                            Geocoder geocoder = new Geocoder(EditActivity.this);
-                            l_address = geocoder.getFromLocation(EditActivity.this.lat, EditActivity.this.lng, 1);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                            Toast.makeText(view.getContext(), "Veuillez allumer votre GPS", Toast.LENGTH_LONG).show();
-                        }
-                        if (l_address != null && !l_address.isEmpty()) {
+                        //Si une connexion internet wifi ou non est détectée, on récupère la position
+                        //Sinon, on demande l'adresse à l'utilisateur
+                        if (isInternetOn()){
+                            // récupère les adresses possibles de localisation
+
+                            try {
+                                Geocoder geocoder = new Geocoder(EditActivity.this);
+                                l_address = geocoder.getFromLocation(EditActivity.this.lat, EditActivity.this.lng, 1);
+                                if (l_address != null && !l_address.isEmpty()) {
+                                    String rue_calc = l_address.get(0).getAddressLine(0);
+                                    //TODO break pour récupérer numéro ? (s'arrêter à un espace ?)
+                                    String ville_calc = l_address.get(0).getLocality();
+                                    String codepostal_calc = l_address.get(0).getPostalCode();
+                                    String pays_calc = l_address.get(0).getCountryName();
+                                    String numero_calc = l_address.get(0).getFeatureName();
+
+                                    // affiche une fenêtre demandant de valider l'adresse calculée
+                                    //Préparation du layout (fichier xml)
+                                    LayoutInflater inflater = (LayoutInflater)
+                                            EditActivity.this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                                    final View custView = inflater.inflate(R.layout.popup_address, null);
+                                    LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                                            LinearLayout.LayoutParams.MATCH_PARENT,
+                                            LinearLayout.LayoutParams.MATCH_PARENT);
+                                    //Dialog Builder
+                                    AlertDialog.Builder builderSingle = new AlertDialog.Builder(EditActivity.this);
+                                    builderSingle.setView(custView);
+                                    builderSingle.setTitle("Adresse calculée");
+                                    builderSingle.setMessage(l_address.get(0).getAddressLine(0) + " " +
+                                            l_address.get(0).getPostalCode() + " " + l_address.get(0).getLocality());
+                                    //Affichage de l'adresse ET du formulaire qui donne l'adresse : faire test après valider,
+                                    //si les champs sont remplis, alors on valide l'adresse entrée/ Ou 2 boutons ?
 
 
-                            // affiche une fenêtre demandant de valider l'adresse calculée
-                            AlertDialog.Builder builderSingle = new AlertDialog.Builder(EditActivity.this);
-                            builderSingle.setTitle("Adresse calculée");
-                            builderSingle.setMessage(l_address.get(0).getAddressLine(0) + " " +
-                                    l_address.get(0).getPostalCode() + " " + l_address.get(0).getLocality());
-                            // bouton recalculer
-                            builderSingle.setNegativeButton(
-                                    "recalculer",
-                                    new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
-                                            dialog.dismiss();
-                                        }
-                                    });
-                            // bouton valider l'adresse
-                            final List<Address> finalL_address = l_address;
-                            builderSingle.setPositiveButton(
-                                    "valider",
-                                    new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
+                                    // bouton recalculer
+                                    builderSingle.setNegativeButton(
+                                            "recalculer",
+                                            new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(DialogInterface dialog, int which) {
+                                                    dialog.dismiss();
+                                                }
+                                            });
+                                    // bouton valider l'adresse
+                                    final List<Address> finalL_address = l_address;
+                                    builderSingle.setPositiveButton(
+                                            "valider",
+                                            new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(DialogInterface dialog, int which) {
+                                                    EditText rue = (EditText) custView.findViewById(R.id.a_rue);
+                                                    EditText numero = (EditText) custView.findViewById(R.id.a_numero);
+                                                    EditText ville = (EditText) custView.findViewById(R.id.a_ville);
+                                                    EditText pays = (EditText) custView.findViewById(R.id.a_pays);
+                                                    EditText code_postal = (EditText) custView.findViewById(R.id.a_codepostal);
+                                                    EditText complement = (EditText) custView.findViewById(R.id.a_complement);
 
-                                            EditActivity.this.adresse = finalL_address.get(0).getAddressLine(0) + " " +
-                                                    finalL_address.get(0).getPostalCode() + " " + finalL_address.get(0).getLocality();
+                                                    if (isFormularyCompleted(numero, rue, ville, pays)) {
+                                                        if (isFormularyAllCompleted(numero, rue, ville, pays)) {
 
-                                            datasource.open();
 
-                                            Lieu lieu = datasource.createLieu(site_name.getText().toString(), adresse, lat, lng);
-                                            Marqueur marqueur = datasource.createMarqueur(lieu.getLieu_id());
-                                            datasource.createRoseAmbiance(cursor_olfactory.getProgress() / 4.f - 1.f, cursor_visual.getProgress() / 4.f - 1.f,
-                                                    cursor_thermal.getProgress() / 4.f - 1.f, cursor_acoustical.getProgress() / 4.f - 1.f, marqueur.getMarqueur_id());
-                                            datasource.createImage(marqueur.getMarqueur_id(), photo_emp);
-                                            String[] mots = description.getText().toString().split("[\\p{Punct}\\s]+");
-                                            for (int i = 0; i < mots.length; i++) {
-                                                datasource.createMot(mots[i], marqueur.getMarqueur_id());
-                                            }
-                                            datasource.createCurseur(caract1.getText().toString(), cursor1.getProgress(), marqueur.getMarqueur_id());
-                                            datasource.createCurseur(caract2.getText().toString(), cursor2.getProgress(), marqueur.getMarqueur_id());
-                                            datasource.createCurseur(caract3.getText().toString(), cursor3.getProgress(), marqueur.getMarqueur_id());
+                                                            EditActivity.this.adresse = finalL_address.get(0).getAddressLine(0) + " " +
+                                                                    finalL_address.get(0).getPostalCode() + " " + finalL_address.get(0).getLocality();
+                                                            Toast.makeText(view.getContext(), "Voici : " + rue.getText().toString(), Toast.LENGTH_LONG).show();
 
-                                            datasource.close();
 
-                                            dialog.dismiss();
-                                            Toast.makeText(view.getContext(), "Enregistrement effectué !", Toast.LENGTH_LONG).show();
+                                                            datasource.open();
+                                                            Adresse adresse_ = datasource.createAdresse(site_name.getText().toString(),
+                                                                    numero.getText().toString(), rue.getText().toString(), ville.getText().toString(),
+                                                                    code_postal.getText().toString(), pays.getText().toString(), complement.getText().toString(),
+                                                                    lat, lng);
+                                                            Lieu lieu = datasource.createLieu(site_name.getText().toString(), adresse, lat, lng);
 
-                                            Intent intent = new Intent(EditActivity.this, MainActivity.class);
-                                            startActivity(intent);
-                                        }
-                                    });
-                            builderSingle.show();
+                                                            Marqueur marqueur = datasource.createMarqueur(lieu.getLieu_id());
+                                                            datasource.createRoseAmbiance(cursor_olfactory.getProgress() / 4.f - 1.f, cursor_visual.getProgress() / 4.f - 1.f,
+                                                                    cursor_thermal.getProgress() / 4.f - 1.f, cursor_acoustical.getProgress() / 4.f - 1.f, marqueur.getMarqueur_id());
+                                                            datasource.createImage(marqueur.getMarqueur_id(), photo_emp);
+                                                            String[] mots = description.getText().toString().split("[\\p{Punct}\\s]+");
+                                                            for (int i = 0; i < mots.length; i++) {
+                                                                datasource.createMot(mots[i], marqueur.getMarqueur_id());
+                                                            }
+                                                            datasource.createCurseur(caract1.getText().toString(), cursor1.getProgress(), marqueur.getMarqueur_id());
+                                                            datasource.createCurseur(caract2.getText().toString(), cursor2.getProgress(), marqueur.getMarqueur_id());
+                                                            datasource.createCurseur(caract3.getText().toString(), cursor3.getProgress(), marqueur.getMarqueur_id());
+
+                                                            datasource.close();
+
+                                                            dialog.dismiss();
+                                                            Toast.makeText(view.getContext(), "Enregistrement effectué !", Toast.LENGTH_LONG).show();
+
+                                                            Intent intent = new Intent(EditActivity.this, MainActivity.class);
+                                                            startActivity(intent);
+                                                        } else {
+                                                            Toast.makeText(view.getContext(), "Veuillez remplir tous les champs * ou aucun pour valider l'adresse calculée.", Toast.LENGTH_LONG).show();
+                                                        }
+                                                    } else {
+
+                                                        //TODO Add adresse aussi
+                                                        EditActivity.this.adresse = finalL_address.get(0).getAddressLine(0) + " " +
+                                                                finalL_address.get(0).getPostalCode() + " " + finalL_address.get(0).getLocality();
+
+                                                        datasource.open();
+
+                                                        Lieu lieu = datasource.createLieu(site_name.getText().toString(), adresse, lat, lng);
+
+                                                        Marqueur marqueur = datasource.createMarqueur(lieu.getLieu_id());
+                                                        datasource.createRoseAmbiance(cursor_olfactory.getProgress() / 4.f - 1.f, cursor_visual.getProgress() / 4.f - 1.f,
+                                                                cursor_thermal.getProgress() / 4.f - 1.f, cursor_acoustical.getProgress() / 4.f - 1.f, marqueur.getMarqueur_id());
+                                                        datasource.createImage(marqueur.getMarqueur_id(), photo_emp);
+                                                        String[] mots = description.getText().toString().split("[\\p{Punct}\\s]+");
+                                                        for (int i = 0; i < mots.length; i++) {
+                                                            datasource.createMot(mots[i], marqueur.getMarqueur_id());
+                                                        }
+                                                        datasource.createCurseur(caract1.getText().toString(), cursor1.getProgress(), marqueur.getMarqueur_id());
+                                                        datasource.createCurseur(caract2.getText().toString(), cursor2.getProgress(), marqueur.getMarqueur_id());
+                                                        datasource.createCurseur(caract3.getText().toString(), cursor3.getProgress(), marqueur.getMarqueur_id());
+
+                                                        datasource.close();
+
+                                                        dialog.dismiss();
+                                                        Toast.makeText(view.getContext(), "Enregistrement effectué avec l'adresse calculée !", Toast.LENGTH_LONG).show();
+
+                                                        Intent intent = new Intent(EditActivity.this, MainActivity.class);
+                                                        startActivity(intent);
+                                                    }
+                                                }
+                                            });
+                                    builderSingle.show();
+                                } else {
+                                    Toast.makeText(view.getContext(), "Impossible de trouver les coordonnées! Allumez votre GPS ?", Toast.LENGTH_LONG).show();
+                                }
+
+
+                            } catch (IOException e) {
+                                e.printStackTrace();
+
+                            }catch (NullPointerException e){
+                                e.printStackTrace();
+                                Toast.makeText(view.getContext(), "Veuillez allumer votre GPS", Toast.LENGTH_LONG).show();
+                            }
+
+
+
                         } else {
-                            Toast.makeText(view.getContext(), "Impossible de trouver les coordonnées!"+(EditActivity.this.lat), Toast.LENGTH_LONG).show();
+
+                            Toast.makeText(view.getContext(), "Veuillez connecter votre appareil à internet.", Toast.LENGTH_LONG).show();
                         }
+
+
 
                     }else {
                         Toast.makeText(view.getContext(),"Veuillez ajouter une description de trois mots.",Toast.LENGTH_LONG).show();
@@ -477,4 +569,70 @@ public class EditActivity extends AppCompatActivity implements LocationListener 
     public void onProviderDisabled(String s) {
         Log.d("Latitude","disable");
     }
+
+    /**
+     * Method to check if internet is available (and no portal !)
+     * @return internet booléen, vaut vrai s'il y a une connexion, faux sinon
+     */
+    public final boolean isInternetOn() {
+        ConnectivityManager con = (ConnectivityManager) getSystemService(Activity.CONNECTIVITY_SERVICE);
+        boolean wifi = con.getNetworkInfo(ConnectivityManager.TYPE_WIFI).isConnectedOrConnecting();
+        boolean mobile = false;
+        try {
+            mobile = con.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).isConnectedOrConnecting();
+        } catch (NullPointerException e) {
+            mobile = false;
+        }
+        boolean internet = wifi | mobile;
+        return internet;
+    }
+
+    /**
+     * Méthode vérifiant si l'utilisateur a complété des champs du formulaire
+     * @return bool : booléen qui vaut true si des champs du formulaire sont remplis, false sinon
+     */
+    public boolean isFormularyCompleted(EditText numero, EditText rue, EditText ville, EditText pays){
+        boolean bool = true;
+        ArrayList<EditText> list = new ArrayList<>();
+
+        list.add(numero);
+        list.add(rue);
+        list.add(ville);
+        list.add(pays);
+        int n = list.size();
+        int i = 0;
+
+        while ((i<n)&&(bool)){
+            if (!(list.get(i).getText().toString().matches(""))) {
+                bool = false;
+            }
+            i=i+1;
+        }
+        return !bool;
+    }
+
+    /**
+     * Méthode permettant de vérifier si tous les champs du formulaire d'adresse ont été remplis
+     * @return true si le formulaire est entièrement rempli, false sinon
+     */
+    public boolean isFormularyAllCompleted(EditText numero, EditText rue, EditText ville, EditText pays){
+
+        boolean bool = true;
+        ArrayList<EditText> list = new ArrayList<>();
+        list.add(numero);
+        list.add(rue);
+        list.add(ville);
+        list.add(pays);
+        int n = list.size();
+        int i = 0;
+        while ((i<n)&&(bool)){
+            if (list.get(i).getText().toString().matches("")) {
+                bool = false;
+            }
+            i = i +1;
+        }
+        return bool;
+    }
+
+
 }

@@ -13,6 +13,9 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
      */
     public static final String TABLE_MARQUEUR = "Marqueur";
     public static final String TABLE_LIEU = "Lieu";
+    public static final String TABLE_POSSEDENOTE = "PossedeNote";
+    public static final String TABLE_UTILISATEUR = "Utilisateur";
+    public static final String TABLE_ADRESSE = "Adresse";
     public static final String TABLE_CURSEUR = "Curseur";
     public static final String TABLE_MOT = "Mot";
     public static final String TABLE_IMAGE = "Image";
@@ -63,36 +66,89 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         return TABLE_ROSEAMBIANCE;
     }
 
+    /**
+     * get the name of Table_possedeNote
+     * @return String which is the name of table possede_Note
+     */
+    public static String getTablePossedenote() { return TABLE_POSSEDENOTE;}
+
+    /**
+     * get the name of Table_utilisateur
+     * @return String which is the name of table rose_ambiance
+     */
+    public String getTableUtilisateur() {return TABLE_UTILISATEUR;}
+
+    /**
+     * get the name of Table_Adresse
+     * @return String which is the name of table adresse
+     */
+    public String getTableAdresse() {return TABLE_ADRESSE;}
+
+
 
     //names of the columns of the whole database
 
     public static final String COLUMN_ID = "_id";
 
+    //Table Marqueur
     public static final String COLUMN_MARQUEURID = "marqueur_id";
     public static final String COLUMN_DATECREATION = "date_creation";
 
+    //Table Localisation/Lieu
     public static final String COLUMN_LIEUID = "lieu_id";
     public static final String COLUMN_LATITUDE = "latitude";
     public static final String COLUMN_LONGITUDE = "longitude";
-    public static final String COLUMN_LIEUNOM = "lieu_nom";
-    public static final String COLUMN_ADRESSE = "adresse";
+    public static final String COLUMN_LIEUNOM = "lieu_nom";//A enlever
+    public static final String COLUMN_ADRESSE = "adresse";//A enlever
 
+    //Table Adresse
+    public static final String COLUMN_CODEPOSTAL = "code_postal";
+    public static final String COLUMN_COMPLEMENT = "complement";
+    public static final String COLUMN_GEOM = "geom";
+    public static final String COLUMN_ADRESSEID = "adresse_id";
+    public static final String COLUMN_ADRESSE_LATITUDE = "adresse_latitude";
+    public static final String COLUMN_ADRESSE_LONGITUDE = "adresse_longitude";
+    public static final String COLUMN_NOM = "nom";
+    public static final String COLUMN_NUMERO = "numero";
+    public static final String COLUMN_PAYS = "pays";
+    public static final String COLUMN_RUE = "rue";
+    public static final String COLUMN_VILLE = "ville";
+
+    //Table Rose
     public static final String COLUMN_ROSEID = "rose_id";
     public static final String COLUMN_OLFACTORY = "o";
     public static final String COLUMN_THERMAL = "t";
     public static final String COLUMN_VISUAL = "v";
     public static final String COLUMN_ACOUSTICAL = "a";
 
+    //Table Photo/Image
     public static final String COLUMN_IMAGEID = "image_id";
     public static final String COLUMN_IMAGEEMP = "image_emp";
 
+    //Table Mot
     public static final String COLUMN_MOTID = "mot_id";
     public static final String COLUMN_MOTLIBELLE = "mot_libelle";
+    //public static final String COLUMN_BOOLEAN= "mot_boolen"; //Colonne pour savoir si le mot est choisi pour apparaître ou non
 
+    //Table possedeNote
+    public static final String COLUMN_NOTEID = "note_id";
+    public static final String COLUMN_VALUE = "note_value";
+
+    //Table Curseur TODO a enlever
     public static final String COLUMN_CURSEURID = "curseur_id";
     public static final String COLUMN_CURSEURLIBELLE = "curseur_libelle";
     public static final String COLUMN_CURSEURVALEUR = "curseur_valeur";
 
+    //Table Utilisateur
+    public static final String COLUMN_CLEAPI = "user_cleapi";
+    public static final String COLUMN_DATECREE = "user_date";
+    public static final String COLUMN_EMAIL = "email";
+    public static final String COLUMN_USERID = "user_id";
+    public static final String COLUMN_MDP = "mot_de_passe";
+    public static final String COLUMN_USERNOM = "user_nom";
+    public static final String COLUMN_USERPRENOM = "user_prenom";
+    public static final String COLUMN_PSEUDO = "pseudo";
+    public static final String COLUMN_STATUT = "statut";
 
     /**
      * name of the local database
@@ -107,10 +163,29 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
      */
     private static final String DATABASE_CREATE = "create table " + TABLE_LIEU + " ("
             + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
-            + COLUMN_LIEUNOM + " text not null, "
-            + COLUMN_ADRESSE + " text not null, "
+            + COLUMN_LIEUNOM + " text not null, "//TODO a enlever
+            + COLUMN_ADRESSE + " text not null, " //TODO a enlever
             + COLUMN_LATITUDE + " REAL, "
-            + COLUMN_LONGITUDE + " REAL "
+            + COLUMN_LONGITUDE + " REAL, "
+            + COLUMN_ADRESSEID + " INTEGER, "
+            + "FOREIGN KEY( " + COLUMN_ADRESSEID + " )" + " REFERENCES " + TABLE_ADRESSE + " ( " + COLUMN_ID + " )"
+            + "); ";
+
+    /**
+     * query to create table Adresse
+     */
+    private static final String DATABASE_CREATE7 = "create table " + TABLE_ADRESSE + " ("
+            + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+            + COLUMN_NOM + "text not null, "
+            + COLUMN_NUMERO + " text not null, "
+            + COLUMN_RUE + " text not null, "
+            + COLUMN_VILLE + " text not null, "
+            + COLUMN_PAYS + " text not null, "
+            + COLUMN_CODEPOSTAL + " text not null, "
+            + COLUMN_COMPLEMENT + " text not null, "
+            + COLUMN_ADRESSE_LATITUDE + " REAL, "
+            + COLUMN_ADRESSE_LONGITUDE + " REAL, "
+            + COLUMN_GEOM + " text not null "
             + "); ";
 
     /**
@@ -120,9 +195,25 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
             + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
             + COLUMN_DATECREATION + " DATE, "
             + COLUMN_LIEUID + " INTEGER, "
+            //+ COLUMN_USERID + " INTEGER, "
+
+            //+ "FOREIGN KEY( " + COLUMN_USERID + " )" + " REFERENCES " + TABLE_UTILISATEUR + " ( " + COLUMN_ID + " )"
             + "FOREIGN KEY( " + COLUMN_LIEUID + " )" + " REFERENCES " + TABLE_LIEU + " ( " + COLUMN_ID + " )"
+            //TODO rajouter ligne du dessus utilisateur
             + "); ";
 
+    /**
+     * TODO query to create table possedeNote
+     */
+   /** private static final String DATABASE_CREATE8 = "create table" + TABLE_POSSEDENOTE + " ("
+            + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+            + COLUMN_VALUE + " INTEGER, "
+            + COLUMN_MARQUEURID + " INTEGER, "
+            + COLUMN_MOTID + " INTEGER, "
+            + "FOREIGN KEY( " + COLUMN_MARQUEURID + " )" + " REFERENCES " + TABLE_MARQUEUR + " ( " + COLUMN_ID + " ), "
+            + "FOREIGN KEY( " + COLUMN_MOTID + " )" + " REFERENCES " + TABLE_MOT + " ( " + COLUMN_ID + " )"
+            + "); ";
+*/
     /**
      * query to create table rose_ambiance
      */
@@ -150,18 +241,24 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
     private static final String DATABASE_CREATE5 = "create table " + TABLE_MOT + " ("
             + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
             + COLUMN_MOTLIBELLE + " TEXT NOT NULL, "
-            + COLUMN_MARQUEURID + " INTEGER, "
+            + COLUMN_MARQUEURID + " INTEGER, " //TODO à enlever
+           // + COLUMN_MOTBOOLEAN + " BOOLEAN, "
             + "FOREIGN KEY( " + COLUMN_MARQUEURID + " )" + " REFERENCES " + TABLE_MARQUEUR + " ( " + COLUMN_ID + " )"
             + "); ";
+
     /**
      * query to create table curseur
      */
+    //TODO à enlever
     private static final String DATABASE_CREATE6 = "create table " + TABLE_CURSEUR + " ("
             + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
             + COLUMN_CURSEURLIBELLE + " TEXT NOT NULL, "
             + COLUMN_CURSEURVALEUR + " INTEGER, "
             + COLUMN_MARQUEURID + " INTEGER, "
+            //+ COLUMN_USERID + "INTEGER, "
             + "FOREIGN KEY( " + COLUMN_MARQUEURID + " )" + " REFERENCES " + TABLE_MARQUEUR + " ( " + COLUMN_ID + " )"
+            //+ "FOREIGN KEY( " + COLUMN_USERID + " )" + " REFERENCES " + TABLE_UTILISATEUR + " ( " + COLUMN_ID + " )"
+            //TODO ADD
             + "); ";
 
     /**
@@ -184,21 +281,29 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         database.execSQL(getDatabaseCreate4());
         database.execSQL(getDatabaseCreate5());
         database.execSQL(getDatabaseCreate6());
+        database.execSQL(getDatabaseCreate7());
+       // database.execSQL(getDatabaseCreate8());
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         Log.w(MySQLiteHelper.class.getName(), "Upgrading database from version " + oldVersion + " to " + newVersion + ", which will destroy all your data");
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_LIEU + ";");
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_ADRESSE + ";");
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_MARQUEUR + ";");
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_ROSEAMBIANCE + ";");
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_IMAGE + ";");
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_CURSEUR + ";");
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_MOT + "; ");
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_POSSEDENOTE + "; ");
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_UTILISATEUR + "; ");
         onCreate(db);
     }
 
+
+
     /**
+
      * getter for createquery of related number
      *
      * @return the query as String
@@ -251,5 +356,16 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
     public static String getDatabaseCreate6() {
         return DATABASE_CREATE6;
     }
+
+    /** getter for createquery of related number
+     * @return the query as String
+     */
+    public static String getDatabaseCreate7() {
+        return DATABASE_CREATE7;
+    }
+
+   /** public static String getDatabaseCreate8() {
+        return DATABASE_CREATE8;
+    }*/ //TODO
 }
 

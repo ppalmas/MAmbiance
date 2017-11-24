@@ -39,6 +39,8 @@
         <activity android:name=".EditActivity">
 
         </activity>
+
+
         <activity android:name=".HistoryActivity">
 
         </activity>
@@ -51,9 +53,6 @@
 
         <activity android:name=".InfoActivity"
             android:windowSoftInputMode="adjustResize">
-
-        </activity>
-        <activity android:name=".ParametersActivity">
 
         </activity>
 
