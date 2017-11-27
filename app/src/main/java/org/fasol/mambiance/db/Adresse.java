@@ -19,7 +19,7 @@ public class Adresse extends DataObject {
     /**
      * String name of the place
      */
-    private String nom;
+    private String adresse_nom;
     /**
      * String numero the address of the place
      */
@@ -103,12 +103,12 @@ public class Adresse extends DataObject {
         this.longitude = longitude;
     }
 
-    public String getAdresse_nom() {
-        return nom;
+    public String getNom() {
+        return adresse_nom;
     }
 
-    public void setAdresse_nom(String adresse_nom) {
-        this.nom = adresse_nom;
+    public void setNom(String adresse_nom) {
+        this.adresse_nom = adresse_nom;
     }
 
     public String getNumero() {
@@ -173,7 +173,7 @@ public class Adresse extends DataObject {
                 "adresse_id=" + adresse_id +
                 ", latitude=" + latitude +
                 ", longitude=" + longitude +
-                ", nom='" + nom + '\'' +
+                ", nom='" + adresse_nom + '\'' +
                 ", numero='" + numero + '\'' +
                 ", rue='" + rue + '\'' +
                 ", ville='" + ville + '\'' +
@@ -189,7 +189,7 @@ public class Adresse extends DataObject {
         ContentValues values = new ContentValues();
 
 
-        values.put(MySQLiteHelper.COLUMN_NOM, this.nom);
+        values.put(MySQLiteHelper.COLUMN_NOM, this.adresse_nom);
         values.put(MySQLiteHelper.COLUMN_NUMERO, this.numero);
         values.put(MySQLiteHelper.COLUMN_RUE, this.rue);
         values.put(MySQLiteHelper.COLUMN_VILLE, this.ville);

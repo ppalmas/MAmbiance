@@ -47,6 +47,7 @@ public class DisplayMarkerActivity extends AppCompatActivity {
     private ArrayList<org.fasol.mambiance.db.Curseur> l_curseur;
     private org.fasol.mambiance.db.Image image;
     private org.fasol.mambiance.db.Lieu lieu;
+    private org.fasol.mambiance.db.Adresse adresse_marqueur;
     private ArrayList<org.fasol.mambiance.db.Mot> l_mot;
     private org.fasol.mambiance.db.RoseAmbiance roseAmbiance;
     private org.fasol.mambiance.db.Marqueur marqueur;
@@ -110,10 +111,12 @@ public class DisplayMarkerActivity extends AppCompatActivity {
         lieu=datasource.getLieuWithId(marqueur.getLieu_id());
         roseAmbiance=datasource.getRoseAmbianceWithMarqueurId(marqueur_id);
         l_mot=datasource.getMotWithMarqueurId(marqueur_id);
+        long adresseid = lieu.getAddress_id();
+        adresse_marqueur = datasource.getAdresseWithId(adresseid);
         datasource.close();
 
         // Affichage des données dans les champs
-        site_name.setText(lieu.getLieu_nom());
+        site_name.setText(adresse_marqueur.getNom());
 
         String description_text="";
         Iterator<Mot> it = l_mot.iterator();

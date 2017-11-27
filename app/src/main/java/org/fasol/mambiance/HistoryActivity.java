@@ -32,10 +32,16 @@ public class HistoryActivity extends AppCompatActivity {
         v_list=(ListView)findViewById(R.id.listview_history);
 
         datasource.open();
+        String adresse = MySQLiteHelper.COLUMN_NUMERO.toString() +  ", " + MySQLiteHelper.COLUMN_RUE.toString() + ", " +
+                MySQLiteHelper.COLUMN_VILLE.toString() + ", " + MySQLiteHelper.COLUMN_PAYS.toString();
+        //TODO
 
         SimpleCursorAdapter adapter = new SimpleCursorAdapter(this, R.layout.list_item_history, datasource.getHistoriqueCursor(),
-                new String[]{MySQLiteHelper.COLUMN_LIEUNOM, MySQLiteHelper.COLUMN_ADRESSE, MySQLiteHelper.COLUMN_DATECREATION, MySQLiteHelper.COLUMN_ID},
-                new int[]{R.id.site_name,R.id.site_adress,R.id.date,R.id.marqueur_selection_id});
+                new String[]{MySQLiteHelper.COLUMN_NOM, MySQLiteHelper.COLUMN_NUMERO, MySQLiteHelper.COLUMN_RUE,
+                        MySQLiteHelper.COLUMN_VILLE, MySQLiteHelper.COLUMN_PAYS,
+                        MySQLiteHelper.COLUMN_DATECREATION, MySQLiteHelper.COLUMN_ID, MySQLiteHelper.COLUMN_ADRESSEID},
+                new int[]{R.id.site_name, R.id.site_adress_num, R.id.site_adress_rue, R.id.site_adress_ville, R.id.site_adress_pays,
+                        R.id.date,R.id.marqueur_selection_id, R.id.marqueur_adresse_id});
 
 
         // affichage

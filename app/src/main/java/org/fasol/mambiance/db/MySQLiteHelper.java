@@ -98,8 +98,6 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
     public static final String COLUMN_LIEUID = "lieu_id";
     public static final String COLUMN_LATITUDE = "latitude";
     public static final String COLUMN_LONGITUDE = "longitude";
-    public static final String COLUMN_LIEUNOM = "lieu_nom";//A enlever
-    public static final String COLUMN_ADRESSE = "adresse";//A enlever
 
     //Table Adresse
     public static final String COLUMN_CODEPOSTAL = "code_postal";
@@ -108,7 +106,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
     public static final String COLUMN_ADRESSEID = "adresse_id";
     public static final String COLUMN_ADRESSE_LATITUDE = "adresse_latitude";
     public static final String COLUMN_ADRESSE_LONGITUDE = "adresse_longitude";
-    public static final String COLUMN_NOM = "nom";
+    public static final String COLUMN_NOM = "adresse_nom";
     public static final String COLUMN_NUMERO = "numero";
     public static final String COLUMN_PAYS = "pays";
     public static final String COLUMN_RUE = "rue";
@@ -155,7 +153,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
      * upgrading the version force the database to be deleted and recreated
      */
     public static final String DATABASE_NAME = "local.db";
-    public static final int DATABASE_VERSION = 5;
+    public static final int DATABASE_VERSION = 12;
 
 
     /**
@@ -163,8 +161,6 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
      */
     private static final String DATABASE_CREATE = "create table " + TABLE_LIEU + " ("
             + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
-            + COLUMN_LIEUNOM + " text not null, "//TODO a enlever
-            + COLUMN_ADRESSE + " text not null, " //TODO a enlever
             + COLUMN_LATITUDE + " REAL, "
             + COLUMN_LONGITUDE + " REAL, "
             + COLUMN_ADRESSEID + " INTEGER, "
@@ -172,20 +168,35 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
             + "); ";
 
     /**
+     * query to create table utilisateur
+     */
+    private static final String DATABASE_CREATE9 = "create table " + TABLE_UTILISATEUR + " ("
+            + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+            + COLUMN_USERNOM + " text not null, "
+            + COLUMN_USERPRENOM + " text not null, "
+            + COLUMN_MDP + " text not null, "
+            + COLUMN_EMAIL + " text not null, "
+            + COLUMN_PSEUDO + " text not null, "
+            + COLUMN_STATUT + " INTEGER, "
+            + COLUMN_CLEAPI + " text not null, "
+            + COLUMN_DATECREE + " TIMESTAMP " //TODO VERIFIER
+            + "); ";
+
+    /**
      * query to create table Adresse
      */
     private static final String DATABASE_CREATE7 = "create table " + TABLE_ADRESSE + " ("
             + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
-            + COLUMN_NOM + "text not null, "
-            + COLUMN_NUMERO + " text not null, "
-            + COLUMN_RUE + " text not null, "
-            + COLUMN_VILLE + " text not null, "
-            + COLUMN_PAYS + " text not null, "
-            + COLUMN_CODEPOSTAL + " text not null, "
-            + COLUMN_COMPLEMENT + " text not null, "
+            + COLUMN_NOM + " TEXT, "
+            + COLUMN_NUMERO + " TEXT, "
+            + COLUMN_RUE + " TEXT, "
+            + COLUMN_VILLE + " TEXT, "
+            + COLUMN_PAYS + " TEXT, "
+            + COLUMN_CODEPOSTAL + " TEXT, "
+            + COLUMN_COMPLEMENT + " TEXT, "
             + COLUMN_ADRESSE_LATITUDE + " REAL, "
             + COLUMN_ADRESSE_LONGITUDE + " REAL, "
-            + COLUMN_GEOM + " text not null "
+            + COLUMN_GEOM + " TEXT "
             + "); ";
 
     /**
@@ -275,6 +286,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         /**
          * we call each methods to create every table
          */
+        database.execSQL(getDatabaseCreate9());
         database.execSQL(getDatabaseCreate());
         database.execSQL(getDatabaseCreate2());
         database.execSQL(getDatabaseCreate3());
@@ -367,5 +379,16 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
    /** public static String getDatabaseCreate8() {
         return DATABASE_CREATE8;
     }*/ //TODO
+
+    /**
+
+     * getter for createquery of related number
+     *
+     * @return the query as String
+     */
+    public static String getDatabaseCreate9() {
+        return DATABASE_CREATE9;
+    }
+
 }
 

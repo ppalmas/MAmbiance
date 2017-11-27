@@ -13,6 +13,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.widget.Toast;
 
 import org.fasol.mambiance.MainActivity;
+import org.slf4j.helpers.Util;
 
 public class LocalDataSource {
     private static final String TAG = "localDataSource";
@@ -32,10 +33,17 @@ public class LocalDataSource {
     private String[] allColumnsCurseur = {MySQLiteHelper.COLUMN_ID, MySQLiteHelper.COLUMN_CURSEURLIBELLE, MySQLiteHelper.COLUMN_CURSEURVALEUR, MySQLiteHelper.COLUMN_MARQUEURID};
     private String[] allColumnsImage = {MySQLiteHelper.COLUMN_ID, MySQLiteHelper.COLUMN_IMAGEEMP, MySQLiteHelper.COLUMN_MARQUEURID};
     private String[] allColumnsMot = {MySQLiteHelper.COLUMN_ID, MySQLiteHelper.COLUMN_MOTLIBELLE, MySQLiteHelper.COLUMN_MARQUEURID};
-    private String[] allColumnsLieu = {MySQLiteHelper.COLUMN_ID, MySQLiteHelper.COLUMN_LIEUNOM, MySQLiteHelper.COLUMN_ADRESSE, MySQLiteHelper.COLUMN_LATITUDE, MySQLiteHelper.COLUMN_LONGITUDE};
+    private String[] allColumnsLieu = {MySQLiteHelper.COLUMN_ID, MySQLiteHelper.COLUMN_LATITUDE, MySQLiteHelper.COLUMN_LONGITUDE, MySQLiteHelper.COLUMN_ADRESSEID};
     private String[] allColumnsRoseAmbiance = {MySQLiteHelper.COLUMN_ID, MySQLiteHelper.COLUMN_OLFACTORY, MySQLiteHelper.COLUMN_VISUAL, MySQLiteHelper.COLUMN_THERMAL, MySQLiteHelper.COLUMN_ACOUSTICAL, MySQLiteHelper.COLUMN_MARQUEURID};
-    private String[] allColumnsAdresse = {MySQLiteHelper.COLUMN_ID, MySQLiteHelper.COLUMN_NOM, MySQLiteHelper.COLUMN_NUMERO, MySQLiteHelper.COLUMN_RUE, MySQLiteHelper.COLUMN_VILLE, MySQLiteHelper.COLUMN_PAYS, MySQLiteHelper.COLUMN_CODEPOSTAL, MySQLiteHelper.COLUMN_COMPLEMENT, MySQLiteHelper.COLUMN_ADRESSE_LATITUDE, MySQLiteHelper.COLUMN_ADRESSE_LONGITUDE, MySQLiteHelper.COLUMN_GEOM};
-//TODO USER, POSSEDE NOTE
+    private String[] allColumnsAdresse = {MySQLiteHelper.COLUMN_ID, MySQLiteHelper.COLUMN_NOM, MySQLiteHelper.COLUMN_NUMERO,
+            MySQLiteHelper.COLUMN_RUE, MySQLiteHelper.COLUMN_VILLE, MySQLiteHelper.COLUMN_PAYS, MySQLiteHelper.COLUMN_CODEPOSTAL,
+            MySQLiteHelper.COLUMN_COMPLEMENT, MySQLiteHelper.COLUMN_ADRESSE_LATITUDE, MySQLiteHelper.COLUMN_ADRESSE_LONGITUDE,
+            MySQLiteHelper.COLUMN_GEOM};
+    private String[] allColumnsUtilisateur = {MySQLiteHelper.COLUMN_ID, MySQLiteHelper.COLUMN_USERNOM, MySQLiteHelper.COLUMN_USERPRENOM,
+            MySQLiteHelper.COLUMN_MDP, MySQLiteHelper.COLUMN_EMAIL, MySQLiteHelper.COLUMN_PSEUDO, MySQLiteHelper.COLUMN_STATUT,
+            MySQLiteHelper.COLUMN_CLEAPI};
+
+//TODO POSSEDE NOTE
 
 
     //getters
@@ -104,7 +112,7 @@ public class LocalDataSource {
         long insertId = database.insert(MySQLiteHelper.TABLE_MARQUEUR, null, values);
         Cursor cursor = database.query(MySQLiteHelper.TABLE_MARQUEUR,
                 allColumnsMarqueur, MySQLiteHelper.COLUMN_ID + " = " + insertId, null,
-                null, null, null);//TODO probleme
+                null, null, null);
 
         cursor.moveToFirst();
         Marqueur newMarqueur = cursorToMarqueur(cursor);
@@ -195,16 +203,13 @@ public class LocalDataSource {
     /**
      * creation a new Lieu in the database
      *
-     * @param nom       name of the place
-     * @param adresse
+
      * @param latitude  latitude of the place
      * @param longitude longitude of the place
      * @return Lieu is the created Lieu
      */
-    public Lieu createLieu(String nom, String adresse, double latitude, double longitude) {
+    public Lieu createLieu2(double latitude, double longitude) {
         ContentValues values = new ContentValues();
-        values.put(MySQLiteHelper.COLUMN_LIEUNOM, nom);
-        values.put(MySQLiteHelper.COLUMN_ADRESSE, adresse);
         values.put(MySQLiteHelper.COLUMN_LATITUDE, latitude);
         values.put(MySQLiteHelper.COLUMN_LONGITUDE, longitude);
         long insertId = database.insert(MySQLiteHelper.TABLE_LIEU, null, values);
@@ -222,18 +227,17 @@ public class LocalDataSource {
     /**
      * creation a new Lieu in the database
      *
-     * @param nom       name of the place
      * @param id_ad id de l'adresse
      * @param latitude  latitude of the place
      * @param longitude longitude of the place
      * @return Lieu is the created Lieu
      */
-    public Lieu createLieu2(String nom, double latitude, double longitude, Long id_ad) {
+    public Lieu createLieu(double latitude, double longitude, Long id_ad) {
         ContentValues values = new ContentValues();
-        values.put(MySQLiteHelper.COLUMN_LIEUNOM, nom);
-        values.put(MySQLiteHelper.COLUMN_ADRESSEID, id_ad);
+
         values.put(MySQLiteHelper.COLUMN_LATITUDE, latitude);
         values.put(MySQLiteHelper.COLUMN_LONGITUDE, longitude);
+        values.put(MySQLiteHelper.COLUMN_ADRESSEID, id_ad);
         long insertId = database.insert(MySQLiteHelper.TABLE_LIEU, null, values);
         Cursor cursor = database.query(
                 MySQLiteHelper.TABLE_LIEU,
@@ -253,12 +257,12 @@ public class LocalDataSource {
      *
      * @return Lieu updated
      */
-    public Lieu updateLieu(Lieu lieu, String nom, String adresse, double latitude, double longitude, long adresse_id) {
+    public Lieu updateLieu(Lieu lieu, double latitude, double longitude, long adresse_id) {
         ContentValues values = new ContentValues();
-        values.put(MySQLiteHelper.COLUMN_LIEUNOM, nom);
-        values.put(MySQLiteHelper.COLUMN_ADRESSE, adresse);
+
         values.put(MySQLiteHelper.COLUMN_LONGITUDE, longitude);
         values.put(MySQLiteHelper.COLUMN_LATITUDE, latitude);
+        values.put(MySQLiteHelper.COLUMN_ADRESSEID, adresse_id);
 
         database.update(MySQLiteHelper.TABLE_LIEU, values, MySQLiteHelper.COLUMN_ID + " = " + lieu.getLieu_id(), null);
         return getLieuWithId(lieu.getLieu_id());
@@ -363,10 +367,9 @@ public class LocalDataSource {
     private Lieu cursorToLieu(Cursor cursor) {
         Lieu p1 = new Lieu();
         p1.setLieu_id(cursor.getLong(0));
-        p1.setLieu_nom(cursor.getString(1));
-        p1.setAdresse(cursor.getString(2));
-        p1.setLatitude(cursor.getFloat(3));
-        p1.setLongitude(cursor.getFloat(4));
+        p1.setLatitude(cursor.getFloat(1));
+        p1.setLongitude(cursor.getFloat(2));
+        p1.setAddress_id(cursor.getLong(3));
         return p1;
     }
 
@@ -916,7 +919,7 @@ public class LocalDataSource {
     /**
      * creating a new Adresse in the database
      *
-     * @return Marqueur is the created Marqueur
+     * @return Adresse is the created Adresse
      */
     public Adresse createAdresse(String nom, String numero, String rue, String ville, String codepostal, String pays, String complement, double latitude, double longitude) {
         ContentValues values = new ContentValues();
@@ -929,19 +932,40 @@ public class LocalDataSource {
         values.put(MySQLiteHelper.COLUMN_PAYS, pays);
         values.put(MySQLiteHelper.COLUMN_CODEPOSTAL, codepostal);
         values.put(MySQLiteHelper.COLUMN_COMPLEMENT, complement);
-        values.put(MySQLiteHelper.COLUMN_LATITUDE, latitude);
-        values.put(MySQLiteHelper.COLUMN_LONGITUDE, longitude);
-        values.put(MySQLiteHelper.COLUMN_GEOM, "POINT(" + latitude + ", " + longitude + ")");
+        values.put(MySQLiteHelper.COLUMN_ADRESSE_LATITUDE, latitude);
+        values.put(MySQLiteHelper.COLUMN_ADRESSE_LONGITUDE, longitude);
+        //values.put(MySQLiteHelper.COLUMN_GEOM, "POINT(" + latitude + ", " + longitude + ")");
+        values.put(MySQLiteHelper.COLUMN_GEOM, longitude);
 
         long insertId = database.insert(MySQLiteHelper.TABLE_ADRESSE, null, values);
 
         Cursor cursor = database.query(MySQLiteHelper.TABLE_ADRESSE,
                 allColumnsAdresse, MySQLiteHelper.COLUMN_ID + " = " + insertId, null,
                 null, null, null);
+        if (cursor.getCount()>0){
+            int i = cursor.getCount();
+        } else {
+            int i = cursor.getCount();
+        }
+
         cursor.moveToFirst();
         Adresse newAdresse = cursorToAdresse(cursor);
         cursor.close();
         return newAdresse;
+    }
+
+    /**
+     * knowing a Adresse_id, we want to get the adresse itself
+     *
+     * @param id is the id of the Adresse we are looking for
+     * @return l1 is the Adresse we were looking for
+     */
+    public Adresse getAdresseWithId(long id) {
+        Cursor c = database.query(MySQLiteHelper.TABLE_ADRESSE, allColumnsAdresse, MySQLiteHelper.COLUMN_ID + " = \"" + id + "\"", null, null, null, null);
+        c.moveToFirst();
+        Adresse l1 = cursorToAdresse(c);
+        c.close();
+        return l1;
     }
 
     /**
@@ -953,7 +977,7 @@ public class LocalDataSource {
     private Adresse cursorToAdresse(Cursor cursor) {
         Adresse p1 = new Adresse();
         p1.setAdresse_id(cursor.getLong(0));
-        p1.setAdresse_nom(cursor.getString(1));
+        p1.setNom(cursor.getString(1));
         p1.setNumero(cursor.getString(2));
         p1.setRue(cursor.getString(3));
         p1.setVille(cursor.getString(4));
@@ -978,13 +1002,14 @@ public class LocalDataSource {
 
     public long getAdresseById(String numero, String rue, String ville, String pays, String code_pos){
 
-        //Par défaut l'id vaut -1. Si au sortir de la méthode, l'id vaut -1, alors aucune adresse
+        //Par défaut l'id vaut -2. Si au sortir de la méthode, l'id vaut -2, alors aucune adresse
         // ne correspond dans la base de données
-        long id = -1;
+        long id = -2;
         ArrayList<Adresse> l_adr = new ArrayList<Adresse>();
-        //TODO add OU rue = numero + rue ? Tester
-        Cursor c = database.rawQuery("SELECT id FROM Adressse WHERE rue =" + rue+ "AND ville =" + ville
-                + "AND pays =" + pays + "AND codepostal = " + code_pos + " AND numero =" + numero, new String[]{});
+        Cursor c = database.rawQuery("SELECT _id FROM " + MySQLiteHelper.TABLE_ADRESSE + " WHERE ("
+                + MySQLiteHelper.TABLE_ADRESSE + "." + MySQLiteHelper.COLUMN_RUE + " = '" + numero + "" + rue + "' AND " +
+                MySQLiteHelper.TABLE_ADRESSE + "." + MySQLiteHelper.COLUMN_VILLE + " = '" + ville + "' AND " +
+                MySQLiteHelper.TABLE_ADRESSE + "." + MySQLiteHelper.COLUMN_PAYS + " = '" + pays + "')", new String[]{});
         c.moveToFirst();
         if (c.getCount() != 0) {
             for (int i = 0; i < c.getCount(); i++) {
@@ -993,17 +1018,97 @@ public class LocalDataSource {
             }
             c.close();
             id = l_adr.get(0).getAdresse_id();
+        } else {
+            c = database.rawQuery("SELECT _id FROM " + MySQLiteHelper.TABLE_ADRESSE + " WHERE (" +
+                    MySQLiteHelper.TABLE_ADRESSE + "." + MySQLiteHelper.COLUMN_NUMERO + " = '" + numero + "' AND " +
+                    MySQLiteHelper.TABLE_ADRESSE + "." + MySQLiteHelper.COLUMN_RUE + " = '" + rue + "' AND " +
+                    MySQLiteHelper.TABLE_ADRESSE + "." + MySQLiteHelper.COLUMN_VILLE + " = '" + ville + "' AND " +
+                            MySQLiteHelper.TABLE_ADRESSE + "." + MySQLiteHelper.COLUMN_PAYS + " = '" + pays + "')", new String[]{});
+            c.moveToFirst();
+            if (c.getCount() != 0) {
+                for (int i = 0; i < c.getCount(); i++) {
+                    l_adr.add(cursorToAdresse(c));
+                    c.moveToNext();
+                }
+                c.close();
+                id = l_adr.get(0).getAdresse_id();
+            }
         }
 
         return id;
     }
 
+    // --------------------------------- METHODES pour UTILISATEUR ------------------------------------------
+    /**
+     * creating a new Utilisateur in the database
+     *
+     * @return User is the created Utilisateur
+     */
+    public Utilisateur createUtilisateur(String nom, String prenom, String mdp, String cleapi, String pseudo, String email, int statut) {
+        ContentValues values = new ContentValues();
+
+
+        values.put(MySQLiteHelper.COLUMN_USERNOM, nom);
+        values.put(MySQLiteHelper.COLUMN_USERPRENOM, prenom);
+        values.put(MySQLiteHelper.COLUMN_MDP, mdp);
+        values.put(MySQLiteHelper.COLUMN_EMAIL, email);
+        values.put(MySQLiteHelper.COLUMN_PSEUDO, pseudo);
+        values.put(MySQLiteHelper.COLUMN_STATUT, statut);
+        values.put(MySQLiteHelper.COLUMN_CLEAPI, cleapi);
+
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date dateMnt = new Date(System.currentTimeMillis());
+        values.put(MySQLiteHelper.COLUMN_DATECREE, dateFormat.format(dateMnt));
+
+        long insertId = database.insert(MySQLiteHelper.TABLE_UTILISATEUR, null, values);
+
+        Cursor cursor = database.query(MySQLiteHelper.TABLE_UTILISATEUR,
+                allColumnsUtilisateur, MySQLiteHelper.COLUMN_ID + " = " + insertId, null,
+                null, null, null);
+
+        Utilisateur newUser = cursorToUtilisateur(cursor);
+        return newUser;
+    }
+
+    /**
+     * convert a cursor to an Utilisateur
+     *
+     * @param cursor
+     * @return Utilisateur
+     */
+    private Utilisateur cursorToUtilisateur(Cursor cursor) {
+        Utilisateur p1 = new Utilisateur();
+        p1.setUser_id(cursor.getLong(0));
+        p1.setNom(cursor.getString(1));
+        p1.setPrenom(cursor.getString(2));
+        p1.setMdp(cursor.getString(3));
+        p1.setEmail(cursor.getString(4));
+        p1.setPseudo(cursor.getString(5));
+        p1.setStatut(cursor.getInt(6));
+        p1.setCleapi(cursor.getString(7));
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+        Date dateCreation = null;
+        try {
+            dateCreation = dateFormat.parse(cursor.getString(1));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        p1.setDate_cree(dateCreation);
+        return p1;
+    }
+
+
     // ---------------------------------------- AUTRES METHODES ----------------------------------------------------
 
     private static String GETHISTORIQUE =
-            "SELECT " + MySQLiteHelper.COLUMN_LIEUNOM + ", " + MySQLiteHelper.COLUMN_ADRESSE + ", " + MySQLiteHelper.COLUMN_DATECREATION + ", " + MySQLiteHelper.TABLE_MARQUEUR + "." + MySQLiteHelper.COLUMN_ID +
-                    " FROM " + MySQLiteHelper.TABLE_LIEU + " INNER JOIN " + MySQLiteHelper.TABLE_MARQUEUR +
-                    " ON " + MySQLiteHelper.TABLE_LIEU + "." + MySQLiteHelper.COLUMN_ID + "=" + MySQLiteHelper.TABLE_MARQUEUR + "." + MySQLiteHelper.COLUMN_LIEUID + ";";
+            "SELECT " + MySQLiteHelper.COLUMN_NOM + ", " + MySQLiteHelper.COLUMN_NUMERO + ", " + MySQLiteHelper.COLUMN_RUE +
+                    ", " + MySQLiteHelper.COLUMN_VILLE + ", " + MySQLiteHelper.COLUMN_PAYS + ", " +
+                    MySQLiteHelper.COLUMN_DATECREATION + " ," + MySQLiteHelper.COLUMN_ADRESSEID + ", " + MySQLiteHelper.TABLE_MARQUEUR + "." + MySQLiteHelper.COLUMN_ID +
+                    " FROM " + MySQLiteHelper.TABLE_ADRESSE + " INNER JOIN " + MySQLiteHelper.TABLE_LIEU + " INNER JOIN " + MySQLiteHelper.TABLE_MARQUEUR +
+                    " ON " + MySQLiteHelper.TABLE_ADRESSE + "." + MySQLiteHelper.COLUMN_ID + "=" + MySQLiteHelper.TABLE_LIEU + "." + MySQLiteHelper.COLUMN_ADRESSEID +
+                   " AND " + MySQLiteHelper.TABLE_LIEU + "." + MySQLiteHelper.COLUMN_ID + "=" + MySQLiteHelper.TABLE_MARQUEUR + "." + MySQLiteHelper.COLUMN_LIEUID + ";";
                     // WHERE USER_ID = ? ...
 
     /**
@@ -1017,10 +1122,14 @@ public class LocalDataSource {
     }
 
     private static String GETALLMARKERMAP =
-            "SELECT " + MySQLiteHelper.COLUMN_LIEUNOM + ", " + MySQLiteHelper.COLUMN_ADRESSE + ", " + MySQLiteHelper.COLUMN_LATITUDE +
-                    ", " + MySQLiteHelper.COLUMN_LONGITUDE + ", " + MySQLiteHelper.TABLE_MARQUEUR + "." + MySQLiteHelper.COLUMN_ID +
-                    " FROM " + MySQLiteHelper.TABLE_LIEU + " INNER JOIN " + MySQLiteHelper.TABLE_MARQUEUR +
-                    " ON " + MySQLiteHelper.TABLE_LIEU + "." + MySQLiteHelper.COLUMN_ID + "=" + MySQLiteHelper.TABLE_MARQUEUR + "." + MySQLiteHelper.COLUMN_LIEUID + ";";
+            "SELECT " + MySQLiteHelper.COLUMN_NOM+ ", " + MySQLiteHelper.COLUMN_NUMERO + ", " + MySQLiteHelper.COLUMN_RUE +
+                    ", " + MySQLiteHelper.COLUMN_VILLE + ", " + MySQLiteHelper.COLUMN_PAYS + ", "
+                    + MySQLiteHelper.COLUMN_LATITUDE + ", " + MySQLiteHelper.COLUMN_LONGITUDE + ", " +
+                    MySQLiteHelper.TABLE_MARQUEUR + "." + MySQLiteHelper.COLUMN_ID +
+                    " FROM " + MySQLiteHelper.TABLE_ADRESSE + " INNER JOIN " + MySQLiteHelper.TABLE_LIEU + " INNER JOIN " +
+                    MySQLiteHelper.TABLE_MARQUEUR +
+                    " ON " + MySQLiteHelper.TABLE_ADRESSE + "." + MySQLiteHelper.COLUMN_ID + "=" + MySQLiteHelper.TABLE_LIEU + "." + MySQLiteHelper.COLUMN_ADRESSEID +
+    MySQLiteHelper.TABLE_LIEU + "." + MySQLiteHelper.COLUMN_ID + "=" + MySQLiteHelper.TABLE_MARQUEUR + "." + MySQLiteHelper.COLUMN_LIEUID + ";";
 
     /**
      * renvoie un cursor de l'ensemble des marqueurs contenant le nom du lieu, l'adresse, la latitude, la longitude et l'id

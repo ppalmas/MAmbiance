@@ -240,12 +240,7 @@ public class EditActivity extends AppCompatActivity implements LocationListener 
                                 Geocoder geocoder = new Geocoder(EditActivity.this);
                                 l_address = geocoder.getFromLocation(EditActivity.this.lat, EditActivity.this.lng, 1);
                                 if (l_address != null && !l_address.isEmpty()) {
-                                    String rue_calc = l_address.get(0).getAddressLine(0);
-                                    //TODO break pour récupérer numéro ? (s'arrêter à un espace ?)
-                                    String ville_calc = l_address.get(0).getLocality();
-                                    String codepostal_calc = l_address.get(0).getPostalCode();
-                                    String pays_calc = l_address.get(0).getCountryName();
-                                    String numero_calc = l_address.get(0).getFeatureName();
+
 
                                     // affiche une fenêtre demandant de valider l'adresse calculée
                                     //Préparation du layout (fichier xml)
@@ -294,15 +289,25 @@ public class EditActivity extends AppCompatActivity implements LocationListener 
 
                                                             EditActivity.this.adresse = finalL_address.get(0).getAddressLine(0) + " " +
                                                                     finalL_address.get(0).getPostalCode() + " " + finalL_address.get(0).getLocality();
-                                                            Toast.makeText(view.getContext(), "Voici : " + rue.getText().toString(), Toast.LENGTH_LONG).show();
+
 
 
                                                             datasource.open();
-                                                            Adresse adresse_ = datasource.createAdresse(site_name.getText().toString(),
-                                                                    numero.getText().toString(), rue.getText().toString(), ville.getText().toString(),
-                                                                    code_postal.getText().toString(), pays.getText().toString(), complement.getText().toString(),
-                                                                    lat, lng);
-                                                            Lieu lieu = datasource.createLieu(site_name.getText().toString(), adresse, lat, lng);
+                                                            long id = datasource.getAdresseById(numero.getText().toString(), rue.getText().toString(), ville.getText().toString(),
+                                                                    pays.getText().toString(), code_postal.getText().toString());
+                                                            long address_id = -2;
+                                                            if (id>0) {
+                                                                //On vérifie si l'adresse existe déjà, alors id vaut l'id de l'adresse trouvée
+                                                                address_id = id;
+                                                            } else {
+                                                                //SInon, on ajoute l'adresse à la base de données
+                                                                Adresse adresse = datasource.createAdresse(site_name.getText().toString(),
+                                                                        numero.getText().toString(), rue.getText().toString(), ville.getText().toString(),
+                                                                        code_postal.getText().toString(), pays.getText().toString(), complement.getText().toString(),
+                                                                        lat, lng);
+                                                                address_id = adresse.getAdresse_id();
+                                                            }
+                                                            Lieu lieu = datasource.createLieu(lat, lng, address_id);
 
                                                             Marqueur marqueur = datasource.createMarqueur(lieu.getLieu_id());
                                                             datasource.createRoseAmbiance(cursor_olfactory.getProgress() / 4.f - 1.f, cursor_visual.getProgress() / 4.f - 1.f,
@@ -319,7 +324,7 @@ public class EditActivity extends AppCompatActivity implements LocationListener 
                                                             datasource.close();
 
                                                             dialog.dismiss();
-                                                            Toast.makeText(view.getContext(), "Enregistrement effectué !", Toast.LENGTH_LONG).show();
+                                                            Toast.makeText(view.getContext(), "Enregistrement de l'adresse entrée effectué !", Toast.LENGTH_LONG).show();
 
                                                             Intent intent = new Intent(EditActivity.this, MainActivity.class);
                                                             startActivity(intent);
@@ -328,13 +333,33 @@ public class EditActivity extends AppCompatActivity implements LocationListener 
                                                         }
                                                     } else {
 
-                                                        //TODO Add adresse aussi
                                                         EditActivity.this.adresse = finalL_address.get(0).getAddressLine(0) + " " +
                                                                 finalL_address.get(0).getPostalCode() + " " + finalL_address.get(0).getLocality();
 
+                                                        String[] rue_split = finalL_address.get(0).getAddressLine(0).split(",");
+                                                        String rue_calc = rue_split[0];
+                                                        String ville_calc = finalL_address.get(0).getLocality();
+                                                        String codepostal_calc = finalL_address.get(0).getPostalCode();
+                                                        String pays_calc = finalL_address.get(0).getCountryName();
+                                                        String numero_calc = finalL_address.get(0).getFeatureName();
                                                         datasource.open();
 
-                                                        Lieu lieu = datasource.createLieu(site_name.getText().toString(), adresse, lat, lng);
+                                                        long id = datasource.getAdresseById("", rue_calc.toString(), ville_calc.toString(),
+                                                                codepostal_calc.toString(), pays_calc.toString());
+
+
+                                                        long address_id = -2;
+                                                        if (id>0) {
+                                                            //On vérifie si l'adresse existe déjà, alors id vaut l'id de l'adresse trouvée
+                                                            address_id = id;
+                                                        } else {
+                                                            //Sinon, on ajoute l'adresse calculée à la base de données
+                                                            Adresse adresse = datasource.createAdresse(site_name.getText().toString(),
+                                                                    "", rue_calc, ville_calc, codepostal_calc, pays_calc, "",
+                                                                    lat, lng);
+                                                            address_id = adresse.getAdresse_id();
+                                                        }
+                                                        Lieu lieu = datasource.createLieu(lat, lng, address_id);
 
                                                         Marqueur marqueur = datasource.createMarqueur(lieu.getLieu_id());
                                                         datasource.createRoseAmbiance(cursor_olfactory.getProgress() / 4.f - 1.f, cursor_visual.getProgress() / 4.f - 1.f,

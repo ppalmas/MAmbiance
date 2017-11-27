@@ -18,14 +18,6 @@ public class Lieu extends DataObject {
      * float latitude and longitude of the place
      */
     private float latitude, longitude;
-    /**
-     * String name of the place
-     */
-    private String lieu_nom;
-    /**
-     * String adress of the place
-     */
-    private String adresse; //TODO remove
 
 
     //Getters
@@ -50,16 +42,7 @@ public class Lieu extends DataObject {
     public float getLongitude() {
         return longitude;
     }
-    /**
-     * getter for the lieu_nom
-     * @return String lieu_nom
-     */
-    public String getLieu_nom() { return lieu_nom; }
-    /**
-     * getter for the adress
-     * @return String adresse
-     */
-    public String getAdresse() { return adresse; }
+
 
 
     //Setters
@@ -70,13 +53,7 @@ public class Lieu extends DataObject {
     public void setLieu_id(long lieu_id) {
         this.lieu_id = lieu_id;
     }
-    /**
-     * setter for the lieu_nom
-     * @param  lieu_nom
-     */
-    public void setLieu_nom(String lieu_nom) {
-        this.lieu_nom = lieu_nom;
-    }
+
     /**
      * setter for the latitude
      * @param  latitude
@@ -91,13 +68,7 @@ public class Lieu extends DataObject {
     public void setLongitude(float longitude) {
         this.longitude = longitude;
     }
-    /**
-     * setter for the adress
-     * @param  adresse
-     */
-    public void setAdresse(String adresse) {
-        this.adresse = adresse;
-    }
+
 
     public long getAddress_id() {
         return address_id;
@@ -108,12 +79,16 @@ public class Lieu extends DataObject {
     }
 //Abstract methods
 
+
     @Override
     public String toString() {
-        return "Lieu [lieu_id=" + lieu_id + ", lieu_nom=" + lieu_nom + ", adresse=" + adresse + ", latitude=" + latitude
-                + ", longitude=" + longitude + "]";
+        return "Lieu{" +
+                "lieu_id=" + lieu_id +
+                ", address_id=" + address_id +
+                ", latitude=" + latitude +
+                ", longitude=" + longitude +
+                '}';
     }
-
 
     @Override
     public void saveToLocal(LocalDataSource datasource) {
@@ -121,9 +96,7 @@ public class Lieu extends DataObject {
 
         values.put(MySQLiteHelper.COLUMN_LATITUDE, this.latitude);
         values.put(MySQLiteHelper.COLUMN_LONGITUDE, this.longitude);
-        values.put(MySQLiteHelper.COLUMN_LIEUNOM, this.lieu_nom);
-        values.put(MySQLiteHelper.COLUMN_ADRESSE, this.adresse);
-        //TODO ajout adresse_id, enlever nom et adresse
+        values.put(MySQLiteHelper.COLUMN_ADRESSEID, this.address_id);
 
         if(this.registredInLocal){
             String str = "_id "+"="+this.lieu_id;
