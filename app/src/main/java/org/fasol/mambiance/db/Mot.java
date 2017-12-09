@@ -17,7 +17,7 @@ public class Mot extends DataObject {
     /**
      * long id of the marker linked
      */
-    private long marqueur_id;
+    private int actif;
 
 
     //Getters
@@ -33,16 +33,15 @@ public class Mot extends DataObject {
      * @return String mot_libelle
      */
     public String getMot_libelle() { return mot_libelle; }
+
     /**
-     * getter for the marqueur_id
-     * @return long marqueur_id
+     * getter for the mot boolean
+     * @return
      */
-    public long getMarqueur_id() {
-        return marqueur_id;
+    public int getActif() {
+        return actif;
     }
-
-
-    //Setters
+//Setters
     /**
      * setter for the Mot_id
      * @param  mot_id
@@ -55,27 +54,33 @@ public class Mot extends DataObject {
      * @param mot_libelle
      */
     public void setMot_libelle(String mot_libelle) { this.mot_libelle = mot_libelle; }
-    /**
-     * setter for the marqueur_id
-     * @param  marqueur_id
-     */
-    public void setMarqueur_id(long marqueur_id) { this.marqueur_id = marqueur_id; }
 
+    /**
+     * setter for the mot boolean
+     * @param actif
+     */
+    public void setActif(int actif) {
+        this.actif = actif;
+    }
 
     //Abstract methods
 
+
     @Override
     public String toString() {
-        return "Mot [mot_id=" + mot_id + ", mot_libelle=" + mot_libelle + ", marqueur_id=" + marqueur_id + "]";
+        return "Mot{" +
+                "mot_id=" + mot_id +
+                ", mot_libelle='" + mot_libelle + '\'' +
+                ", actif=" + actif +
+                '}';
     }
-
 
     @Override
     public void saveToLocal(LocalDataSource datasource) {
         ContentValues values = new ContentValues();
 
         values.put(MySQLiteHelper.COLUMN_MOTLIBELLE, this.mot_libelle);
-        values.put(MySQLiteHelper.COLUMN_MARQUEURID, this.marqueur_id);
+        values.put(MySQLiteHelper.COLUMN_MOTBOOLEAN, this.actif);
 
         if(this.registredInLocal){
             String str = "_id "+"="+this.mot_id;

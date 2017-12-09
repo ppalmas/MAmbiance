@@ -44,7 +44,7 @@ public class DisplayMarkerActivity extends AppCompatActivity {
     private ImageView photo;
 
     // Objets liés au marqueur
-    private ArrayList<org.fasol.mambiance.db.Curseur> l_curseur;
+    private ArrayList<org.fasol.mambiance.db.PossedeNote> l_note;
     private org.fasol.mambiance.db.Image image;
     private org.fasol.mambiance.db.Lieu lieu;
     private org.fasol.mambiance.db.Adresse adresse_marqueur;
@@ -75,7 +75,7 @@ public class DisplayMarkerActivity extends AppCompatActivity {
 
         // Accès au différents objects
         site_name=(TextView) findViewById(R.id.site_name_display);
-        description=(TextView) findViewById(R.id.description_display);
+        description = (TextView) findViewById(R.id.description_display);
         date=(TextView)findViewById(R.id.date_display);
 
         caract1=(TextView)findViewById(R.id.caract1_display);
@@ -105,35 +105,40 @@ public class DisplayMarkerActivity extends AppCompatActivity {
 
         // Récupère les objets liés au marqueur
         datasource.open();
+
         marqueur=datasource.getMarqueurWithId(marqueur_id);
-        l_curseur=datasource.getCurseurWithMarqueurId(marqueur_id);
+        String description_text = marqueur.getDescription();
+        l_note=datasource.getPossedeNoteWithMarqueurId(marqueur_id);
         image=datasource.getImageWithMarqueurId(marqueur_id);
         lieu=datasource.getLieuWithId(marqueur.getLieu_id());
+
+
+        ArrayList<Mot> l_temp = new ArrayList<>();
+        for (int i = 0; i< l_note.size(); i++){
+            long id_mot= l_note.get(i).getMot_id();
+            l_temp.add(datasource.getMotWithId(id_mot));
+        }
+        l_mot = l_temp;
         roseAmbiance=datasource.getRoseAmbianceWithMarqueurId(marqueur_id);
-        l_mot=datasource.getMotWithMarqueurId(marqueur_id);
         long adresseid = lieu.getAddress_id();
         adresse_marqueur = datasource.getAdresseWithId(adresseid);
-        datasource.close();
+
 
         // Affichage des données dans les champs
         site_name.setText(adresse_marqueur.getNom());
-
-        String description_text="";
-        Iterator<Mot> it = l_mot.iterator();
-        description_text+=it.next().getMot_libelle();
-        while(it.hasNext()){
-            description_text+=", "+it.next().getMot_libelle();
-        }
         description.setText(description_text);
-
         date.setText(DateFormat.format("dd/MM/yyyy - HH:mm:ss",marqueur.getDate_creation()));
 
-        caract1.setText(l_curseur.get(0).getCurseur_libelle());
-        caract2.setText(l_curseur.get(1).getCurseur_libelle());
-        caract3.setText(l_curseur.get(2).getCurseur_libelle());
-        cursor1.setProgress(l_curseur.get(0).getCurseur_valeur());
-        cursor2.setProgress(l_curseur.get(1).getCurseur_valeur());
-        cursor3.setProgress(l_curseur.get(2).getCurseur_valeur());
+
+        // Ajout du libellé du mot associé au PossedeNote dans caract1
+        caract1.setText(datasource.getMotWithId(l_note.get(0).getMot_id()).getMot_libelle());
+        caract2.setText(datasource.getMotWithId(l_note.get(1).getMot_id()).getMot_libelle());
+        caract3.setText(datasource.getMotWithId(l_note.get(2).getMot_id()).getMot_libelle());
+        datasource.close();
+        // Ajout de la valeur des curseurs de possedeNote dans cursor
+        cursor1.setProgress(l_note.get(0).getNote_value());
+        cursor2.setProgress(l_note.get(1).getNote_value());
+        cursor3.setProgress(l_note.get(2).getNote_value());
 
         cursor_acoustical.setProgress((int)((roseAmbiance.getA()+1.f)*4.f));
         cursor_olfactory.setProgress((int)((roseAmbiance.getO()+1.f)*4.f));

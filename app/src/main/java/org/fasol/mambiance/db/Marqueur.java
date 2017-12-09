@@ -7,6 +7,7 @@ import android.content.ContentValues;
 public class Marqueur extends DataObject {
 
 	//TODO Ajout utilsiateur_id
+	//TODO ajout description ?
 	//Attributes
 	/**
 	 * long id of the object marqueur
@@ -21,7 +22,32 @@ public class Marqueur extends DataObject {
 	 */
 	private Date date_creation;
 
+	/**
+	 * Description of the ambiance
+	 */
+	private String description;
+
+	private long user_id;
+
 	//Getters
+
+    /**
+     * Getter for the description
+     * @return
+     */
+	public String getDescription() {
+		return description;
+	}
+
+	/**
+	 * Getter de l'id de l'user
+	 * @return
+	 */
+	public long getUser_id() {
+		return user_id;
+	}
+
+
 	/**
 	 * getter for the marqueur_id
 	 * @return long marqueur_id
@@ -45,6 +71,23 @@ public class Marqueur extends DataObject {
 	public Date getDate_creation() { return date_creation; }
 
 	//Setters
+
+	/**
+	 * Setter for the description
+	 * @param description
+	 */
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	/**
+	 * Setter de l'id user
+	 * @param user_id
+	 */
+	public void setUser_id(long user_id) {
+		this.user_id = user_id;
+	}
+
 	/**
 	 * setter for the marqueur_id
 	 * @param  marqueur_id
@@ -72,7 +115,7 @@ public class Marqueur extends DataObject {
 	@Override
 	public String toString() {
 		return "Marqueur [marqueur_id=" + marqueur_id + ", lieu_id=" + lieu_id
-				+ ", date_creation=" + date_creation + "]";
+				+ ", date_creation=" + date_creation + ", description=" + description + "]";
 	}
 
 
@@ -89,6 +132,7 @@ public class Marqueur extends DataObject {
 		//values.put(MySQLiteHelper.COLUMN_MARQUEURID, this.marqueur_id);
 		values.put(MySQLiteHelper.COLUMN_LIEUID, this.lieu_id);
 		values.put(MySQLiteHelper.COLUMN_DATECREATION, this.date_creation.toString());
+		values.put(MySQLiteHelper.COLUMN_DESCRIPTION, this.description.toString());
 
 		if(this.registredInLocal){
 			String str = "_id "+"="+this.marqueur_id;

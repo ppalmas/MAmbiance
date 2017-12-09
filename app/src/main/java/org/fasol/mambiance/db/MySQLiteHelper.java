@@ -93,6 +93,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
     //Table Marqueur
     public static final String COLUMN_MARQUEURID = "marqueur_id";
     public static final String COLUMN_DATECREATION = "date_creation";
+    public static  final  String COLUMN_DESCRIPTION = "description";
 
     //Table Localisation/Lieu
     public static final String COLUMN_LIEUID = "lieu_id";
@@ -126,16 +127,12 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
     //Table Mot
     public static final String COLUMN_MOTID = "mot_id";
     public static final String COLUMN_MOTLIBELLE = "mot_libelle";
-    //public static final String COLUMN_BOOLEAN= "mot_boolen"; //Colonne pour savoir si le mot est choisi pour apparaître ou non
+    public static final String COLUMN_MOTBOOLEAN= "mot_boolen"; //Colonne pour savoir si le mot est choisi pour apparaître ou non
 
     //Table possedeNote
     public static final String COLUMN_NOTEID = "note_id";
-    public static final String COLUMN_VALUE = "note_value";
+    public static final String COLUMN_NOTEVALUE = "note_value";
 
-    //Table Curseur TODO a enlever
-    public static final String COLUMN_CURSEURID = "curseur_id";
-    public static final String COLUMN_CURSEURLIBELLE = "curseur_libelle";
-    public static final String COLUMN_CURSEURVALEUR = "curseur_valeur";
 
     //Table Utilisateur
     public static final String COLUMN_CLEAPI = "user_cleapi";
@@ -153,7 +150,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
      * upgrading the version force the database to be deleted and recreated
      */
     public static final String DATABASE_NAME = "local.db";
-    public static final int DATABASE_VERSION = 12;
+    public static final int DATABASE_VERSION = 15;
 
 
     /**
@@ -172,8 +169,8 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
      */
     private static final String DATABASE_CREATE9 = "create table " + TABLE_UTILISATEUR + " ("
             + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
-            + COLUMN_USERNOM + " text not null, "
-            + COLUMN_USERPRENOM + " text not null, "
+            + COLUMN_USERNOM + " text, "
+            + COLUMN_USERPRENOM + " text, "
             + COLUMN_MDP + " text not null, "
             + COLUMN_EMAIL + " text not null, "
             + COLUMN_PSEUDO + " text not null, "
@@ -206,25 +203,21 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
             + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
             + COLUMN_DATECREATION + " DATE, "
             + COLUMN_LIEUID + " INTEGER, "
-            //+ COLUMN_USERID + " INTEGER, "
-
-            //+ "FOREIGN KEY( " + COLUMN_USERID + " )" + " REFERENCES " + TABLE_UTILISATEUR + " ( " + COLUMN_ID + " )"
+            + COLUMN_DESCRIPTION + " TEXT, "
+            + COLUMN_USERID + " INTEGER, "
+            + "FOREIGN KEY( " + COLUMN_USERID + " )" + " REFERENCES " + TABLE_UTILISATEUR + " ( " + COLUMN_ID + " ), "
             + "FOREIGN KEY( " + COLUMN_LIEUID + " )" + " REFERENCES " + TABLE_LIEU + " ( " + COLUMN_ID + " )"
-            //TODO rajouter ligne du dessus utilisateur
             + "); ";
 
-    /**
-     * TODO query to create table possedeNote
-     */
-   /** private static final String DATABASE_CREATE8 = "create table" + TABLE_POSSEDENOTE + " ("
+
+   private static final String DATABASE_CREATE10 = " CREATE TABLE " + TABLE_POSSEDENOTE + " ("
             + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
-            + COLUMN_VALUE + " INTEGER, "
+            + COLUMN_NOTEVALUE + " INTEGER, "
             + COLUMN_MARQUEURID + " INTEGER, "
             + COLUMN_MOTID + " INTEGER, "
             + "FOREIGN KEY( " + COLUMN_MARQUEURID + " )" + " REFERENCES " + TABLE_MARQUEUR + " ( " + COLUMN_ID + " ), "
-            + "FOREIGN KEY( " + COLUMN_MOTID + " )" + " REFERENCES " + TABLE_MOT + " ( " + COLUMN_ID + " )"
+            + "FOREIGN KEY( " + COLUMN_MOTID + " )" + " REFERENCES " + TABLE_MOT + " ( " + COLUMN_ID + " ) "
             + "); ";
-*/
     /**
      * query to create table rose_ambiance
      */
@@ -252,25 +245,47 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
     private static final String DATABASE_CREATE5 = "create table " + TABLE_MOT + " ("
             + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
             + COLUMN_MOTLIBELLE + " TEXT NOT NULL, "
-            + COLUMN_MARQUEURID + " INTEGER, " //TODO à enlever
-           // + COLUMN_MOTBOOLEAN + " BOOLEAN, "
-            + "FOREIGN KEY( " + COLUMN_MARQUEURID + " )" + " REFERENCES " + TABLE_MARQUEUR + " ( " + COLUMN_ID + " )"
+            + COLUMN_MOTBOOLEAN + " BOOLEAN "
             + "); ";
 
-    /**
-     * query to create table curseur
-     */
-    //TODO à enlever
-    private static final String DATABASE_CREATE6 = "create table " + TABLE_CURSEUR + " ("
-            + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
-            + COLUMN_CURSEURLIBELLE + " TEXT NOT NULL, "
-            + COLUMN_CURSEURVALEUR + " INTEGER, "
-            + COLUMN_MARQUEURID + " INTEGER, "
-            //+ COLUMN_USERID + "INTEGER, "
-            + "FOREIGN KEY( " + COLUMN_MARQUEURID + " )" + " REFERENCES " + TABLE_MARQUEUR + " ( " + COLUMN_ID + " )"
-            //+ "FOREIGN KEY( " + COLUMN_USERID + " )" + " REFERENCES " + TABLE_UTILISATEUR + " ( " + COLUMN_ID + " )"
-            //TODO ADD
+
+/**
+    private static final String DATABASE_ADDUSER_1 = "INSERT INTO " + TABLE_UTILISATEUR + " VALUES ("
+            + "'1', '', 'Paola', 'motdepasse', 'paolapalmas@hotmail.fr', 'Paola', 'statut', 'cle', '04-12-2017 00:00:00'"
             + "); ";
+ **/
+
+    /**
+     * queries to add some words to the table Mot
+     */
+    private static final String DATABASE_ADDMOTS_1 = "INSERT INTO " + TABLE_MOT + " VALUES ("
+            + "'1', 'Cozy', '0'"
+            + "); ";
+
+    private static final String DATABASE_ADDMOTS_2 = "INSERT INTO " + TABLE_MOT + " VALUES ("
+            + "'2', 'Palpitant', '1'"
+            + "); ";
+
+    private static final String DATABASE_ADDMOTS_3 = "INSERT INTO " + TABLE_MOT + " VALUES ("
+            + "'3', 'Formel', '1'"
+            + "); ";
+
+    private static final String DATABASE_ADDMOTS_4 = "INSERT INTO " + TABLE_MOT + " VALUES ("
+            + "'4', 'Accueillant', '1'"
+            + "); ";
+
+    private static final String DATABASE_ADDMOTS_5 = "INSERT INTO " + TABLE_MOT + " VALUES ("
+            + "'5', 'Sécurisant', '1'"
+            + "); ";
+
+    private static final String DATABASE_ADDMOTS_6 = "INSERT INTO " + TABLE_MOT + " VALUES ("
+            + "'6', 'Inspirant', '1'"
+            + "); ";
+
+    private static final String DATABASE_ADDMOTS_7 = "INSERT INTO " + TABLE_MOT + " VALUES ("
+            + "'7', 'Intime', '0'"
+            + "); ";
+
 
     /**
      * constructor
@@ -292,9 +307,17 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         database.execSQL(getDatabaseCreate3());
         database.execSQL(getDatabaseCreate4());
         database.execSQL(getDatabaseCreate5());
-        database.execSQL(getDatabaseCreate6());
         database.execSQL(getDatabaseCreate7());
-       // database.execSQL(getDatabaseCreate8());
+        database.execSQL(getDatabaseCreate10());
+        database.execSQL(addMots1());
+        database.execSQL(addMots2());
+        database.execSQL(addMots3());
+        database.execSQL(addMots4());
+        database.execSQL(addMots5());
+        database.execSQL(addMots6());
+        database.execSQL(addMots7());
+       // database.execSQL(getDatabaseAdduser1());
+
     }
 
     @Override
@@ -310,6 +333,21 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_POSSEDENOTE + "; ");
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_UTILISATEUR + "; ");
         onCreate(db);
+    }
+
+    public static String addMots1 (){ return DATABASE_ADDMOTS_1;
+    }
+    public static String addMots2 (){ return DATABASE_ADDMOTS_2;
+    }
+    public static String addMots3 (){ return DATABASE_ADDMOTS_3;
+    }
+    public static String addMots4 (){ return DATABASE_ADDMOTS_4;
+    }
+    public static String addMots5 (){ return DATABASE_ADDMOTS_5;
+    }
+    public static String addMots6 (){ return DATABASE_ADDMOTS_6;
+    }
+    public static String addMots7 (){ return DATABASE_ADDMOTS_7;
     }
 
 
@@ -360,14 +398,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         return DATABASE_CREATE5;
     }
 
-    /**
-     * getter for createquery of related number
-     *
-     * @return the query as String
-     */
-    public static String getDatabaseCreate6() {
-        return DATABASE_CREATE6;
-    }
+
 
     /** getter for createquery of related number
      * @return the query as String
@@ -376,9 +407,9 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         return DATABASE_CREATE7;
     }
 
-   /** public static String getDatabaseCreate8() {
-        return DATABASE_CREATE8;
-    }*/ //TODO
+   public static String getDatabaseCreate10() {
+        return DATABASE_CREATE10;
+    }
 
     /**
 
@@ -389,6 +420,8 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
     public static String getDatabaseCreate9() {
         return DATABASE_CREATE9;
     }
+
+  //  public static String getDatabaseAdduser1() {return DATABASE_ADDUSER_1;};
 
 }
 

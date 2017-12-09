@@ -32,9 +32,6 @@ public class HistoryActivity extends AppCompatActivity {
         v_list=(ListView)findViewById(R.id.listview_history);
 
         datasource.open();
-        String adresse = MySQLiteHelper.COLUMN_NUMERO.toString() +  ", " + MySQLiteHelper.COLUMN_RUE.toString() + ", " +
-                MySQLiteHelper.COLUMN_VILLE.toString() + ", " + MySQLiteHelper.COLUMN_PAYS.toString();
-        //TODO
 
         SimpleCursorAdapter adapter = new SimpleCursorAdapter(this, R.layout.list_item_history, datasource.getHistoriqueCursor(),
                 new String[]{MySQLiteHelper.COLUMN_NOM, MySQLiteHelper.COLUMN_NUMERO, MySQLiteHelper.COLUMN_RUE,

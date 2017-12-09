@@ -42,6 +42,8 @@ import android.widget.Toast;
 import org.fasol.mambiance.db.Adresse;
 import org.fasol.mambiance.db.Lieu;
 import org.fasol.mambiance.db.Marqueur;
+import org.fasol.mambiance.db.Mot;
+import org.fasol.mambiance.db.MySQLiteHelper;
 
 import java.io.File;
 import java.io.IOException;
@@ -65,6 +67,7 @@ public class EditActivity extends AppCompatActivity implements LocationListener 
     public final static String[] l_caract = {"Cozy", "Palpitant", "Formel", "Accueillant", "Sécurisant", "Inspirant", "Intime", "Animé",
             "Luxueux", "Chill", "Personnel", "Romantique", "Ennuyeux", "Chaleureux", "Business", "Reposant"};
 
+    private long user_id;
     // champs à remplir
     private EditText site_name;
     private EditText description;
@@ -96,8 +99,11 @@ public class EditActivity extends AppCompatActivity implements LocationListener 
 
     // current latitude, longitude and adress
     private float lat,lng;
+
     private String adresse;
 
+    //Id des mots affichés à l'écran
+    private long id1, id2, id3;
     // Store the result when asking the user for the location
     private static final int PERMISSIONS_REQUEST_FINE_LOCATION = 0;
     private static final int PERMISSIONS_REQUEST_COARSE_LOCATION = 0;
@@ -107,6 +113,9 @@ public class EditActivity extends AppCompatActivity implements LocationListener 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.edit_activity);
+
+        datasource.open();
+        user_id = datasource.getUser0();
 
         // ajout de la rose des ambiances
         layout_rose = (FrameLayout) findViewById(R.id.frame_layout_rose);
@@ -143,23 +152,40 @@ public class EditActivity extends AppCompatActivity implements LocationListener 
         mPhotoView = (ImageView) findViewById(R.id.photo_thumbnail);
         save = (Button) findViewById(R.id.btn_save);
 
-        // sélection des adjectifs aléatoirement
-        ArrayList<Integer> caract_pos = new ArrayList<Integer>();
-        for (int i = 0; i < l_caract.length; i++) caract_pos.add(i);
+        datasource.open();
+        ArrayList<Mot> caract_pos = datasource.getMotActif();
+        datasource.close();
+        //Si la liste de Mots activés dépasse 3 i.e. le nombre de mots affichables à l'écran,
+        // on affiche 3 mots pris aléatoirement
+        if (caract_pos.size()>3){
 
-        Random rd = new Random();
-        int rand = rd.nextInt(caract_pos.size());
-        int caract_sel = caract_pos.get(rand);
-        caract1.setText(l_caract[caract_sel]);
-        caract_pos.remove(rand);
-        rand = rd.nextInt(caract_pos.size());
-        caract_sel = caract_pos.get(rand);
-        caract2.setText(l_caract[caract_sel]);
-        caract_pos.remove(rand);
-        rand = rd.nextInt(caract_pos.size());
-        caract_sel = caract_pos.get(rand);
-        caract3.setText(l_caract[caract_sel]);
-        caract_pos.remove(rand);
+            Random rd = new Random();
+            //Affichage du premier mot aléatoire
+            // entier rand correspondant à un entier aléatoire < taille de la lise
+            int rand = rd.nextInt(caract_pos.size());
+            // Mot sélectionné aléatoirement
+            Mot caract_sel = caract_pos.get(rand);
+            id1 = caract_sel.getMot_id();
+            // Affichage du libellé de ce mot
+            caract1.setText(caract_sel.getMot_libelle());
+            caract_pos.remove(rand);
+            rand = rd.nextInt(caract_pos.size());
+            caract_sel = caract_pos.get(rand);
+            id2 = caract_sel.getMot_id();
+            caract2.setText(caract_sel.getMot_libelle());
+            caract_pos.remove(rand);
+            rand = rd.nextInt(caract_pos.size());
+            caract_sel = caract_pos.get(rand);
+            id3 = caract_sel.getMot_id();
+            caract3.setText(caract_sel.getMot_libelle());
+            caract_pos.remove(rand);
+
+        } else {
+            //Sinon on affiche les 3 mots en supposant que l'admin en a défini au moins 3 actifs
+            caract1.setText(caract_pos.get(0).getMot_libelle());
+            caract2.setText(caract_pos.get(1).getMot_libelle());
+            caract3.setText(caract_pos.get(2).getMot_libelle());
+        }
 
         // ajout d'un clicklistener sur les boutons
         btn_photo.setOnClickListener(photoListener);
@@ -191,8 +217,6 @@ public class EditActivity extends AppCompatActivity implements LocationListener 
         Location location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
         //if(location == null) location = locationManager.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER);
         // Récupérer les précédentes coordonnées n'est pas une bonne solution : proposer de placer la position sur une carte
-        //TODO régler problème de pas gps => pas de modif de l'activité
-
         //lat=(float)location.getLatitude();
         // lng=(float)location.getLongitude();
         photo_emp ="";
@@ -309,25 +333,25 @@ public class EditActivity extends AppCompatActivity implements LocationListener 
                                                             }
                                                             Lieu lieu = datasource.createLieu(lat, lng, address_id);
 
-                                                            Marqueur marqueur = datasource.createMarqueur(lieu.getLieu_id());
+                                                            Marqueur marqueur = datasource.createMarqueur(lieu.getLieu_id(), user_id, description.getText().toString());
                                                             datasource.createRoseAmbiance(cursor_olfactory.getProgress() / 4.f - 1.f, cursor_visual.getProgress() / 4.f - 1.f,
                                                                     cursor_thermal.getProgress() / 4.f - 1.f, cursor_acoustical.getProgress() / 4.f - 1.f, marqueur.getMarqueur_id());
                                                             datasource.createImage(marqueur.getMarqueur_id(), photo_emp);
-                                                            String[] mots = description.getText().toString().split("[\\p{Punct}\\s]+");
-                                                            for (int i = 0; i < mots.length; i++) {
-                                                                datasource.createMot(mots[i], marqueur.getMarqueur_id());
-                                                            }
-                                                            datasource.createCurseur(caract1.getText().toString(), cursor1.getProgress(), marqueur.getMarqueur_id());
-                                                            datasource.createCurseur(caract2.getText().toString(), cursor2.getProgress(), marqueur.getMarqueur_id());
-                                                            datasource.createCurseur(caract3.getText().toString(), cursor3.getProgress(), marqueur.getMarqueur_id());
+
+                                                            //Ajout des notes dans la base de données
+                                                            datasource.createPossedeNote(cursor1.getProgress(), marqueur.getMarqueur_id(), id1);
+                                                            datasource.createPossedeNote(cursor2.getProgress(), marqueur.getMarqueur_id(), id2);
+                                                            datasource.createPossedeNote(cursor3.getProgress(), marqueur.getMarqueur_id(), id3);
+
 
                                                             datasource.close();
 
                                                             dialog.dismiss();
                                                             Toast.makeText(view.getContext(), "Enregistrement de l'adresse entrée effectué !", Toast.LENGTH_LONG).show();
 
-                                                            Intent intent = new Intent(EditActivity.this, MainActivity.class);
-                                                            startActivity(intent);
+                                                            //Intent intent = new Intent(EditActivity.this, MainActivity.class);
+                                                            //startActivity(intent); = récupérer les données
+                                                            finish(); //pour finir l'activité, l'enlever, et revenir à l'activité d'avant
                                                         } else {
                                                             Toast.makeText(view.getContext(), "Veuillez remplir tous les champs * ou aucun pour valider l'adresse calculée.", Toast.LENGTH_LONG).show();
                                                         }
@@ -361,25 +385,25 @@ public class EditActivity extends AppCompatActivity implements LocationListener 
                                                         }
                                                         Lieu lieu = datasource.createLieu(lat, lng, address_id);
 
-                                                        Marqueur marqueur = datasource.createMarqueur(lieu.getLieu_id());
+                                                        Marqueur marqueur = datasource.createMarqueur(lieu.getLieu_id(), user_id, description.getText().toString());
                                                         datasource.createRoseAmbiance(cursor_olfactory.getProgress() / 4.f - 1.f, cursor_visual.getProgress() / 4.f - 1.f,
                                                                 cursor_thermal.getProgress() / 4.f - 1.f, cursor_acoustical.getProgress() / 4.f - 1.f, marqueur.getMarqueur_id());
                                                         datasource.createImage(marqueur.getMarqueur_id(), photo_emp);
-                                                        String[] mots = description.getText().toString().split("[\\p{Punct}\\s]+");
-                                                        for (int i = 0; i < mots.length; i++) {
-                                                            datasource.createMot(mots[i], marqueur.getMarqueur_id());
-                                                        }
-                                                        datasource.createCurseur(caract1.getText().toString(), cursor1.getProgress(), marqueur.getMarqueur_id());
-                                                        datasource.createCurseur(caract2.getText().toString(), cursor2.getProgress(), marqueur.getMarqueur_id());
-                                                        datasource.createCurseur(caract3.getText().toString(), cursor3.getProgress(), marqueur.getMarqueur_id());
+                                                        String[] mots = description.getText().toString().split("[\\p{Punct}\\s]+");//TODO voir où ajouter cette description
+
+                                                        //Ajout des notes dans la base de données
+                                                        datasource.createPossedeNote(cursor1.getProgress(), marqueur.getMarqueur_id(), id1);
+                                                        datasource.createPossedeNote(cursor2.getProgress(), marqueur.getMarqueur_id(), id2);
+                                                        datasource.createPossedeNote(cursor3.getProgress(), marqueur.getMarqueur_id(), id3);
 
                                                         datasource.close();
 
                                                         dialog.dismiss();
                                                         Toast.makeText(view.getContext(), "Enregistrement effectué avec l'adresse calculée !", Toast.LENGTH_LONG).show();
 
-                                                        Intent intent = new Intent(EditActivity.this, MainActivity.class);
-                                                        startActivity(intent);
+                                                        //Intent intent = new Intent(EditActivity.this, MainActivity.class);
+                                                        //startActivity(intent); = récupérer les données
+                                                        finish(); //pour finir l'activité, l'enlever, et revenir à l'activité d'avant
                                                     }
                                                 }
                                             });

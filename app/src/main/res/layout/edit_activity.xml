@@ -148,13 +148,6 @@
             android:layout_weight="0.8"
             android:visibility="gone"/>
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.7"
-            android:text="@string/description"
-            android:textAlignment="center"
-            android:textSize="24sp" />
 
         <EditText
             android:id="@+id/edit_description"
@@ -162,7 +155,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="0.3"
             android:textSize="24sp"
-            android:hint="mot1, mot2, mot3, ..."/>
+            android:hint="Description"/>
     </LinearLayout>
 
     <Button

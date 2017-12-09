@@ -63,13 +63,7 @@
                     android:layout_height="match_parent"
                     android:src="@mipmap/ic_info"
                     android:scaleType="center"/>
-                <ImageButton
-                    android:id="@+id/btn_param"
-                    android:layout_width="match_parent"
-                    android:layout_weight="0.5"
-                    android:layout_height="match_parent"
-                    android:src="@mipmap/ic_parameters"
-                    android:scaleType="center"/>
+
             </LinearLayout>
         </LinearLayout>
         <ImageButton

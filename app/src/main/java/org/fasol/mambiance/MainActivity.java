@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.ImageButton;
 
 import org.fasol.mambiance.db.LocalDataSource;
+import org.fasol.mambiance.db.Utilisateur;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -49,7 +50,6 @@ public class MainActivity extends AppCompatActivity {
         btn_history=(ImageButton)findViewById(R.id.btn_history);
         btn_map=(ImageButton)findViewById(R.id.btn_map);
         btn_info=(ImageButton)findViewById(R.id.btn_info);
-        btn_param = (ImageButton) findViewById(R.id.btn_param);
 
         // Lien avec l'activité historique
         btn_history.setOnClickListener(new View.OnClickListener() {
@@ -87,6 +87,22 @@ public class MainActivity extends AppCompatActivity {
                 Intent secondeActiv = new Intent(MainActivity.this, InfoActivity.class);
 
                 startActivity(secondeActiv);
+            }
+        });
+        btn_user.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v){
+                datasource.open();
+                if (datasource.getUser0()==-2){
+                    Intent secondeActiv = new Intent(MainActivity.this, UserNewActivity.class);
+
+                    startActivity(secondeActiv);
+                } else {
+                    Intent secondeActiv = new Intent(MainActivity.this, UserActivity.class);
+
+                    startActivity(secondeActiv);
+                }
+
             }
         });
 
