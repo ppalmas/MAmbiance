@@ -120,8 +120,6 @@ public class UserNewActivity extends AppCompatActivity {
 
         String m = mdp.getText().toString();
         String m2 = mdp2.getText().toString();
-        boolean b = m==m2;
-        boolean b2 = m.equals(m2);
         return (m.equals(m2));
     }
 }

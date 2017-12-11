@@ -955,6 +955,7 @@ public class LocalDataSource {
         values.put(MySQLiteHelper.COLUMN_CLEAPI, cleapi);
 //TODO date ne fonctionne pas
 
+
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date dateMnt = new Date(System.currentTimeMillis());
         values.put(MySQLiteHelper.COLUMN_DATECREE, dateFormat.format(dateMnt));
@@ -987,6 +988,7 @@ public class LocalDataSource {
         p1.setPseudo(cursor.getString(5));
         p1.setStatut(cursor.getInt(6));
         p1.setCleapi(cursor.getString(7));
+
 
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
         Date dateCreation = null;

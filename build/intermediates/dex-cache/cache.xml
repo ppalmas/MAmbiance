@@ -2,6 +2,33 @@
 <items version="2" >
 
     <item
+        is-multidex="false"
+        jar="C:\Users\Paola\Documents\CENTRALE NANTES\2017-2018\INFO\PROJET1\Mambiance-master\app\libs\GenAsync.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.0"
+        sha1="6a58a869c275f3424cffb0c266d1d1c1518e38e7">
+        <dex dex="C:\Users\Paola\Documents\CENTRALE NANTES\2017-2018\INFO\PROJET1\Mambiance-master\app\build\intermediates\pre-dexed\debug\GenAsync_e38f5865fa2c5008b5988b5f573b1a2d78aa259c.jar" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\Paola\Documents\CENTRALE NANTES\2017-2018\INFO\PROJET1\Mambiance-master\app\libs\GenAsync.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.0"
+        sha1="6a58a869c275f3424cffb0c266d1d1c1518e38e7">
+        <dex dex="C:\Users\Paola\Documents\CENTRALE NANTES\2017-2018\INFO\PROJET1\Mambiance-master\app\build\intermediates\transforms\dex\debug\folders\1000\2\GenAsync_e38f5865fa2c5008b5988b5f573b1a2d78aa259c\classes.dex" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\Paola\.gradle\caches\modules-2\files-2.1\com.google.code.gson\gson\2.6.2\f1bc476cc167b18e66c297df599b2377131a8947\gson-2.6.2.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.0"
+        sha1="f1bc476cc167b18e66c297df599b2377131a8947">
+        <dex dex="C:\Users\Paola\Documents\CENTRALE NANTES\2017-2018\INFO\PROJET1\Mambiance-master\app\build\intermediates\pre-dexed\debug\gson-2.6.2_29cad01d8982448e862925b189c3da78f42cbe82.jar" />
+    </item>
+    <item
         is-multidex="true"
         jar="C:\Users\Paola\Documents\CENTRALE NANTES\2017-2018\INFO\PROJET1\Mambiance-master\app\build\intermediates\incremental-classes\debug\instant-run-bootstrap.jar"
         jumboMode="true"
@@ -18,6 +45,24 @@
         revision="25.0.0"
         sha1="3be78ebc2706b2e1fe2f12d5726887a92d6c183b">
         <dex dex="C:\Users\Paola\Documents\CENTRALE NANTES\2017-2018\INFO\PROJET1\Mambiance-master\app\build\intermediates\transforms\dex\debug\folders\1000\10000\instant-run_3a228c89bf77e10cf6aab50ed658e109e8fa4ae2\classes.dex" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\Paola\.gradle\caches\modules-2\files-2.1\com.squareup.okio\okio\1.13.0\a9283170b7305c8d92d25aff02a6ab7e45d06cbe\okio-1.13.0.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.0"
+        sha1="a9283170b7305c8d92d25aff02a6ab7e45d06cbe">
+        <dex dex="C:\Users\Paola\Documents\CENTRALE NANTES\2017-2018\INFO\PROJET1\Mambiance-master\app\build\intermediates\pre-dexed\debug\okio-1.13.0_f3904104a5f6a7f5902164ee37479e7105113e70.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\Paola\.gradle\caches\modules-2\files-2.1\com.squareup.okhttp3\okhttp\3.9.1\84b4b7d1c4a238e7899972b7446c250691e65f1f\okhttp-3.9.1.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.0"
+        sha1="84b4b7d1c4a238e7899972b7446c250691e65f1f">
+        <dex dex="C:\Users\Paola\Documents\CENTRALE NANTES\2017-2018\INFO\PROJET1\Mambiance-master\app\build\intermediates\pre-dexed\debug\okhttp-3.9.1_e7cc78a1184d004e4984aa97efbbd33224dc1938.jar" />
     </item>
 
 </items>

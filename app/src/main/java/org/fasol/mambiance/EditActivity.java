@@ -2,6 +2,7 @@ package org.fasol.mambiance;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -15,10 +16,12 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
+import android.support.annotation.StringDef;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
@@ -39,21 +42,41 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+
+import com.google.gson.Gson;
+import com.kosalgeek.asynctask.AsyncResponse;
+import com.kosalgeek.asynctask.PostResponseAsyncTask;
+
 import org.fasol.mambiance.db.Adresse;
 import org.fasol.mambiance.db.Lieu;
 import org.fasol.mambiance.db.Marqueur;
 import org.fasol.mambiance.db.Mot;
 import org.fasol.mambiance.db.MySQLiteHelper;
 
+import org.fasol.mambiance.db.RoseAmbiance;
+import org.fasol.mambiance.jsonparsing.HttpHandler;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 
 
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+import okhttp3.ResponseBody;
 
 import static org.fasol.mambiance.MainActivity.datasource;
 
@@ -61,7 +84,7 @@ import static org.fasol.mambiance.MainActivity.datasource;
  * Created by fasol on 18/11/16.
  */
 
-public class EditActivity extends AppCompatActivity implements LocationListener {
+public class EditActivity extends AppCompatActivity implements LocationListener, AsyncResponse {
 
     // liste des caractéristiques possibles
     public final static String[] l_caract = {"Cozy", "Palpitant", "Formel", "Accueillant", "Sécurisant", "Inspirant", "Intime", "Animé",
@@ -83,6 +106,13 @@ public class EditActivity extends AppCompatActivity implements LocationListener 
     private SeekBar cursor_visual;
     private Button btn_photo;
     private String photo_emp = null;
+    private long address_id = -2;
+    public String rue;
+    private String numero;
+    private String ville;
+    private String code_postal;
+    private String pays;
+    private String complement;
 
 
 
@@ -107,6 +137,10 @@ public class EditActivity extends AppCompatActivity implements LocationListener 
     // Store the result when asking the user for the location
     private static final int PERMISSIONS_REQUEST_FINE_LOCATION = 0;
     private static final int PERMISSIONS_REQUEST_COARSE_LOCATION = 0;
+    private final OkHttpClient client = new OkHttpClient();
+
+    // url to get all products list
+    private static String url = "http://95.85.32.82/mambiance/v1/marqueur";
 
 
     @Override
@@ -114,7 +148,11 @@ public class EditActivity extends AppCompatActivity implements LocationListener 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.edit_activity);
 
+
+
         datasource.open();
+        //L'id du user vaut le premier id trouvé dans la base de données
+        // Un seul utilisateur est enregistré en local sur l'appareil
         user_id = datasource.getUser0();
 
         // ajout de la rose des ambiances
@@ -218,8 +256,11 @@ public class EditActivity extends AppCompatActivity implements LocationListener 
         //if(location == null) location = locationManager.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER);
         // Récupérer les précédentes coordonnées n'est pas une bonne solution : proposer de placer la position sur une carte
         //lat=(float)location.getLatitude();
-        // lng=(float)location.getLongitude();
+        //lng=(float)location.getLongitude();
         photo_emp ="";
+
+
+
     }
 
 
@@ -284,6 +325,7 @@ public class EditActivity extends AppCompatActivity implements LocationListener 
                                     //si les champs sont remplis, alors on valide l'adresse entrée/ Ou 2 boutons ?
 
 
+
                                     // bouton recalculer
                                     builderSingle.setNegativeButton(
                                             "recalculer",
@@ -300,12 +342,12 @@ public class EditActivity extends AppCompatActivity implements LocationListener 
                                             new DialogInterface.OnClickListener() {
                                                 @Override
                                                 public void onClick(DialogInterface dialog, int which) {
-                                                    EditText rue = (EditText) custView.findViewById(R.id.a_rue);
-                                                    EditText numero = (EditText) custView.findViewById(R.id.a_numero);
-                                                    EditText ville = (EditText) custView.findViewById(R.id.a_ville);
-                                                    EditText pays = (EditText) custView.findViewById(R.id.a_pays);
-                                                    EditText code_postal = (EditText) custView.findViewById(R.id.a_codepostal);
-                                                    EditText complement = (EditText) custView.findViewById(R.id.a_complement);
+                                                    rue = ((EditText) custView.findViewById(R.id.a_rue)).getText().toString();
+                                                    numero = ((EditText) custView.findViewById(R.id.a_numero)).getText().toString();
+                                                    ville = ((EditText) custView.findViewById(R.id.a_ville)).getText().toString();
+                                                    pays = ((EditText) custView.findViewById(R.id.a_pays)).getText().toString();
+                                                    code_postal = ((EditText) custView.findViewById(R.id.a_codepostal)).getText().toString();
+                                                    complement = ((EditText) custView.findViewById(R.id.a_complement)).getText().toString();
 
                                                     if (isFormularyCompleted(numero, rue, ville, pays)) {
                                                         if (isFormularyAllCompleted(numero, rue, ville, pays)) {
@@ -317,26 +359,67 @@ public class EditActivity extends AppCompatActivity implements LocationListener 
 
 
                                                             datasource.open();
-                                                            long id = datasource.getAdresseById(numero.getText().toString(), rue.getText().toString(), ville.getText().toString(),
-                                                                    pays.getText().toString(), code_postal.getText().toString());
-                                                            long address_id = -2;
+                                                            long id = datasource.getAdresseById(numero, rue, ville,
+                                                                    pays, code_postal);
+
+
+                                                            Gson gson = new Gson();
+                                                            String json;
+                                                            String geom = "POINT("+lat+", "+ lng + ")";
                                                             if (id>0) {
                                                                 //On vérifie si l'adresse existe déjà, alors id vaut l'id de l'adresse trouvée
                                                                 address_id = id;
+                                                                Adresse adresse1 = datasource.getAdresseWithId(id);
+                                                                json = gson.toJson(adresse1);
                                                             } else {
                                                                 //SInon, on ajoute l'adresse à la base de données
-                                                                Adresse adresse = datasource.createAdresse(site_name.getText().toString(),
-                                                                        numero.getText().toString(), rue.getText().toString(), ville.getText().toString(),
-                                                                        code_postal.getText().toString(), pays.getText().toString(), complement.getText().toString(),
+                                                                Adresse adresse1 = datasource.createAdresse(site_name.getText().toString(),
+                                                                        numero, rue, ville,
+                                                                        code_postal, pays, complement,
                                                                         lat, lng);
-                                                                address_id = adresse.getAdresse_id();
-                                                            }
-                                                            Lieu lieu = datasource.createLieu(lat, lng, address_id);
+                                                                address_id = adresse1.getAdresse_id();
+                                                                json = gson.toJson(adresse1);
 
-                                                            Marqueur marqueur = datasource.createMarqueur(lieu.getLieu_id(), user_id, description.getText().toString());
-                                                            datasource.createRoseAmbiance(cursor_olfactory.getProgress() / 4.f - 1.f, cursor_visual.getProgress() / 4.f - 1.f,
-                                                                    cursor_thermal.getProgress() / 4.f - 1.f, cursor_acoustical.getProgress() / 4.f - 1.f, marqueur.getMarqueur_id());
+
+                                                            }
+
+
+                                                            float rose_o = cursor_olfactory.getProgress() / 4.f - 1.f;
+                                                            float rose_v = cursor_visual.getProgress() / 4.f - 1.f;
+                                                            float rose_t = cursor_thermal.getProgress() / 4.f - 1.f;
+                                                            float rose_a = cursor_acoustical.getProgress() / 4.f - 1.f;
+
+                                                            Lieu lieu = datasource.createLieu(lat, lng, address_id);
+                                                            json = gson.toJson(lieu);
+                                                            long lieu_id = lieu.getLieu_id();
+
+                                                            Marqueur marqueur = datasource.createMarqueur(lieu_id, user_id, description.getText().toString());
+                                                            RoseAmbiance rose = datasource.createRoseAmbiance(rose_o, rose_v,
+                                                                    rose_t, rose_a, marqueur.getMarqueur_id());
                                                             datasource.createImage(marqueur.getMarqueur_id(), photo_emp);
+                                                            json = gson.toJson(rose);
+
+
+                                                            String jsonMarqueur = "{'adresse_codepostal':" + code_postal + ","
+                                                                    + "'adresse_id':"+ String.valueOf(address_id) + ","
+                                                                    + "'adresse_numero':" + numero + ","
+                                                                    + "'adresse_nom':" + site_name.getText().toString() + ","
+                                                                    + "'adresse_rue':" + rue + ","
+                                                                    + "'adresse_ville':" + rue + ","
+                                                                    + "'adresse_pays':" + pays + ","
+                                                                    + "'adresse_complement':" + complement + ","
+                                                                    + "'adresse_latitude':" + String.valueOf(lat) + ","
+                                                                    + "'adresse_longitude':" + String.valueOf(lng) + ","
+                                                                    + "'adresse_geom':" + geom + ","
+                                                                    + "'rose_o':" + rose_o + ","
+                                                                    + "'rose_t':" + rose_t + ","
+                                                                    + "'rose_v':" + rose_v + ","
+                                                                    + "'rose_a':" + rose_a + ","
+                                                                    + "'localisation_latitude':" + String.valueOf(lat) + ","
+
+                                                                    + "'localisation_id':" + String.valueOf(lieu_id) + ","
+                                                                    + "'localisation_longitude':" + String.valueOf(lng) + ","
+                                                                    + "}";
 
                                                             //Ajout des notes dans la base de données
                                                             datasource.createPossedeNote(cursor1.getProgress(), marqueur.getMarqueur_id(), id1);
@@ -346,11 +429,82 @@ public class EditActivity extends AppCompatActivity implements LocationListener 
 
                                                             datasource.close();
 
+
                                                             dialog.dismiss();
+
+                                                            //Deuxième solution avec bibliothèque OkHttp
+                                                            OkHttpClient okHttpClient = new OkHttpClient();
+                                                            MediaType JSON_TYPE = MediaType.parse("application/json; charset=utf-8");
+                                                            String myJson = jsonMarqueur;
+
+                                                            Request myGetRequest = new Request.Builder()
+                                                                    .url(url)
+                                                                    .post(RequestBody.create(JSON_TYPE, myJson))
+                                                                    .build();
+
+                                                            //Création de la requête POST
+                                                            okHttpClient.newCall(myGetRequest).enqueue(new Callback() {
+                                                                /**
+                                                                 * Called when the request could not be executed due to cancellation, a connectivity problem or
+                                                                 * timeout. Because networks can fail during an exchange, it is possible that the remote server
+                                                                 * accepted the request before the failure.
+                                                                 *
+                                                                 * @param call
+                                                                 * @param e
+                                                                 */
+                                                                @Override
+                                                                public void onFailure(Call call, IOException e) {
+                                                                    e.printStackTrace();
+                                                                    Toast.makeText(view.getContext(), "Problème serveur, l'envoi a échoué", Toast.LENGTH_LONG).show();
+                                                                }
+
+                                                                /**
+                                                                 * Called when the HTTP response was successfully returned by the remote server. The callback may
+                                                                 * proceed to read the response body with {@link Response#body}. The response is still live until
+                                                                 * its response body is {@linkplain ResponseBody closed}. The recipient of the callback may
+                                                                 * consume the response body on another thread.
+                                                                 * <p>
+                                                                 * <p>Note that transport-layer success (receiving a HTTP response code, headers and body) does
+                                                                 * not necessarily indicate application-layer success: {@code response} may still indicate an
+                                                                 * unhappy HTTP response code like 404 or 500.
+                                                                 *
+                                                                 * @param call
+                                                                 * @param response
+                                                                 */
+
+                                                                @Override
+                                                                public void onResponse(Call call, Response response) throws IOException {
+                                                                    //le retour est effectué dans un thread différent
+                                                                    if (!response.isSuccessful()) {
+                                                                        throw new IOException("Unexpected code " + response);
+                                                                    } else {
+                                                                        Toast.makeText(view.getContext(), response.toString(), Toast.LENGTH_LONG).show();
+                                                                    }
+                                                                }
+                                                            });
+
+                                                            //Première solution avec bibliothèque
+                                                            HashMap postData = new HashMap();
+                                                            postData.put("adresse_codepostal", "test");
+                                                            postData.put("adresse_complement", "test");
+                                                            postData.put("adresse_geom", geom);
+                                                            postData.put("adresse_latitude", String.valueOf(lat));
+                                                            postData.put("adresse_longitude", String.valueOf(lng));
+                                                            postData.put("adresse_nom", site_name.getText().toString());
+                                                            postData.put("adresse_numero", numero);
+                                                            postData.put("adresse_pays", pays);
+                                                            postData.put("adresse_rue", rue);
+                                                            postData.put("adresse_ville", ville);
+                                                            postData.put("localisation_latitude", String.valueOf(lat));
+                                                            postData.put("localisation_longitude", String.valueOf(lng));
+                                                            postData.put("rose_o", String.valueOf(rose_o));
+                                                            postData.put("rose_v", String.valueOf(rose_v));
+                                                            postData.put("rose_t", String.valueOf(rose_t));
+                                                            postData.put("rose_a", String.valueOf(rose_a));
+                                                            PostResponseAsyncTask task = new PostResponseAsyncTask(EditActivity.this, postData);
+                                                            task.execute("http://95.85.32.82/mambiance/");
                                                             Toast.makeText(view.getContext(), "Enregistrement de l'adresse entrée effectué !", Toast.LENGTH_LONG).show();
 
-                                                            //Intent intent = new Intent(EditActivity.this, MainActivity.class);
-                                                            //startActivity(intent); = récupérer les données
                                                             finish(); //pour finir l'activité, l'enlever, et revenir à l'activité d'avant
                                                         } else {
                                                             Toast.makeText(view.getContext(), "Veuillez remplir tous les champs * ou aucun pour valider l'adresse calculée.", Toast.LENGTH_LONG).show();
@@ -359,55 +513,138 @@ public class EditActivity extends AppCompatActivity implements LocationListener 
 
                                                         EditActivity.this.adresse = finalL_address.get(0).getAddressLine(0) + " " +
                                                                 finalL_address.get(0).getPostalCode() + " " + finalL_address.get(0).getLocality();
-
+                                                        //Récupération de l'adresse
                                                         String[] rue_split = finalL_address.get(0).getAddressLine(0).split(",");
-                                                        String rue_calc = rue_split[0];
-                                                        String ville_calc = finalL_address.get(0).getLocality();
-                                                        String codepostal_calc = finalL_address.get(0).getPostalCode();
-                                                        String pays_calc = finalL_address.get(0).getCountryName();
-                                                        String numero_calc = finalL_address.get(0).getFeatureName();
+                                                        rue = rue_split[0];
+                                                        ville = finalL_address.get(0).getLocality();
+                                                        code_postal = finalL_address.get(0).getPostalCode();
+                                                        pays = finalL_address.get(0).getCountryName();
+                                                        numero = finalL_address.get(0).getFeatureName();
+                                                        //ouverture base de données
                                                         datasource.open();
-
-                                                        long id = datasource.getAdresseById("", rue_calc.toString(), ville_calc.toString(),
-                                                                codepostal_calc.toString(), pays_calc.toString());
-
-
-                                                        long address_id = -2;
+                                                        //On vérifie si l'adresse existe déjà
+                                                        long id = datasource.getAdresseById("", rue, ville,
+                                                                code_postal, pays);
                                                         if (id>0) {
-                                                            //On vérifie si l'adresse existe déjà, alors id vaut l'id de l'adresse trouvée
+                                                            //alors id vaut l'id de l'adresse trouvée
                                                             address_id = id;
                                                         } else {
                                                             //Sinon, on ajoute l'adresse calculée à la base de données
                                                             Adresse adresse = datasource.createAdresse(site_name.getText().toString(),
-                                                                    "", rue_calc, ville_calc, codepostal_calc, pays_calc, "",
+                                                                    numero, rue, ville, code_postal, pays, "",
                                                                     lat, lng);
                                                             address_id = adresse.getAdresse_id();
                                                         }
+                                                        //TODO vérifier que même si l'adresse n'existe pas, un lieu commun existe
+                                                        // et alors lat et long sont les latitudes et longitudes du lieu commun (type une place)
+                                                        //Création du lieu
                                                         Lieu lieu = datasource.createLieu(lat, lng, address_id);
-
-                                                        Marqueur marqueur = datasource.createMarqueur(lieu.getLieu_id(), user_id, description.getText().toString());
-                                                        datasource.createRoseAmbiance(cursor_olfactory.getProgress() / 4.f - 1.f, cursor_visual.getProgress() / 4.f - 1.f,
-                                                                cursor_thermal.getProgress() / 4.f - 1.f, cursor_acoustical.getProgress() / 4.f - 1.f, marqueur.getMarqueur_id());
+                                                        long lieu_id = lieu.getLieu_id();
+                                                        float rose_o = cursor_olfactory.getProgress() / 4.f - 1.f;
+                                                        float rose_v = cursor_visual.getProgress() / 4.f - 1.f;
+                                                        float rose_t = cursor_thermal.getProgress() / 4.f - 1.f;
+                                                        float rose_a = cursor_acoustical.getProgress() / 4.f - 1.f;
+                                                        //Création du marqueur
+                                                        Marqueur marqueur = datasource.createMarqueur(lieu_id, user_id, description.getText().toString());
+                                                        datasource.createRoseAmbiance(rose_o, rose_v,
+                                                                rose_t, rose_a, marqueur.getMarqueur_id());
                                                         datasource.createImage(marqueur.getMarqueur_id(), photo_emp);
-                                                        String[] mots = description.getText().toString().split("[\\p{Punct}\\s]+");//TODO voir où ajouter cette description
-
                                                         //Ajout des notes dans la base de données
                                                         datasource.createPossedeNote(cursor1.getProgress(), marqueur.getMarqueur_id(), id1);
                                                         datasource.createPossedeNote(cursor2.getProgress(), marqueur.getMarqueur_id(), id2);
                                                         datasource.createPossedeNote(cursor3.getProgress(), marqueur.getMarqueur_id(), id3);
-
                                                         datasource.close();
+                                                        //Envoi au serveur distant
+                                                        Gson g = new Gson();
+                                                        String geom = "POINT("+lat+", "+ lng + ")";
+                                                        String jsonMarqueur = "{"
+                                                                + "'adresse_numero':'" + numero.toString() + "',"
+                                                                + "'adresse_nom':'" + site_name.getText().toString() + "',"
+                                                                + "'adresse_rue':'" + rue.toString() + "',"
+                                                                + "'adresse_ville':'" + ville.toString() + "',"
+                                                                + "'adresse_codepostal':'" + code_postal.toString() + "',"
+                                                                + "'adresse_pays':'" + pays.toString() + "',"
+                                                                + "'adresse_complement':'" + complement.toString() + "',"
+                                                                + "'adresse_latitude':'" + String.valueOf(lat) + "',"
+                                                                + "'adresse_longitude':'" + String.valueOf(lng) + "',"
+                                                                + "'adresse_geom':'" + geom + "',"
+                                                                + "'localisation_latitude':'" + String.valueOf(lat) + "',"
+                                                                + "'localisation_longitude':'" + String.valueOf(lng) + "'"
+                                                                + "'rose_o':'" + rose_o + "',"
+                                                                + "'rose_t':'" + rose_t + "',"
+                                                                + "'rose_v':'" + rose_v + "',"
+                                                                + "'rose_a':'" + rose_a + "',"
+                                                                + "}";
+                                                        //Deuxième solution avec bibliothèque OkHttp
+                                                        MediaType JSON_TYPE = MediaType.parse("application/json; charset=utf-8");
+                                                        String myJson = jsonMarqueur;
 
+                                                        Request myGetRequest = new Request.Builder()
+                                                                //Clé API qui fonctionne pour permettre l'authentification
+                                                                .header("Authorization", "12e8a85c14756db4cde7b6919c303377")
+                                                                .url(url)
+                                                                .post(RequestBody.create(JSON_TYPE, myJson))
+                                                                .build();
+
+                                                        OkHttpClient okHttpClient = new OkHttpClient();
+                                                        // code request code here
+                                                        okHttpClient.newCall(myGetRequest).enqueue(new Callback() {
+                                                            public void onFailure(Call call, IOException e) {
+                                                                e.printStackTrace();
+                                                                Toast.makeText(view.getContext(), "Problème serveur, l'envoi a échoué", Toast.LENGTH_LONG).show();
+                                                            }
+
+                                                            @Override
+                                                            public void onResponse(Call call, Response response) throws IOException {
+                                                                //le retour est effectué dans un thread différent
+                                                                final String text = response.body().string();
+                                                                System.out.println(text);
+
+                                                                runOnUiThread(new Runnable() {
+                                                                    @Override
+                                                                    public void run() {
+                                                                        Toast.makeText(view.getContext(), text, Toast.LENGTH_LONG).show();
+                                                                    }
+                                                                });
+                                                            }
+                                                        });
                                                         dialog.dismiss();
-                                                        Toast.makeText(view.getContext(), "Enregistrement effectué avec l'adresse calculée !", Toast.LENGTH_LONG).show();
+/**
+                                                        HashMap postData = new HashMap();
+                                                        postData.put("adresse_codepostal", "test");
+                                                        postData.put("adresse_complement", "test");
+                                                        postData.put("adresse_geom", geom);
+                                                       // postData.put("adresse_id", String.valueOf(address_id));
+                                                        postData.put("adresse_latitude", String.valueOf(lat));
+                                                        postData.put("adresse_longitude", String.valueOf(lng));
+                                                        postData.put("adresse_nom", site_name.getText().toString());
+                                                        postData.put("adresse_numero", numero);
+                                                        postData.put("adresse_pays", pays);
+                                                        postData.put("adresse_rue", rue);
+                                                        postData.put("adresse_ville", ville);
+                                                       // postData.put("localisation_id", String.valueOf(lieu_id));
+                                                        postData.put("localisation_latitude", String.valueOf(lat));
+                                                        postData.put("localisation_longitude", String.valueOf(lng));
+                                                        postData.put("rose_o", String.valueOf(rose_o));
+                                                        postData.put("rose_v", String.valueOf(rose_v));
+                                                        postData.put("rose_t", String.valueOf(rose_t));
+                                                        postData.put("rose_a", String.valueOf(rose_a));
+                                                        PostResponseAsyncTask task = new PostResponseAsyncTask(EditActivity.this, postData);
+                                                        task.execute("http://95.85.32.82/mambiance/v1/marqueur/?adresse_ville=Nantes");*/
 
-                                                        //Intent intent = new Intent(EditActivity.this, MainActivity.class);
-                                                        //startActivity(intent); = récupérer les données
+                                                        Toast.makeText(view.getContext(), "Enregistrement de l'adresse calculée effectué !", Toast.LENGTH_LONG).show();
+
                                                         finish(); //pour finir l'activité, l'enlever, et revenir à l'activité d'avant
+
                                                     }
+
                                                 }
                                             });
                                     builderSingle.show();
+
+
+
+
                                 } else {
                                     Toast.makeText(view.getContext(), "Impossible de trouver les coordonnées! Allumez votre GPS ?", Toast.LENGTH_LONG).show();
                                 }
@@ -640,9 +877,9 @@ public class EditActivity extends AppCompatActivity implements LocationListener 
      * Méthode vérifiant si l'utilisateur a complété des champs du formulaire
      * @return bool : booléen qui vaut true si des champs du formulaire sont remplis, false sinon
      */
-    public boolean isFormularyCompleted(EditText numero, EditText rue, EditText ville, EditText pays){
+    public boolean isFormularyCompleted(String numero, String rue, String ville, String pays){
         boolean bool = true;
-        ArrayList<EditText> list = new ArrayList<>();
+        ArrayList<String> list = new ArrayList<>();
 
         list.add(numero);
         list.add(rue);
@@ -652,7 +889,7 @@ public class EditActivity extends AppCompatActivity implements LocationListener 
         int i = 0;
 
         while ((i<n)&&(bool)){
-            if (!(list.get(i).getText().toString().matches(""))) {
+            if (!(list.get(i).matches(""))) {
                 bool = false;
             }
             i=i+1;
@@ -664,10 +901,10 @@ public class EditActivity extends AppCompatActivity implements LocationListener 
      * Méthode permettant de vérifier si tous les champs du formulaire d'adresse ont été remplis
      * @return true si le formulaire est entièrement rempli, false sinon
      */
-    public boolean isFormularyAllCompleted(EditText numero, EditText rue, EditText ville, EditText pays){
+    public boolean isFormularyAllCompleted(String numero, String rue, String ville, String pays){
 
         boolean bool = true;
-        ArrayList<EditText> list = new ArrayList<>();
+        ArrayList<String> list = new ArrayList<>();
         list.add(numero);
         list.add(rue);
         list.add(ville);
@@ -675,7 +912,7 @@ public class EditActivity extends AppCompatActivity implements LocationListener 
         int n = list.size();
         int i = 0;
         while ((i<n)&&(bool)){
-            if (list.get(i).getText().toString().matches("")) {
+            if (list.get(i).matches("")) {
                 bool = false;
             }
             i = i +1;
@@ -684,4 +921,13 @@ public class EditActivity extends AppCompatActivity implements LocationListener 
     }
 
 
+    @Override
+    public void processFinish(String result) {
+        Toast.makeText(EditActivity.this, result, Toast.LENGTH_LONG).show();
+    }
+
+
+
+
 }
+
