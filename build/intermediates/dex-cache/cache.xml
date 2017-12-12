@@ -12,6 +12,15 @@
     </item>
     <item
         is-multidex="true"
+        jar="C:\Users\Paola\.gradle\caches\modules-2\files-2.1\com.squareup.retrofit2\retrofit\2.3.0\bcacde6a8ccedcc56c127403d26b76072fe6214d\retrofit-2.3.0.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.0"
+        sha1="bcacde6a8ccedcc56c127403d26b76072fe6214d">
+        <dex dex="C:\Users\Paola\Documents\CENTRALE NANTES\2017-2018\INFO\PROJET1\Mambiance-master\app\build\intermediates\transforms\dex\debug\folders\1000\10\retrofit-2.3.0_ed148338e6a7c47f6d282935a485bae2cb6c37dd\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
         jar="C:\Users\Paola\Documents\CENTRALE NANTES\2017-2018\INFO\PROJET1\Mambiance-master\app\libs\GenAsync.jar"
         jumboMode="true"
         optimize="true"

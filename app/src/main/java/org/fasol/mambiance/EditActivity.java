@@ -2,7 +2,6 @@ package org.fasol.mambiance;
 
 import android.Manifest;
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -16,12 +15,9 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.support.annotation.Nullable;
-import android.support.annotation.StringDef;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
@@ -32,7 +28,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
@@ -44,6 +39,7 @@ import android.widget.Toast;
 
 
 import com.google.gson.Gson;
+import com.google.gson.internal.Streams;
 import com.kosalgeek.asynctask.AsyncResponse;
 import com.kosalgeek.asynctask.PostResponseAsyncTask;
 
@@ -51,11 +47,8 @@ import org.fasol.mambiance.db.Adresse;
 import org.fasol.mambiance.db.Lieu;
 import org.fasol.mambiance.db.Marqueur;
 import org.fasol.mambiance.db.Mot;
-import org.fasol.mambiance.db.MySQLiteHelper;
 
 import org.fasol.mambiance.db.RoseAmbiance;
-import org.fasol.mambiance.jsonparsing.HttpHandler;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -67,6 +60,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
+import java.util.StringTokenizer;
 
 
 import okhttp3.Call;
@@ -401,7 +395,6 @@ public class EditActivity extends AppCompatActivity implements LocationListener,
 
 
                                                             String jsonMarqueur = "{'adresse_codepostal':" + code_postal + ","
-                                                                    + "'adresse_id':"+ String.valueOf(address_id) + ","
                                                                     + "'adresse_numero':" + numero + ","
                                                                     + "'adresse_nom':" + site_name.getText().toString() + ","
                                                                     + "'adresse_rue':" + rue + ","
@@ -416,9 +409,7 @@ public class EditActivity extends AppCompatActivity implements LocationListener,
                                                                     + "'rose_v':" + rose_v + ","
                                                                     + "'rose_a':" + rose_a + ","
                                                                     + "'localisation_latitude':" + String.valueOf(lat) + ","
-
-                                                                    + "'localisation_id':" + String.valueOf(lieu_id) + ","
-                                                                    + "'localisation_longitude':" + String.valueOf(lng) + ","
+                                                                    + "'localisation_longitude':" + String.valueOf(lng)
                                                                     + "}";
 
                                                             //Ajout des notes dans la base de données
@@ -484,7 +475,7 @@ public class EditActivity extends AppCompatActivity implements LocationListener,
                                                             });
 
                                                             //Première solution avec bibliothèque
-                                                            HashMap postData = new HashMap();
+                                                      /**      HashMap postData = new HashMap();
                                                             postData.put("adresse_codepostal", "test");
                                                             postData.put("adresse_complement", "test");
                                                             postData.put("adresse_geom", geom);
@@ -502,7 +493,7 @@ public class EditActivity extends AppCompatActivity implements LocationListener,
                                                             postData.put("rose_t", String.valueOf(rose_t));
                                                             postData.put("rose_a", String.valueOf(rose_a));
                                                             PostResponseAsyncTask task = new PostResponseAsyncTask(EditActivity.this, postData);
-                                                            task.execute("http://95.85.32.82/mambiance/");
+                                                            task.execute("http://95.85.32.82/mambiance/");**/
                                                             Toast.makeText(view.getContext(), "Enregistrement de l'adresse entrée effectué !", Toast.LENGTH_LONG).show();
 
                                                             finish(); //pour finir l'activité, l'enlever, et revenir à l'activité d'avant
@@ -557,7 +548,7 @@ public class EditActivity extends AppCompatActivity implements LocationListener,
                                                         //Envoi au serveur distant
                                                         Gson g = new Gson();
                                                         String geom = "POINT("+lat+", "+ lng + ")";
-                                                        String jsonMarqueur = "{"
+                                                        String jsonMarqueur = "{[{"
                                                                 + "'adresse_numero':'" + numero.toString() + "',"
                                                                 + "'adresse_nom':'" + site_name.getText().toString() + "',"
                                                                 + "'adresse_rue':'" + rue.toString() + "',"
@@ -565,30 +556,44 @@ public class EditActivity extends AppCompatActivity implements LocationListener,
                                                                 + "'adresse_codepostal':'" + code_postal.toString() + "',"
                                                                 + "'adresse_pays':'" + pays.toString() + "',"
                                                                 + "'adresse_complement':'" + complement.toString() + "',"
-                                                                + "'adresse_latitude':'" + String.valueOf(lat) + "',"
+                                                                + "'latitude':'" + String.valueOf(lat) + "',"
                                                                 + "'adresse_longitude':'" + String.valueOf(lng) + "',"
                                                                 + "'adresse_geom':'" + geom + "',"
                                                                 + "'localisation_latitude':'" + String.valueOf(lat) + "',"
-                                                                + "'localisation_longitude':'" + String.valueOf(lng) + "'"
+                                                                + "'localisation_longitude':'" + String.valueOf(lng) + "',"
                                                                 + "'rose_o':'" + rose_o + "',"
                                                                 + "'rose_t':'" + rose_t + "',"
                                                                 + "'rose_v':'" + rose_v + "',"
-                                                                + "'rose_a':'" + rose_a + "',"
-                                                                + "}";
-                                                        //Deuxième solution avec bibliothèque OkHttp
-                                                        MediaType JSON_TYPE = MediaType.parse("application/json; charset=utf-8");
-                                                        String myJson = jsonMarqueur;
+                                                                + "'rose_a':'" + rose_a
+                                                                + "}]}";
 
-                                                        Request myGetRequest = new Request.Builder()
-                                                                //Clé API qui fonctionne pour permettre l'authentification
-                                                                .header("Authorization", "12e8a85c14756db4cde7b6919c303377")
-                                                                .url(url)
-                                                                .post(RequestBody.create(JSON_TYPE, myJson))
+                                                        String json = "";
+
+
+                                                        MediaType mediaType = MediaType.parse("application/x-www-form-urlencoded");
+                                                        RequestBody body = RequestBody.create(mediaType, "adresse_numero=" + numero +
+                                                                "&adresse_nom=" + site_name.getText().toString() + "&adresse_rue=" +
+                                                                rue + "&adresse_ville=" + ville + "&adresse_codepostal=" + code_postal +
+                                                                "&adresse_pays=" + pays + "&adresse_complement=" + complement +
+                                                                "&adresse_latitude=" + String.valueOf(lat) + "&adresse_longitude="+
+                                                                String.valueOf(lng) + "&adresse_geom=" + geom +
+                                                                "&localisation_latitude=" + String.valueOf(lat)+ "&localisation_longitude="
+                                                                + String.valueOf(lng) + "&rose_o" + rose_o + "=&rose_t" + rose_t+
+                                                                "=&rose_v=" + rose_v + "&rose_a=" + rose_a);
+                                                        Request request = new Request.Builder()
+                                                                .url("http://95.85.32.82/mambiance/v1/marqueur?adresse_numero=1")
+                                                                .post(body)
+                                                                .addHeader("Content-Type", "application/x-www-form-urlencoded")
+                                                                .addHeader("Authorization", "12e8a85c14756db4cde7b6919c303377")
+                                                                .addHeader("Cache-Control", "no-cache")
+                                                                .addHeader("Postman-Token", "9f68ca7f-7281-0344-2fca-9018c45d65e5")
                                                                 .build();
+
+                                                        //Response response = client.newCall(request).execute();
 
                                                         OkHttpClient okHttpClient = new OkHttpClient();
                                                         // code request code here
-                                                        okHttpClient.newCall(myGetRequest).enqueue(new Callback() {
+                                                        okHttpClient.newCall(request).enqueue(new Callback() {
                                                             public void onFailure(Call call, IOException e) {
                                                                 e.printStackTrace();
                                                                 Toast.makeText(view.getContext(), "Problème serveur, l'envoi a échoué", Toast.LENGTH_LONG).show();
@@ -609,8 +614,8 @@ public class EditActivity extends AppCompatActivity implements LocationListener,
                                                             }
                                                         });
                                                         dialog.dismiss();
-/**
-                                                        HashMap postData = new HashMap();
+
+    /**                                                    HashMap postData = new HashMap();
                                                         postData.put("adresse_codepostal", "test");
                                                         postData.put("adresse_complement", "test");
                                                         postData.put("adresse_geom", geom);
@@ -630,7 +635,7 @@ public class EditActivity extends AppCompatActivity implements LocationListener,
                                                         postData.put("rose_t", String.valueOf(rose_t));
                                                         postData.put("rose_a", String.valueOf(rose_a));
                                                         PostResponseAsyncTask task = new PostResponseAsyncTask(EditActivity.this, postData);
-                                                        task.execute("http://95.85.32.82/mambiance/v1/marqueur/?adresse_ville=Nantes");*/
+                                                        task.execute("http://95.85.32.82/mambiance/v1/marqueur/");*/
 
                                                         Toast.makeText(view.getContext(), "Enregistrement de l'adresse calculée effectué !", Toast.LENGTH_LONG).show();
 
