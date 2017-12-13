@@ -8,8 +8,18 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import java.io.IOException;
 import java.nio.channels.DatagramChannel;
 import java.util.ArrayList;
+import java.util.regex.Pattern;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 import static org.fasol.mambiance.MainActivity.datasource;
 
@@ -34,6 +44,16 @@ public class UserNewActivity extends AppCompatActivity {
     private EditText u_pseudo;
 
     private Button btn_save;
+    //Variable finale et statique utilisée pour vérifier qu'une adresse mail est valide
+    public final static Pattern EMAIL_ADDRESS_PATTERN = Pattern.compile(
+            "[a-zA-Z0-9\\+\\.\\_\\%\\-\\+]{1,256}" +
+                    "\\@" +
+                    "[a-zA-Z0-9][a-zA-Z0-9\\-]{0,64}" +
+                    "(" +
+                    "\\." +
+                    "[a-zA-Z0-9][a-zA-Z0-9\\-]{0,25}" +
+                    ")+"
+    );
 
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,26 +72,63 @@ public class UserNewActivity extends AppCompatActivity {
     }
 
     /**
-     * Méthode appelée au clic de l'utilisateur sur "valider" le formulaire
-     * d'inscription de l'utilisateur
-     * Effectue une vérification des informations entrées
-     * Géolocalise l'utilisateur et propose une adresse correspondante
-     * Enregistre les informations dans la base de données
+     * Méthode permettant d'enregistrer l'utilisateur dans la base de données locale de l'appareil
+     * Récupère nom, prénom, pseudo, email, mot de passe, associe une clé API, un statut
      */
     private View.OnClickListener saveListener = new View.OnClickListener() {
         @Override
         public void onClick(final View view) {
             if (isFormularyCompleted(u_pseudo, u_mdp, u_mdp2, u_email)){
                 if (isMdpEqual(u_mdp, u_mdp2)){
-                    nom = u_nom.getText().toString();
-                    prenom = u_prenom.getText().toString();
-                    email = u_email.getText().toString();
-                    mdp = u_mdp.getText().toString();
-                    pseudo = u_pseudo.getText().toString();
-                    datasource.open();
-                    datasource.createUtilisateur(nom, prenom, mdp, "254b34604b2f943b01d5e8f9df02fe27", pseudo, email, 0);
-                    datasource.close();
-                    finish();
+                    if (email_valid(u_email)) {
+                        nom = u_nom.getText().toString();
+                        prenom = u_prenom.getText().toString();
+                        email = u_email.getText().toString();
+                        mdp = u_mdp.getText().toString();
+                        pseudo = u_pseudo.getText().toString();
+                        datasource.open();
+                        datasource.createUtilisateur(nom, prenom, mdp, "254b34604b2f943b01d5e8f9df02fe27", pseudo, email, 0);
+                        datasource.close();
+                        //Envoi au serveur distant
+                        OkHttpClient client = new OkHttpClient();
+                        //Création de la requête
+                        MediaType mediaType = MediaType.parse("application/x-www-form-urlencoded");
+                        RequestBody body = RequestBody.create(mediaType, "pseudo=" + pseudo + "&password=" + mdp + "&email=" +
+                                email + "&nom=" + nom + "&prenom=" + prenom);
+                        Request request = new Request.Builder()
+                                .url("http://95.85.32.82/mambiance/v1/register")
+                                .post(body)
+                                .addHeader("Content-Type", "application/x-www-form-urlencoded")
+                                .addHeader("Cache-Control", "no-cache")
+                                .addHeader("Postman-Token", "3fa60859-6dd0-9e78-d6ac-d64aa9a65c99")
+                                .build();
+
+                        //Envoi de la requête
+                        client.newCall(request).enqueue(new Callback() {
+                            public void onFailure(Call call, IOException e) {
+                                e.printStackTrace();
+                                Toast.makeText(view.getContext(), "Problème serveur, l'envoi a échoué", Toast.LENGTH_LONG).show();
+                            }
+
+                            @Override
+                            public void onResponse(Call call, Response response) throws IOException {
+                                //le retour est effectué dans un thread différent
+                                final String text = response.body().string();
+                                System.out.println(text);
+
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Toast.makeText(view.getContext(), text, Toast.LENGTH_LONG).show();
+                                    }
+                                });
+                            }
+                        });
+
+                        finish();
+                    } else {
+                        Toast.makeText(view.getContext(),"Attention, veuillez entrer un email valide.",Toast.LENGTH_LONG).show();
+                    }
                 } else {
                     Toast.makeText(view.getContext(),"Attention, les mots de passe sont différents.",Toast.LENGTH_LONG).show();
                 }
@@ -100,12 +157,24 @@ public class UserNewActivity extends AppCompatActivity {
         int i = 0;
 
         while ((i<n)&&(bool)){
-            if (!(list.get(i).getText().toString().matches(""))) {
+            if (((list.get(i).getText().toString().matches("")))||(list.get(i).getText().toString()==null)) {
                 bool = false;
             }
             i=i+1;
         }
-        return !bool;
+        return bool;
+    }
+
+
+
+    /**
+     * Méthode permettant de vérifier si l'email entré est syntaxiquement valide (something@something.something)
+     * @param email edittext
+     * @return booléen vrai si l'email est valide
+     */
+    public boolean email_valid (EditText email){
+        return EMAIL_ADDRESS_PATTERN.matcher(email.getText().toString()).matches();
+
     }
 
     /**

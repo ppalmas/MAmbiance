@@ -281,6 +281,7 @@ public class EditActivity extends AppCompatActivity implements LocationListener,
      * Effectue une vérification des informations entrées
      * Géolocalise l'utilisateur et propose une adresse correspondante
      * Enregistre les informations dans la base de données
+     * Envoie les données vers le serveur distant (marqueur, rose, notes)
      */
     private View.OnClickListener saveListener = new View.OnClickListener() {
         @Override
@@ -537,9 +538,13 @@ public class EditActivity extends AppCompatActivity implements LocationListener,
                                                         float rose_a = cursor_acoustical.getProgress() / 4.f - 1.f;
                                                         //Création du marqueur
                                                         Marqueur marqueur = datasource.createMarqueur(lieu_id, user_id, description.getText().toString());
+                                                        long marqueur_id = marqueur.getMarqueur_id();
                                                         datasource.createRoseAmbiance(rose_o, rose_v,
                                                                 rose_t, rose_a, marqueur.getMarqueur_id());
                                                         datasource.createImage(marqueur.getMarqueur_id(), photo_emp);
+                                                        String mot1 = datasource.getMotWithId(id1).getMot_libelle();
+                                                        String mot2 = datasource.getMotWithId(id2).getMot_libelle();
+                                                        String mot3 = datasource.getMotWithId(id3).getMot_libelle();
                                                         //Ajout des notes dans la base de données
                                                         datasource.createPossedeNote(cursor1.getProgress(), marqueur.getMarqueur_id(), id1);
                                                         datasource.createPossedeNote(cursor2.getProgress(), marqueur.getMarqueur_id(), id2);
@@ -548,30 +553,11 @@ public class EditActivity extends AppCompatActivity implements LocationListener,
                                                         //Envoi au serveur distant
                                                         Gson g = new Gson();
                                                         String geom = "POINT("+lat+", "+ lng + ")";
-                                                        String jsonMarqueur = "{[{"
-                                                                + "'adresse_numero':'" + numero.toString() + "',"
-                                                                + "'adresse_nom':'" + site_name.getText().toString() + "',"
-                                                                + "'adresse_rue':'" + rue.toString() + "',"
-                                                                + "'adresse_ville':'" + ville.toString() + "',"
-                                                                + "'adresse_codepostal':'" + code_postal.toString() + "',"
-                                                                + "'adresse_pays':'" + pays.toString() + "',"
-                                                                + "'adresse_complement':'" + complement.toString() + "',"
-                                                                + "'latitude':'" + String.valueOf(lat) + "',"
-                                                                + "'adresse_longitude':'" + String.valueOf(lng) + "',"
-                                                                + "'adresse_geom':'" + geom + "',"
-                                                                + "'localisation_latitude':'" + String.valueOf(lat) + "',"
-                                                                + "'localisation_longitude':'" + String.valueOf(lng) + "',"
-                                                                + "'rose_o':'" + rose_o + "',"
-                                                                + "'rose_t':'" + rose_t + "',"
-                                                                + "'rose_v':'" + rose_v + "',"
-                                                                + "'rose_a':'" + rose_a
-                                                                + "}]}";
 
-                                                        String json = "";
 
 
                                                         MediaType mediaType = MediaType.parse("application/x-www-form-urlencoded");
-                                                        RequestBody body = RequestBody.create(mediaType, "adresse_numero=" + numero +
+                                                        RequestBody body_marqueur = RequestBody.create(mediaType, "adresse_numero=" + numero +
                                                                 "&adresse_nom=" + site_name.getText().toString() + "&adresse_rue=" +
                                                                 rue + "&adresse_ville=" + ville + "&adresse_codepostal=" + code_postal +
                                                                 "&adresse_pays=" + pays + "&adresse_complement=" + complement +
@@ -580,20 +566,65 @@ public class EditActivity extends AppCompatActivity implements LocationListener,
                                                                 "&localisation_latitude=" + String.valueOf(lat)+ "&localisation_longitude="
                                                                 + String.valueOf(lng) + "&rose_o" + rose_o + "=&rose_t" + rose_t+
                                                                 "=&rose_v=" + rose_v + "&rose_a=" + rose_a);
-                                                        Request request = new Request.Builder()
-                                                                .url("http://95.85.32.82/mambiance/v1/marqueur?adresse_numero=1")
-                                                                .post(body)
+                                                        Request request_marqueur = new Request.Builder()
+                                                                .url("http://95.85.32.82/mambiance/v1/marqueur")
+                                                                .post(body_marqueur)
+                                                                .addHeader("Content-Type", "application/x-www-form-urlencoded")
+                                                                .addHeader("Authorization", "12e8a85c14756db4cde7b6919c303377")
+                                                                .addHeader("Cache-Control", "no-cache")
+                                                                .addHeader("Postman-Token", "9f68ca7f-7281-0344-2fca-9018c45d65e5")
+                                                                .build();
+                                                        // On crée une note pour chaque mot et note entrée, pas de vérification si ça existe déjà
+                                                        //TODO
+                                                        RequestBody body_note1 = RequestBody.create(mediaType,
+                                                                "marqueur_id="+ marqueur_id +"&mot_libelle="
+                                                                        + mot1+"&note_value="+cursor1.getProgress());
+                                                        Request request_note1 = new Request.Builder()
+                                                                .url("http://95.85.32.82/mambiance/v1/note")
+                                                                .post(body_note1)
+                                                                .addHeader("Content-Type", "application/x-www-form-urlencoded")
+                                                                .addHeader("Authorization", "12e8a85c14756db4cde7b6919c303377")
+                                                                .addHeader("Cache-Control", "no-cache")
+                                                                .addHeader("Postman-Token", "9f68ca7f-7281-0344-2fca-9018c45d65e5")
+                                                                .build();
+                                                        RequestBody body_note2 = RequestBody.create(mediaType,
+                                                                "marqueur_id="+ marqueur_id +"&mot_libelle="
+                                                                        +mot2+"&note_value="+cursor2.getProgress());
+                                                        Request request_note2 = new Request.Builder()
+                                                                .url("http://95.85.32.82/mambiance/v1/note")
+                                                                .post(body_note2)
+                                                                .addHeader("Content-Type", "application/x-www-form-urlencoded")
+                                                                .addHeader("Authorization", "12e8a85c14756db4cde7b6919c303377")
+                                                                .addHeader("Cache-Control", "no-cache")
+                                                                .addHeader("Postman-Token", "9f68ca7f-7281-0344-2fca-9018c45d65e5")
+                                                                .build();
+                                                        RequestBody body_note3 = RequestBody.create(mediaType,
+                                                                "marqueur_id="+ marqueur_id +"&mot_libelle="
+                                                                        +mot3+"&note_value="+cursor3.getProgress());
+                                                        Request request_note3 = new Request.Builder()
+                                                                .url("http://95.85.32.82/mambiance/v1/note")
+                                                                .post(body_note3)
+                                                                .addHeader("Content-Type", "application/x-www-form-urlencoded")
+                                                                .addHeader("Authorization", "12e8a85c14756db4cde7b6919c303377")
+                                                                .addHeader("Cache-Control", "no-cache")
+                                                                .addHeader("Postman-Token", "9f68ca7f-7281-0344-2fca-9018c45d65e5")
+                                                                .build();
+                                                        RequestBody body_photo = RequestBody.create(mediaType,
+                                                                "marqueur_id="+ marqueur_id +"&mot_libelle="
+                                                                        +mot3+"&note_value="+cursor3.getProgress());
+                                                        Request request_photo = new Request.Builder()
+                                                                .url("http://95.85.32.82/mambiance/v1/note")
+                                                                .post(body_note3)
                                                                 .addHeader("Content-Type", "application/x-www-form-urlencoded")
                                                                 .addHeader("Authorization", "12e8a85c14756db4cde7b6919c303377")
                                                                 .addHeader("Cache-Control", "no-cache")
                                                                 .addHeader("Postman-Token", "9f68ca7f-7281-0344-2fca-9018c45d65e5")
                                                                 .build();
 
-                                                        //Response response = client.newCall(request).execute();
 
                                                         OkHttpClient okHttpClient = new OkHttpClient();
-                                                        // code request code here
-                                                        okHttpClient.newCall(request).enqueue(new Callback() {
+                                                        // appel au serveur de la requête pour créer un marqueur
+                                                        okHttpClient.newCall(request_marqueur).enqueue(new Callback() {
                                                             public void onFailure(Call call, IOException e) {
                                                                 e.printStackTrace();
                                                                 Toast.makeText(view.getContext(), "Problème serveur, l'envoi a échoué", Toast.LENGTH_LONG).show();
@@ -613,6 +644,88 @@ public class EditActivity extends AppCompatActivity implements LocationListener,
                                                                 });
                                                             }
                                                         });
+                                                        okHttpClient.newCall(request_note1).enqueue(new Callback() {
+                                                            public void onFailure(Call call, IOException e) {
+                                                                e.printStackTrace();
+                                                                Toast.makeText(view.getContext(), "Problème serveur, l'envoi a échoué", Toast.LENGTH_LONG).show();
+                                                            }
+
+                                                            @Override
+                                                            public void onResponse(Call call, Response response) throws IOException {
+                                                                //le retour est effectué dans un thread différent
+                                                                final String text = response.body().string();
+                                                                System.out.println(text);
+
+                                                                runOnUiThread(new Runnable() {
+                                                                    @Override
+                                                                    public void run() {
+                                                                        Toast.makeText(view.getContext(), text, Toast.LENGTH_LONG).show();
+                                                                    }
+                                                                });
+                                                            }
+                                                        });
+                                                        okHttpClient.newCall(request_note2).enqueue(new Callback() {
+                                                            public void onFailure(Call call, IOException e) {
+                                                                e.printStackTrace();
+                                                                Toast.makeText(view.getContext(), "Problème serveur, l'envoi a échoué", Toast.LENGTH_LONG).show();
+                                                            }
+
+                                                            @Override
+                                                            public void onResponse(Call call, Response response) throws IOException {
+                                                                //le retour est effectué dans un thread différent
+                                                                final String text = response.body().string();
+                                                                System.out.println(text);
+
+                                                                runOnUiThread(new Runnable() {
+                                                                    @Override
+                                                                    public void run() {
+                                                                        Toast.makeText(view.getContext(), text, Toast.LENGTH_LONG).show();
+                                                                    }
+                                                                });
+                                                            }
+                                                        });
+                                                        okHttpClient.newCall(request_note3).enqueue(new Callback() {
+                                                            public void onFailure(Call call, IOException e) {
+                                                                e.printStackTrace();
+                                                                Toast.makeText(view.getContext(), "Problème serveur, l'envoi a échoué", Toast.LENGTH_LONG).show();
+                                                            }
+
+                                                            @Override
+                                                            public void onResponse(Call call, Response response) throws IOException {
+                                                                //le retour est effectué dans un thread différent
+                                                                final String text = response.body().string();
+                                                                System.out.println(text);
+
+                                                                runOnUiThread(new Runnable() {
+                                                                    @Override
+                                                                    public void run() {
+                                                                        Toast.makeText(view.getContext(), text, Toast.LENGTH_LONG).show();
+                                                                    }
+                                                                });
+                                                            }
+                                                        });
+                                                        okHttpClient.newCall(request_photo).enqueue(new Callback() {
+                                                            public void onFailure(Call call, IOException e) {
+                                                                e.printStackTrace();
+                                                                Toast.makeText(view.getContext(), "Problème serveur, l'envoi a échoué", Toast.LENGTH_LONG).show();
+                                                            }
+
+                                                            @Override
+                                                            public void onResponse(Call call, Response response) throws IOException {
+                                                                //le retour est effectué dans un thread différent
+                                                                final String text = response.body().string();
+                                                                System.out.println(text);
+
+                                                                runOnUiThread(new Runnable() {
+                                                                    @Override
+                                                                    public void run() {
+                                                                        Toast.makeText(view.getContext(), text, Toast.LENGTH_LONG).show();
+                                                                    }
+                                                                });
+                                                            }
+                                                        });
+
+
                                                         dialog.dismiss();
 
     /**                                                    HashMap postData = new HashMap();
@@ -706,7 +819,6 @@ public class EditActivity extends AppCompatActivity implements LocationListener,
     /**
      * Function isFormularyDescriptionCompleted
      * @return boolean flag : yes if there is a description
-     * TODO : méthode qui vérifie que la description est entrée comme il faut (séparateur virugle, 3 mots)
      */
     private boolean isFormularyDescriptionCompleted(){
         boolean flag = (!description.getText().toString().matches(""));

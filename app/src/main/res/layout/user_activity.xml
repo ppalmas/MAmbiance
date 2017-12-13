@@ -128,6 +128,8 @@
             android:text="Mot de passe *" />
 
         <EditText
+            android:inputType="textVisiblePassword"
+            android:password="true"
             android:id="@+id/a_mdp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -150,6 +152,8 @@
             android:text="Confirmation du mot de passe *" />
 
         <EditText
+            android:inputType="textVisiblePassword"
+            android:password="true"
             android:id="@+id/a_mdp2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

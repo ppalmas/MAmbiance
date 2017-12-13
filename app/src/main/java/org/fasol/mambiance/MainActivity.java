@@ -65,9 +65,17 @@ public class MainActivity extends AppCompatActivity {
         btn_edit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent secondeActiv = new Intent(MainActivity.this, EditActivity.class);
+                datasource.open();
+                if (datasource.getUser0()==-2){
+                    Intent secondeActiv = new Intent(MainActivity.this, UserNewActivity.class);
 
-                startActivity(secondeActiv);
+                    startActivity(secondeActiv);
+                } else {
+                    Intent secondeActiv = new Intent(MainActivity.this, EditActivity.class);
+
+                    startActivity(secondeActiv);
+                }
+                datasource.close();
             }
         });
 
@@ -102,7 +110,7 @@ public class MainActivity extends AppCompatActivity {
 
                     startActivity(secondeActiv);
                 }
-
+                datasource.close();
             }
         });
 
