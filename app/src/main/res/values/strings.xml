@@ -7,9 +7,10 @@
     <string name="information_title">Mambiance v2</string>
     <string name="information_text">"Cette application a été réalisée par Rémi PARROT et Hector MELEY
         dans le cadre d'un projet de l'option informatique à l'Ecole Centrale de Nantes.\n
-        Elle est basée sur une version précédente, elle-même réalisé à l'Ecole Centrale de Nantes.\n\n\n
+        Elle a ensuite été modifiée et reprise par Cyril DE CATHEU et Paola PALMAS\n
+        Elle est basée sur une version précédente, elle-même réalisé à l'Ecole Centrale de Nantes.\n
         Le projet a été proposé par Myriam SERVIERES chercheuse du laboratoire CRENAU.\n\n\n
-        Le projet a été encadré par Myriam SERVIERES enseignante de l'option Informatique à l'Ecole Centrale de Nantes.\n\n\n
-        La version précédente de l'application a été réalisé par Abdelghafour BENKASSMI et Flore MASSOULLIE."
+        Le projet a été encadré par Myriam SERVIERES et Vincent TOURRE enseignants de l'option Informatique à l'Ecole Centrale de Nantes.\n\n\n
+        La première version de l'application a été réalisé par Abdelghafour BENKASSMI et Flore MASSOULLIE."
         </string>
 </resources>

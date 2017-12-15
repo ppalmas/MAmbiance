@@ -116,7 +116,7 @@ public class MapMarkerActivityAll extends AppCompatActivity {
 
         //On sérialise le fichier menu.xml pour l'afficher dans la barre de menu
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.main_menu, menu);
+        inflater.inflate(R.menu.menu_map, menu);
 
         return super.onCreateOptionsMenu(menu);
     }
@@ -137,6 +137,10 @@ public class MapMarkerActivityAll extends AppCompatActivity {
                 intent = new Intent(this, MainActivity.class);
                 startActivity(intent);
                 return true;
+            case R.id.allmarkers:
+                intent = new Intent(this, MapMarkerActivity.class);
+                startActivity(intent);
+                return true;
 
             default:
                 // If we got here, the user's action was not recognized.
@@ -145,6 +149,7 @@ public class MapMarkerActivityAll extends AppCompatActivity {
 
         }
     }
+
 
 }
 

@@ -8,142 +8,146 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    android:orientation="vertical"
     tools:context="org.fasol.mambiance.MainActivity">
 
     <TextView
         android:id="@+id/site_name_display"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:fontFamily="sans-serif"
         android:text="Nom du Lieu"
         android:textAlignment="center"
-        android:layout_weight="1"
-        android:textSize="30sp"
-        android:fontFamily="sans-serif"
         android:textAllCaps="true"
-        android:textStyle="normal|bold"/>
+        android:textSize="30sp"
+        android:textStyle="normal|bold" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="horizontal"
-        android:layout_weight="0.15">
+        android:layout_weight="0.15"
+        android:orientation="horizontal">
 
         <LinearLayout
             android:id="@+id/form_cursor"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical"
             android:layout_weight="0.5"
+            android:orientation="vertical"
             android:paddingRight="@dimen/activity_horizontal_margin">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:orientation="horizontal"
                 android:layout_weight="1">
 
                 <TextView
-                    android:layout_width="match_parent"
+                    android:layout_width="465dp"
                     android:layout_height="match_parent"
                     android:layout_weight="0.7"
                     android:text="@string/description"
                     android:textAlignment="center"
-                    android:textSize="24sp"
-                    android:textStyle="normal|bold"/>
+                    android:textSize="20sp"
+                    android:textStyle="normal|bold" />
 
                 <TextView
                     android:id="@+id/description_display"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_weight="0.3"
-                    android:textSize="24sp"/>
+                    android:textSize="24sp" />
             </LinearLayout>
 
             <ImageView
                 android:id="@+id/photo_display"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:src="@drawable/parc_photo"
-                android:layout_weight="0.1" />
+                android:layout_weight="0.1"
+                android:src="@drawable/parc_photo" />
 
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical"
             android:layout_weight="0.5"
+            android:orientation="vertical"
             android:paddingLeft="@dimen/activity_horizontal_margin">
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/evaluate"
                 android:layout_weight="0.5"
+                android:text="@string/evaluate"
                 android:textAlignment="center"
                 android:textSize="24sp"
-                android:textStyle="normal|bold"/>
+                android:textStyle="normal|bold" />
 
             <FrameLayout
                 android:id="@+id/frame_layout_rose_display"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:layout_weight="50"
                 android:paddingBottom="@dimen/activity_vertical_margin"
                 android:paddingLeft="@dimen/activity_horizontal_margin"
                 android:paddingRight="@dimen/activity_horizontal_margin"
-                android:paddingTop="@dimen/activity_vertical_margin"
-                android:layout_weight="50">
+                android:paddingTop="@dimen/activity_vertical_margin">
 
-                <include layout="@layout/rose_ambiance"
-                         android:id="@+id/rose_ambiance_display"/>
+                <include
+                    android:id="@+id/rose_ambiance_display"
+                    layout="@layout/rose_ambiance" />
             </FrameLayout>
 
             <TextView
                 android:id="@+id/caract1_display"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="adjectif 1"
                 android:layout_weight="0.1"
                 android:gravity="center_vertical"
-                android:textSize="18sp"/>
+                android:text="adjectif 1"
+                android:textSize="18sp" />
+
             <SeekBar
                 android:id="@+id/cursor1_display"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.1"
-                android:max="10"
-                android:enabled="false"/>
+                android:enabled="false"
+                android:max="10" />
+
             <TextView
                 android:id="@+id/caract2_display"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="adjectif 2"
                 android:layout_weight="0.1"
                 android:gravity="center_vertical"
-                android:textSize="18sp"/>
+                android:text="adjectif 2"
+                android:textSize="18sp" />
+
             <SeekBar
                 android:id="@+id/cursor2_display"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.1"
-                android:max="10"
-                android:enabled="false"/>
+                android:enabled="false"
+                android:max="10" />
+
             <TextView
                 android:id="@+id/caract3_display"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="adjectif 3"
                 android:layout_weight="0.1"
                 android:gravity="center_vertical"
-                android:textSize="18sp"/>
+                android:text="adjectif 3"
+                android:textSize="18sp" />
+
             <SeekBar
                 android:id="@+id/cursor3_display"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.1"
-                android:max="10"
-                android:enabled="false"/>
+                android:enabled="false"
+                android:max="10" />
         </LinearLayout>
 
     </LinearLayout>
@@ -152,7 +156,7 @@
         android:id="@+id/date_display"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_weight="1"
         android:text="Date"
-        android:textAlignment="textEnd"
-        android:layout_weight="1" />
+        android:textAlignment="textEnd" />
 </LinearLayout>

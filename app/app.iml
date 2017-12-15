@@ -90,6 +90,7 @@
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/builds" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/check-manifest" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/classes" />
+      <excludeFolder url="file://$MODULE_DIR$/build/intermediates/classes-jar" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/incremental" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/incremental-classes" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/incremental-runtime-classes" />
@@ -116,39 +117,39 @@
       <excludeFolder url="file://$MODULE_DIR$/build/outputs" />
       <excludeFolder url="file://$MODULE_DIR$/build/tmp" />
     </content>
-    <orderEntry type="jdk" jdkName="Android API 25 Platform" jdkType="Android SDK" />
+    <orderEntry type="jdk" jdkName="Android API 26 Platform" jdkType="Android SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="__local_aars__:C.\Users\Paola\Documents\CENTRALE NANTES\2017-2018\INFO\PROJET1\Mambiance-master\app\libs\GenAsync.jar:unspecified@jar" level="project" />
-    <orderEntry type="library" name="com.android.support:support-fragment-25.0.0" level="project" />
+    <orderEntry type="library" name="com.android.support:support-media-compat-26.0.0" level="project" />
     <orderEntry type="library" scope="TEST" name="com.android.support.test:exposed-instrumentation-api-publish-0.5" level="project" />
-    <orderEntry type="library" name="com.android.support:support-core-ui-25.0.0" level="project" />
     <orderEntry type="library" scope="TEST" name="junit:junit:4.12@jar" level="project" />
+    <orderEntry type="library" name="com.android.support:support-fragment-26.0.0" level="project" />
     <orderEntry type="library" scope="TEST" name="javax.inject:javax.inject:1@jar" level="project" />
+    <orderEntry type="library" name="com.android.support:support-vector-drawable-26.0.0" level="project" />
     <orderEntry type="library" scope="TEST" name="com.squareup:javawriter:2.1.1@jar" level="project" />
     <orderEntry type="library" name="com.google.code.gson:gson:2.6.2@jar" level="project" />
-    <orderEntry type="library" name="com.android.support:support-media-compat-25.0.0" level="project" />
     <orderEntry type="library" name="org.slf4j:slf4j-api:1.7.7@jar" level="project" />
-    <orderEntry type="library" name="com.android.support:animated-vector-drawable-25.0.0" level="project" />
+    <orderEntry type="library" name="com.android.support:appcompat-v7-26.0.0" level="project" />
+    <orderEntry type="library" name="com.android.support:support-core-utils-26.0.0" level="project" />
     <orderEntry type="library" name="com.squareup.okio:okio:1.13.0@jar" level="project" />
+    <orderEntry type="library" name="com.android.support:support-core-ui-26.0.0" level="project" />
     <orderEntry type="library" name="com.squareup.retrofit2:retrofit:2.3.0@jar" level="project" />
     <orderEntry type="library" name="org.osmdroid:osmdroid-third-party-5.5" level="project" />
     <orderEntry type="library" scope="TEST" name="com.google.code.findbugs:jsr305:2.0.1@jar" level="project" />
-    <orderEntry type="library" name="com.android.support:support-v4-25.0.0" level="project" />
-    <orderEntry type="library" name="com.android.support:support-annotations:25.0.0@jar" level="project" />
+    <orderEntry type="library" name="com.android.support:support-compat-26.0.0" level="project" />
     <orderEntry type="library" scope="TEST" name="org.hamcrest:hamcrest-core:1.3@jar" level="project" />
     <orderEntry type="library" scope="TEST" name="com.android.support.test.espresso:espresso-core-2.2.2" level="project" />
-    <orderEntry type="library" name="com.android.support:support-core-utils-25.0.0" level="project" />
     <orderEntry type="library" name="org.osmdroid:osmdroid-android-5.5" level="project" />
     <orderEntry type="library" scope="TEST" name="com.android.support.test:rules-0.5" level="project" />
     <orderEntry type="library" name="com.squareup.okhttp3:okhttp:3.9.1@jar" level="project" />
-    <orderEntry type="library" name="com.android.support:appcompat-v7-25.0.0" level="project" />
     <orderEntry type="library" scope="TEST" name="org.hamcrest:hamcrest-library:1.3@jar" level="project" />
     <orderEntry type="library" scope="TEST" name="org.hamcrest:hamcrest-integration:1.3@jar" level="project" />
     <orderEntry type="library" scope="TEST" name="com.android.support.test:runner-0.5" level="project" />
-    <orderEntry type="library" name="com.android.support:support-compat-25.0.0" level="project" />
+    <orderEntry type="library" name="com.android.support:support-v4-26.0.0" level="project" />
+    <orderEntry type="library" name="com.android.support:animated-vector-drawable-26.0.0" level="project" />
     <orderEntry type="library" scope="TEST" name="com.android.support.test.espresso:espresso-idling-resource-2.2.2" level="project" />
     <orderEntry type="library" scope="TEST" name="javax.annotation:javax.annotation-api:1.2@jar" level="project" />
-    <orderEntry type="library" name="com.android.support:support-vector-drawable-25.0.0" level="project" />
-    <orderEntry type="library" name="android-android-25" level="project" />
+    <orderEntry type="library" name="com.android.support:support-annotations:26.0.0@jar" level="project" />
+    <orderEntry type="library" name="android-android-26" level="project" />
   </component>
 </module>

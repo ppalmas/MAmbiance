@@ -989,7 +989,6 @@ public class LocalDataSource {
         p1.setStatut(cursor.getInt(6));
         p1.setCleapi(cursor.getString(7));
 
-
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
         Date dateCreation = null;
         try {
@@ -1062,7 +1061,6 @@ public class LocalDataSource {
         return newNote;
     }
 
-//TODO POSSED NOTE
 
     /**
      * knowing a Note_id, we want to get the PossedeNote itself

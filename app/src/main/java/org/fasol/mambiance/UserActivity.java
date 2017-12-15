@@ -2,6 +2,8 @@ package org.fasol.mambiance;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.widget.EditText;
 
 import org.fasol.mambiance.db.Utilisateur;
@@ -47,5 +49,20 @@ public class UserActivity extends AppCompatActivity{
 
 
 
+    }
+    /**
+     * Method to inflate the xml menu file
+     * @param menu the menu
+     * @return true if everything went good
+     */
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu){
+        super.onCreateOptionsMenu(menu);
+
+        //On sérialise le fichier menu.xml pour l'afficher dans la barre de menu
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.main_menu, menu);
+
+        return super.onCreateOptionsMenu(menu);
     }
 }
