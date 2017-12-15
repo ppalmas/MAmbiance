@@ -75,8 +75,8 @@ public class MapMarkerActivity extends AppCompatActivity{
         Cursor c = datasource.getAllMarkerMap();
         c.moveToFirst();
         for(int i=0;i<c.getCount();i++) {
-            l_marqueurId.add(c.getLong(4));
-            mMarkerOverlay.add(new OverlayItem(c.getString(0), c.getString(1), new GeoPoint(c.getFloat(5), c.getFloat(6))));
+            l_marqueurId.add(c.getLong(7));
+            mMarkerOverlay.add(new OverlayItem(c.getString(0), c.getString(8), new GeoPoint(c.getFloat(5), c.getFloat(6))));
             c.moveToNext();
         }
         c.close();

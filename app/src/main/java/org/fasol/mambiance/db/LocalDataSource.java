@@ -1139,7 +1139,7 @@ public class LocalDataSource {
             "SELECT " + MySQLiteHelper.COLUMN_NOM+ ", " + MySQLiteHelper.COLUMN_NUMERO + ", " + MySQLiteHelper.COLUMN_RUE +
                     ", " + MySQLiteHelper.COLUMN_VILLE + ", " + MySQLiteHelper.COLUMN_PAYS + ", "
                     + MySQLiteHelper.COLUMN_LATITUDE + ", " + MySQLiteHelper.COLUMN_LONGITUDE + ", " +
-                    MySQLiteHelper.TABLE_MARQUEUR + "." + MySQLiteHelper.COLUMN_ID +
+                    MySQLiteHelper.TABLE_MARQUEUR + "." + MySQLiteHelper.COLUMN_ID + ", " + MySQLiteHelper.COLUMN_DESCRIPTION+
                     " FROM " + MySQLiteHelper.TABLE_ADRESSE + " INNER JOIN " + MySQLiteHelper.TABLE_LIEU + " INNER JOIN " +
                     MySQLiteHelper.TABLE_MARQUEUR +
                     " ON " + MySQLiteHelper.TABLE_ADRESSE + "." + MySQLiteHelper.COLUMN_ID + "=" + MySQLiteHelper.TABLE_LIEU + "." + MySQLiteHelper.COLUMN_ADRESSEID + " AND " +

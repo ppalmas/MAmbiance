@@ -47,6 +47,9 @@
         <activity android:name=".MapMarkerActivity">
 
         </activity>
+        <activity android:name=".MapMarkerActivityAll">
+
+        </activity>
         <activity android:name=".DisplayMarkerActivity">
 
         </activity>
