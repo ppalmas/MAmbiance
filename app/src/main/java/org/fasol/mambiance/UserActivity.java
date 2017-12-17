@@ -44,7 +44,10 @@ public class UserActivity extends AppCompatActivity{
             prenom_user.setText(u.getPrenom());
             pseudo.setText(u.getPseudo());
             mail.setText(u.getEmail());
-//            datecreation.setText(u.getDate_cree().toString());
+            if (!(u.getDate_cree()==null)){
+                datecreation.setText(u.getDate_cree().toString());
+            }
+
         }
 
 

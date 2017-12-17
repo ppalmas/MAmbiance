@@ -1,8 +1,14 @@
 package org.fasol.mambiance;
 
+import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -21,15 +27,23 @@ import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.OverlayItem;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.security.AccessController;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import okhttp3.Call;
+import okhttp3.Callback;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+import okhttp3.ResponseBody;
 
 import static org.fasol.mambiance.MainActivity.datasource;
 
@@ -52,6 +66,9 @@ public class MapMarkerActivityAll extends AppCompatActivity {
     private MyLocationNewOverlay mLocationOverlay;
 
     private ArrayList<OverlayItem> mMarkerOverlay;
+
+    private static final int PERMISSIONS_REQUEST_FINE_LOCATION = 0;
+    private static final int PERMISSIONS_REQUEST_COARSE_LOCATION = 0;
 
 
 
@@ -84,12 +101,15 @@ public class MapMarkerActivityAll extends AppCompatActivity {
 
         //Affichage marqueurs enregistré dans la BDD
         mMarkerOverlay=new ArrayList<OverlayItem>();
-        ArrayList<Long> l_marqueurId = new ArrayList<Long>();
+        final ArrayList<Long> l_marqueurId = new ArrayList<Long>();
 
+        //Requête serveur (GET)
         OkHttpClient client = new OkHttpClient();
-        ArrayList<HashMap<String, String>> markersList = new ArrayList<>();
+        final ArrayList<HashMap<String, String>> markersList = new ArrayList<>();
 
-        MediaType mediaType = MediaType.parse("application/x-www-form-urlencoded");
+        //Récupération des données sous format JSON
+        MediaType mediaType = MediaType.parse("application/json");
+        //Création de la requête GET
         Request request = new Request.Builder()
                 .url("http://95.85.32.82/mambiance/v1/marqueur/all")
                 .get()
@@ -99,92 +119,110 @@ public class MapMarkerActivityAll extends AppCompatActivity {
                 .addHeader("Postman-Token", "cb17b186-7953-eba3-4f79-ac8e495b2550")
                 .build();
 
-        try {
-            Response response = client.newCall(request).execute();
-            //La réponse est au format JSON
-            if (response != null) {
-                try {
-                    //Parsing JSON
-
-                    JSONObject jsonObj = new JSONObject(String.valueOf(response));
-                    // Getting JSON Array node
-                    JSONArray markers = jsonObj.getJSONArray("markers");
-
-                    // looping through All Contacts
-                    for (int i = 0; i < markers.length(); i++) {
-                        JSONObject c = markers.getJSONObject(i);
-
-                        long id = c.getLong("adresse_id");
-                        long latitude = c.getLong("adresse_latitude");
-                        long longitude = c.getLong("adresse_longitude");
-                        String description = c.getString("marqueur_comment");
-                        String nom = c.getString("adresse_nom");
-                        String adresse = c.getString("adresse_numero") + c.getString("adresse_rue") + c.getString("adresse_ville");
-                        String titre;
-                        if (nom.isEmpty()||nom==null){
-                            titre = adresse;
-                        } else {
-                            titre = nom;
-                        }
-                        // tmp hash map for single contact
-                        HashMap<String, String> markersH = new HashMap<>();
-
-                        // adding each child node to HashMap key => value
-                   //     markersH.put("id", id);
-                     //   markersH.put("latitude", latitude);
-                       // markersH.put("longitude", longitude);
-
-                        // adding marker to markers list
-                        markersList.add(markersH);
-                        l_marqueurId.add(id);
-                        mMarkerOverlay.add(new OverlayItem(String.valueOf(id), titre, description, new GeoPoint(latitude, longitude)));
-                    }
-                } catch (final JSONException e) {
-                    Log.e(TAG, "Json parsing error: " + e.getMessage());
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            Toast.makeText(getApplicationContext(),
-                                    "Json parsing error: " + e.getMessage(),
-                                    Toast.LENGTH_LONG)
-                                    .show();
-                        }
-                    });
-
-                }
-            } else {
-                Log.e(TAG, "Couldn't get json from server.");
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(getApplicationContext(),
-                                "Couldn't get json from server. Check LogCat for possible errors!",
-                                Toast.LENGTH_LONG)
-                                .show();
-                    }
-                });
-
+        //Envoi requête
+        client.newCall(request).enqueue(new Callback() {
+            /**
+             * Called when the request could not be executed due to cancellation, a connectivity problem or
+             * timeout. Because networks can fail during an exchange, it is possible that the remote server
+             * accepted the request before the failure.
+             *
+             * @param call
+             * @param e
+             */
+            @Override
+            public void onFailure(Call call, IOException e) {
+                e.printStackTrace();
+                Toast.makeText(getApplicationContext(), "Problème serveur, l'envoi a échoué", Toast.LENGTH_LONG).show();
             }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
 
-        /*datasource.open();
-        Cursor c = datasource.getAllMarkerMap();
-        c.moveToFirst();
-        for(int i=0;i<c.getCount();i++) {
-            l_marqueurId.add(c.getLong(4));
-            mMarkerOverlay.add(new OverlayItem(c.getString(0), c.getString(1), new GeoPoint(c.getFloat(5), c.getFloat(6))));
+            /**
+             * Called when the HTTP response was successfully returned by the remote server. The callback may
+             * proceed to read the response body with {@link Response#body}. The response is still live until
+             * its response body is {@linkplain ResponseBody closed}. The recipient of the callback may
+             * consume the response body on another thread.
+             * <p>
+             * <p>Note that transport-layer success (receiving a HTTP response code, headers and body) does
+             * not necessarily indicate application-layer success: {@code response} may still indicate an
+             * unhappy HTTP response code like 404 or 500.
+             *
+             * @param call
+             * @param response
+             */
 
-            c.moveToNext();
-        }
-        c.close();
-        datasource.close();*/
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                //le retour est effectué dans un thread différent, sinon l'application crashe
+                if (!response.isSuccessful()) {
+                    throw new IOException("Unexpected code " + response);
+                } else {
+                    //Toast.makeText(mMapView.getContext(), response.toString(), Toast.LENGTH_LONG).show();
+                    if (response != null) {
+                        try {
+                            //Parsing JSON
+                            JSONObject jsonObj = new JSONObject(response.body().string());
+                            // Getting JSON Array node
+                            JSONArray markers = jsonObj.getJSONArray("marqueurs");
 
-        MarkerIconOverlay mMarkerIconOverlay = new MarkerIconOverlay(mMarkerOverlay,
-                ContextCompat.getDrawable(getApplicationContext(),R.mipmap.ic_map_marker), this, l_marqueurId);
-        this.mMapView.getOverlays().add(mMarkerIconOverlay);
-        mMapView.invalidate();
+                            // looping through All Contacts
+                            for (int i = 0; i < markers.length(); i++) {
+                                JSONObject c = markers.getJSONObject(i);
+
+                                long id = c.getLong("adresse_id");
+                                String lat = c.getString("localisation_latitude");
+                                String longi = c.getString("localisation_longitude");
+                                float latitude = Float.parseFloat(lat);
+                                float longitude = Float.parseFloat(longi);
+                                String description = c.getString("marqueur_comment");
+                                String nom = c.getString("adresse_nom");
+                                String adresse = c.getString("adresse_numero") + c.getString("adresse_rue") + c.getString("adresse_ville");
+                                String titre;
+                                if (nom.isEmpty()||nom==null){
+                                    titre = adresse;
+                                } else {
+                                    titre = nom;
+                                }
+
+                                HashMap<String, String> markersH = new HashMap<>();
+
+                                markersList.add(markersH);
+                                l_marqueurId.add(id);
+                                mMarkerOverlay.add(new OverlayItem(String.valueOf(id), titre, description, new GeoPoint(latitude, longitude)));
+                            }
+                        } catch (final JSONException e) {
+                            Log.e(TAG, "Json parsing error: " + e.getMessage());
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Toast.makeText(getApplicationContext(),
+                                            "Json parsing error: " + e.getMessage(),
+                                            Toast.LENGTH_LONG)
+                                            .show();
+                                }
+                            });
+
+                        }
+                        //Affichage des marqueurs récupérés
+                        MarkerIconOverlay mMarkerIconOverlay = new MarkerIconOverlay(mMarkerOverlay,
+                                ContextCompat.getDrawable(getApplicationContext(),R.mipmap.ic_map_marker), MapMarkerActivityAll.this, l_marqueurId);
+                        MapMarkerActivityAll.this.mMapView.getOverlays().add(mMarkerIconOverlay);
+                    } else {
+                        Log.e(TAG, "Couldn't get json from server.");
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(getApplicationContext(),
+                                        "Couldn't get json from server. Check LogCat for possible errors!",
+                                        Toast.LENGTH_LONG)
+                                        .show();
+                            }
+                        });
+
+                    }
+                }
+            }
+        });
+
+        MapMarkerActivityAll.this.mMapView.invalidate();
 
         // Rotation gestures
         /*mRotationGestureOverlay = new RotationGestureOverlay(this, mMapView);
@@ -249,7 +287,6 @@ public class MapMarkerActivityAll extends AppCompatActivity {
 
         }
     }
-
 
 }
 

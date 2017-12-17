@@ -38,11 +38,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
-import com.google.gson.Gson;
-import com.google.gson.internal.Streams;
-import com.kosalgeek.asynctask.AsyncResponse;
-import com.kosalgeek.asynctask.PostResponseAsyncTask;
-
 import org.fasol.mambiance.db.Adresse;
 import org.fasol.mambiance.db.Lieu;
 import org.fasol.mambiance.db.Marqueur;
@@ -78,7 +73,7 @@ import static org.fasol.mambiance.MainActivity.datasource;
  * Created by fasol on 18/11/16.
  */
 
-public class EditActivity extends AppCompatActivity implements LocationListener, AsyncResponse {
+public class EditActivity extends AppCompatActivity implements LocationListener {
 
     // liste des caractéristiques possibles
     public final static String[] l_caract = {"Cozy", "Palpitant", "Formel", "Accueillant", "Sécurisant", "Inspirant", "Intime", "Animé",
@@ -131,7 +126,7 @@ public class EditActivity extends AppCompatActivity implements LocationListener,
     // Store the result when asking the user for the location
     private static final int PERMISSIONS_REQUEST_FINE_LOCATION = 0;
     private static final int PERMISSIONS_REQUEST_COARSE_LOCATION = 0;
-    private final OkHttpClient client = new OkHttpClient();
+
 
     // url to get all products list
     private static String url = "http://95.85.32.82/mambiance/v1/marqueur";
@@ -163,8 +158,6 @@ public class EditActivity extends AppCompatActivity implements LocationListener,
         caract1 = (TextView) findViewById(R.id.caract1);
         caract2 = (TextView) findViewById(R.id.caract2);
         caract3 = (TextView) findViewById(R.id.caract3);
-
-
 
         cursor1 = (SeekBar) findViewById(R.id.cursor1);
         cursor2 = (SeekBar) findViewById(R.id.cursor2);
@@ -223,6 +216,7 @@ public class EditActivity extends AppCompatActivity implements LocationListener,
         btn_photo.setOnClickListener(photoListener);
         save.setOnClickListener(saveListener);
 
+        //Permissions
         locationManager = (LocationManager) getSystemService(this.LOCATION_SERVICE);
 //TODO: gérer le problème d'arrêt lorsque l'appli arrive pas à prendre des coordonnées car par allumé etc.
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -246,11 +240,8 @@ public class EditActivity extends AppCompatActivity implements LocationListener,
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
         locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, this);
 
-        Location location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-        //if(location == null) location = locationManager.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER);
-        // Récupérer les précédentes coordonnées n'est pas une bonne solution : proposer de placer la position sur une carte
-        //lat=(float)location.getLatitude();
-        //lng=(float)location.getLongitude();
+
+
         photo_emp ="";
 
 
@@ -287,6 +278,7 @@ public class EditActivity extends AppCompatActivity implements LocationListener,
         @Override
         public void onClick(final View view) {
 
+            //Vérification du formulaire
             if(isFormularyNameCompleted()) {
                 if (isFormularyPhotoCompleted()) {
                     if (isFormularyDescriptionCompleted()) {
@@ -295,13 +287,10 @@ public class EditActivity extends AppCompatActivity implements LocationListener,
                         //Sinon, on demande l'adresse à l'utilisateur
                         if (isInternetOn()){
                             // récupère les adresses possibles de localisation
-
                             try {
                                 Geocoder geocoder = new Geocoder(EditActivity.this);
                                 l_address = geocoder.getFromLocation(EditActivity.this.lat, EditActivity.this.lng, 1);
                                 if (l_address != null && !l_address.isEmpty()) {
-
-
                                     // affiche une fenêtre demandant de valider l'adresse calculée
                                     //Préparation du layout (fichier xml)
                                     LayoutInflater inflater = (LayoutInflater)
@@ -316,10 +305,6 @@ public class EditActivity extends AppCompatActivity implements LocationListener,
                                     builderSingle.setTitle("Adresse calculée");
                                     builderSingle.setMessage(l_address.get(0).getAddressLine(0) + " " +
                                             l_address.get(0).getPostalCode() + " " + l_address.get(0).getLocality());
-                                    //Affichage de l'adresse ET du formulaire qui donne l'adresse : faire test après valider,
-                                    //si les champs sont remplis, alors on valide l'adresse entrée/ Ou 2 boutons ?
-
-
 
                                     // bouton recalculer
                                     builderSingle.setNegativeButton(
@@ -344,28 +329,24 @@ public class EditActivity extends AppCompatActivity implements LocationListener,
                                                     code_postal = ((EditText) custView.findViewById(R.id.a_codepostal)).getText().toString();
                                                     complement = ((EditText) custView.findViewById(R.id.a_complement)).getText().toString();
 
+                                                    //Si le formulaire d'adresse est complété, on vérifie que tous les champs obligatoires sont remplis
+                                                    //Sinon on affiche des messages d'erreurs
                                                     if (isFormularyCompleted(numero, rue, ville, pays)) {
                                                         if (isFormularyAllCompleted(numero, rue, ville, pays)) {
-
 
                                                             EditActivity.this.adresse = finalL_address.get(0).getAddressLine(0) + " " +
                                                                     finalL_address.get(0).getPostalCode() + " " + finalL_address.get(0).getLocality();
 
-
-
+                                                            //Ouverture base de données (LocalDataSource)
                                                             datasource.open();
                                                             long id = datasource.getAdresseById(numero, rue, ville,
                                                                     pays, code_postal);
 
-
-                                                            Gson gson = new Gson();
-                                                            String json;
                                                             String geom = "POINT("+lat+", "+ lng + ")";
                                                             if (id>0) {
                                                                 //On vérifie si l'adresse existe déjà, alors id vaut l'id de l'adresse trouvée
                                                                 address_id = id;
                                                                 Adresse adresse1 = datasource.getAdresseWithId(id);
-                                                                json = gson.toJson(adresse1);
                                                             } else {
                                                                 //SInon, on ajoute l'adresse à la base de données
                                                                 Adresse adresse1 = datasource.createAdresse(site_name.getText().toString(),
@@ -373,128 +354,191 @@ public class EditActivity extends AppCompatActivity implements LocationListener,
                                                                         code_postal, pays, complement,
                                                                         lat, lng);
                                                                 address_id = adresse1.getAdresse_id();
-                                                                json = gson.toJson(adresse1);
 
 
                                                             }
-
-
+                                                            //Notes de la rose des ambiances
                                                             float rose_o = cursor_olfactory.getProgress() / 4.f - 1.f;
                                                             float rose_v = cursor_visual.getProgress() / 4.f - 1.f;
                                                             float rose_t = cursor_thermal.getProgress() / 4.f - 1.f;
                                                             float rose_a = cursor_acoustical.getProgress() / 4.f - 1.f;
 
+                                                            //Création du lieu
                                                             Lieu lieu = datasource.createLieu(lat, lng, address_id);
-                                                            json = gson.toJson(lieu);
                                                             long lieu_id = lieu.getLieu_id();
 
+                                                            //Création du marqueur
                                                             Marqueur marqueur = datasource.createMarqueur(lieu_id, user_id, description.getText().toString());
+                                                            long marqueur_id = marqueur.getMarqueur_id();
                                                             RoseAmbiance rose = datasource.createRoseAmbiance(rose_o, rose_v,
                                                                     rose_t, rose_a, marqueur.getMarqueur_id());
                                                             datasource.createImage(marqueur.getMarqueur_id(), photo_emp);
-                                                            json = gson.toJson(rose);
-
-
-                                                            String jsonMarqueur = "{'adresse_codepostal':" + code_postal + ","
-                                                                    + "'adresse_numero':" + numero + ","
-                                                                    + "'adresse_nom':" + site_name.getText().toString() + ","
-                                                                    + "'adresse_rue':" + rue + ","
-                                                                    + "'adresse_ville':" + rue + ","
-                                                                    + "'adresse_pays':" + pays + ","
-                                                                    + "'adresse_complement':" + complement + ","
-                                                                    + "'adresse_latitude':" + String.valueOf(lat) + ","
-                                                                    + "'adresse_longitude':" + String.valueOf(lng) + ","
-                                                                    + "'adresse_geom':" + geom + ","
-                                                                    + "'rose_o':" + rose_o + ","
-                                                                    + "'rose_t':" + rose_t + ","
-                                                                    + "'rose_v':" + rose_v + ","
-                                                                    + "'rose_a':" + rose_a + ","
-                                                                    + "'localisation_latitude':" + String.valueOf(lat) + ","
-                                                                    + "'localisation_longitude':" + String.valueOf(lng)
-                                                                    + "}";
+                                                            //Définition du marqueur au format json
 
                                                             //Ajout des notes dans la base de données
                                                             datasource.createPossedeNote(cursor1.getProgress(), marqueur.getMarqueur_id(), id1);
                                                             datasource.createPossedeNote(cursor2.getProgress(), marqueur.getMarqueur_id(), id2);
                                                             datasource.createPossedeNote(cursor3.getProgress(), marqueur.getMarqueur_id(), id3);
 
+                                                            String mot1 = datasource.getMotWithId(id1).getMot_libelle();
+                                                            String mot2 = datasource.getMotWithId(id2).getMot_libelle();
+                                                            String mot3 = datasource.getMotWithId(id3).getMot_libelle();
 
                                                             datasource.close();
 
-
-                                                            dialog.dismiss();
-
-                                                            //Deuxième solution avec bibliothèque OkHttp
-                                                            OkHttpClient okHttpClient = new OkHttpClient();
-                                                            MediaType JSON_TYPE = MediaType.parse("application/json; charset=utf-8");
-                                                            String myJson = jsonMarqueur;
-
-                                                            Request myGetRequest = new Request.Builder()
-                                                                    .url(url)
-                                                                    .post(RequestBody.create(JSON_TYPE, myJson))
+                                                            //Envoi au serveur distant
+                                                            MediaType mediaType = MediaType.parse("application/x-www-form-urlencoded");
+                                                            RequestBody body_marqueur = RequestBody.create(mediaType, "adresse_numero=" + numero +
+                                                                    "&adresse_nom=" + site_name.getText().toString() + "&adresse_rue=" +
+                                                                    rue + "&adresse_ville=" + ville + "&adresse_codepostal=" + code_postal +
+                                                                    "&adresse_pays=" + pays + "&adresse_complement=" + complement +
+                                                                    "&adresse_latitude=" + String.valueOf(lat) + "&adresse_longitude="+
+                                                                    String.valueOf(lng) + "&adresse_geom=" + geom +
+                                                                    "&localisation_latitude=" + String.valueOf(lat)+ "&localisation_longitude="
+                                                                    + String.valueOf(lng) + "&rose_o" + rose_o + "=&rose_t" + rose_t+
+                                                                    "=&rose_v=" + rose_v + "&rose_a=" + rose_a);
+                                                            //Création requête
+                                                            Request request_marqueur = new Request.Builder()
+                                                                    .url("http://95.85.32.82/mambiance/v1/marqueur")
+                                                                    .post(body_marqueur)
+                                                                    .addHeader("Content-Type", "application/x-www-form-urlencoded")
+                                                                    .addHeader("Authorization", "12e8a85c14756db4cde7b6919c303377")
+                                                                    .addHeader("Cache-Control", "no-cache")
+                                                                    .addHeader("Postman-Token", "9f68ca7f-7281-0344-2fca-9018c45d65e5")
+                                                                    .build();
+                                                            // On crée une note pour chaque mot et note entrée, pas de vérification si ça existe déjà
+                                                            RequestBody body_note1 = RequestBody.create(mediaType,
+                                                                    "marqueur_id="+ marqueur_id +"&mot_libelle="
+                                                                            + mot1+"&note_value="+cursor1.getProgress());
+                                                            Request request_note1 = new Request.Builder()
+                                                                    .url("http://95.85.32.82/mambiance/v1/note")
+                                                                    .post(body_note1)
+                                                                    .addHeader("Content-Type", "application/x-www-form-urlencoded")
+                                                                    .addHeader("Authorization", "12e8a85c14756db4cde7b6919c303377")
+                                                                    .addHeader("Cache-Control", "no-cache")
+                                                                    .addHeader("Postman-Token", "9f68ca7f-7281-0344-2fca-9018c45d65e5")
+                                                                    .build();
+                                                            RequestBody body_note2 = RequestBody.create(mediaType,
+                                                                    "marqueur_id="+ marqueur_id +"&mot_libelle="
+                                                                            +mot2+"&note_value="+cursor2.getProgress());
+                                                            Request request_note2 = new Request.Builder()
+                                                                    .url("http://95.85.32.82/mambiance/v1/note")
+                                                                    .post(body_note2)
+                                                                    .addHeader("Content-Type", "application/x-www-form-urlencoded")
+                                                                    .addHeader("Authorization", "12e8a85c14756db4cde7b6919c303377")
+                                                                    .addHeader("Cache-Control", "no-cache")
+                                                                    .addHeader("Postman-Token", "9f68ca7f-7281-0344-2fca-9018c45d65e5")
+                                                                    .build();
+                                                            RequestBody body_note3 = RequestBody.create(mediaType,
+                                                                    "marqueur_id="+ marqueur_id +"&mot_libelle="
+                                                                            +mot3+"&note_value="+cursor3.getProgress());
+                                                            Request request_note3 = new Request.Builder()
+                                                                    .url("http://95.85.32.82/mambiance/v1/note")
+                                                                    .post(body_note3)
+                                                                    .addHeader("Content-Type", "application/x-www-form-urlencoded")
+                                                                    .addHeader("Authorization", "12e8a85c14756db4cde7b6919c303377")
+                                                                    .addHeader("Cache-Control", "no-cache")
+                                                                    .addHeader("Postman-Token", "9f68ca7f-7281-0344-2fca-9018c45d65e5")
                                                                     .build();
 
-                                                            //Création de la requête POST
-                                                            okHttpClient.newCall(myGetRequest).enqueue(new Callback() {
+
+
+                                                            OkHttpClient okHttpClient = new OkHttpClient();
+                                                            // appel au serveur de la requête pour créer un marqueur
+                                                            okHttpClient.newCall(request_marqueur).enqueue(new Callback() {
                                                                 /**
-                                                                 * Called when the request could not be executed due to cancellation, a connectivity problem or
-                                                                 * timeout. Because networks can fail during an exchange, it is possible that the remote server
-                                                                 * accepted the request before the failure.
-                                                                 *
+                                                                 * Méthode OnFailure du call
                                                                  * @param call
                                                                  * @param e
                                                                  */
-                                                                @Override
                                                                 public void onFailure(Call call, IOException e) {
                                                                     e.printStackTrace();
                                                                     Toast.makeText(view.getContext(), "Problème serveur, l'envoi a échoué", Toast.LENGTH_LONG).show();
                                                                 }
 
+                                                                @Override
+                                                                public void onResponse(Call call, Response response) throws IOException {
+                                                                    //le retour est effectué dans un thread différent
+                                                                    final String text = response.body().string();
+                                                                    System.out.println(text);
+
+                                                                    runOnUiThread(new Runnable() {
+                                                                        @Override
+                                                                        public void run() {
+                                                                            Toast.makeText(view.getContext(), text, Toast.LENGTH_LONG).show();
+                                                                        }
+                                                                    });
+                                                                }
+                                                            });
+                                                            okHttpClient.newCall(request_note1).enqueue(new Callback() {
                                                                 /**
-                                                                 * Called when the HTTP response was successfully returned by the remote server. The callback may
-                                                                 * proceed to read the response body with {@link Response#body}. The response is still live until
-                                                                 * its response body is {@linkplain ResponseBody closed}. The recipient of the callback may
-                                                                 * consume the response body on another thread.
-                                                                 * <p>
-                                                                 * <p>Note that transport-layer success (receiving a HTTP response code, headers and body) does
-                                                                 * not necessarily indicate application-layer success: {@code response} may still indicate an
-                                                                 * unhappy HTTP response code like 404 or 500.
-                                                                 *
+                                                                 * Méthode OnFailure du call
                                                                  * @param call
-                                                                 * @param response
+                                                                 * @param e
                                                                  */
+                                                                public void onFailure(Call call, IOException e) {
+                                                                    e.printStackTrace();
+                                                                    Toast.makeText(view.getContext(), "Problème serveur, l'envoi a échoué", Toast.LENGTH_LONG).show();
+                                                                }
 
                                                                 @Override
                                                                 public void onResponse(Call call, Response response) throws IOException {
                                                                     //le retour est effectué dans un thread différent
-                                                                    if (!response.isSuccessful()) {
-                                                                        throw new IOException("Unexpected code " + response);
-                                                                    } else {
-                                                                        Toast.makeText(view.getContext(), response.toString(), Toast.LENGTH_LONG).show();
-                                                                    }
+                                                                    final String text = response.body().string();
+                                                                    System.out.println(text);
+
+                                                                    runOnUiThread(new Runnable() {
+                                                                        @Override
+                                                                        public void run() {
+                                                                            Toast.makeText(view.getContext(), text, Toast.LENGTH_LONG).show();
+                                                                        }
+                                                                    });
+                                                                }
+                                                            });
+                                                            okHttpClient.newCall(request_note2).enqueue(new Callback() {
+                                                                public void onFailure(Call call, IOException e) {
+                                                                    e.printStackTrace();
+                                                                    Toast.makeText(view.getContext(), "Problème serveur, l'envoi a échoué", Toast.LENGTH_LONG).show();
+                                                                }
+
+                                                                @Override
+                                                                public void onResponse(Call call, Response response) throws IOException {
+                                                                    //le retour est effectué dans un thread différent
+                                                                    final String text = response.body().string();
+                                                                    System.out.println(text);
+
+                                                                    runOnUiThread(new Runnable() {
+                                                                        @Override
+                                                                        public void run() {
+                                                                            Toast.makeText(view.getContext(), text, Toast.LENGTH_LONG).show();
+                                                                        }
+                                                                    });
+                                                                }
+                                                            });
+                                                            okHttpClient.newCall(request_note3).enqueue(new Callback() {
+                                                                public void onFailure(Call call, IOException e) {
+                                                                    e.printStackTrace();
+                                                                    Toast.makeText(view.getContext(), "Problème serveur, l'envoi a échoué", Toast.LENGTH_LONG).show();
+                                                                }
+
+                                                                @Override
+                                                                public void onResponse(Call call, Response response) throws IOException {
+                                                                    //le retour est effectué dans un thread différent
+                                                                    final String text = response.body().string();
+                                                                    System.out.println(text);
+
+                                                                    runOnUiThread(new Runnable() {
+                                                                        @Override
+                                                                        public void run() {
+                                                                            Toast.makeText(view.getContext(), text, Toast.LENGTH_LONG).show();
+                                                                        }
+                                                                    });
                                                                 }
                                                             });
 
-                                                            //Première solution avec bibliothèque
-                                                      /**      HashMap postData = new HashMap();
-                                                            postData.put("adresse_codepostal", "test");
-                                                            postData.put("adresse_complement", "test");
-                                                            postData.put("adresse_geom", geom);
-                                                            postData.put("adresse_latitude", String.valueOf(lat));
-                                                            postData.put("adresse_longitude", String.valueOf(lng));
-                                                            postData.put("adresse_nom", site_name.getText().toString());
-                                                            postData.put("adresse_numero", numero);
-                                                            postData.put("adresse_pays", pays);
-                                                            postData.put("adresse_rue", rue);
-                                                            postData.put("adresse_ville", ville);
-                                                            postData.put("localisation_latitude", String.valueOf(lat));
-                                                            postData.put("localisation_longitude", String.valueOf(lng));
-                                                            postData.put("rose_o", String.valueOf(rose_o));
-                                                            postData.put("rose_v", String.valueOf(rose_v));
-                                                            postData.put("rose_t", String.valueOf(rose_t));
-                                                            postData.put("rose_a", String.valueOf(rose_a));
-                                                            PostResponseAsyncTask task = new PostResponseAsyncTask(EditActivity.this, postData);
-                                                            task.execute("http://95.85.32.82/mambiance/");**/
+
+                                                            dialog.dismiss();
+
                                                             Toast.makeText(view.getContext(), "Enregistrement de l'adresse entrée effectué !", Toast.LENGTH_LONG).show();
 
                                                             finish(); //pour finir l'activité, l'enlever, et revenir à l'activité d'avant
@@ -527,8 +571,6 @@ public class EditActivity extends AppCompatActivity implements LocationListener,
                                                                     lat, lng);
                                                             address_id = adresse.getAdresse_id();
                                                         }
-                                                        //TODO vérifier que même si l'adresse n'existe pas, un lieu commun existe
-                                                        // et alors lat et long sont les latitudes et longitudes du lieu commun (type une place)
                                                         //Création du lieu
                                                         Lieu lieu = datasource.createLieu(lat, lng, address_id);
                                                         long lieu_id = lieu.getLieu_id();
@@ -550,12 +592,9 @@ public class EditActivity extends AppCompatActivity implements LocationListener,
                                                         datasource.createPossedeNote(cursor2.getProgress(), marqueur.getMarqueur_id(), id2);
                                                         datasource.createPossedeNote(cursor3.getProgress(), marqueur.getMarqueur_id(), id3);
                                                         datasource.close();
-                                                        //Envoi au serveur distant
-                                                        Gson g = new Gson();
+
                                                         String geom = "POINT("+lat+", "+ lng + ")";
-
-
-
+                                                        //Envoi au serveur distant
                                                         MediaType mediaType = MediaType.parse("application/x-www-form-urlencoded");
                                                         RequestBody body_marqueur = RequestBody.create(mediaType, "adresse_numero=" + numero +
                                                                 "&adresse_nom=" + site_name.getText().toString() + "&adresse_rue=" +
@@ -575,7 +614,6 @@ public class EditActivity extends AppCompatActivity implements LocationListener,
                                                                 .addHeader("Postman-Token", "9f68ca7f-7281-0344-2fca-9018c45d65e5")
                                                                 .build();
                                                         // On crée une note pour chaque mot et note entrée, pas de vérification si ça existe déjà
-                                                        //TODO
                                                         RequestBody body_note1 = RequestBody.create(mediaType,
                                                                 "marqueur_id="+ marqueur_id +"&mot_libelle="
                                                                         + mot1+"&note_value="+cursor1.getProgress());
@@ -609,18 +647,6 @@ public class EditActivity extends AppCompatActivity implements LocationListener,
                                                                 .addHeader("Cache-Control", "no-cache")
                                                                 .addHeader("Postman-Token", "9f68ca7f-7281-0344-2fca-9018c45d65e5")
                                                                 .build();
-                                                        RequestBody body_photo = RequestBody.create(mediaType,
-                                                                "marqueur_id="+ marqueur_id +"&mot_libelle="
-                                                                        +mot3+"&note_value="+cursor3.getProgress());
-                                                        Request request_photo = new Request.Builder()
-                                                                .url("http://95.85.32.82/mambiance/v1/note")
-                                                                .post(body_note3)
-                                                                .addHeader("Content-Type", "application/x-www-form-urlencoded")
-                                                                .addHeader("Authorization", "12e8a85c14756db4cde7b6919c303377")
-                                                                .addHeader("Cache-Control", "no-cache")
-                                                                .addHeader("Postman-Token", "9f68ca7f-7281-0344-2fca-9018c45d65e5")
-                                                                .build();
-
 
                                                         OkHttpClient okHttpClient = new OkHttpClient();
                                                         // appel au serveur de la requête pour créer un marqueur
@@ -704,52 +730,9 @@ public class EditActivity extends AppCompatActivity implements LocationListener,
                                                                 });
                                                             }
                                                         });
-                                                        okHttpClient.newCall(request_photo).enqueue(new Callback() {
-                                                            public void onFailure(Call call, IOException e) {
-                                                                e.printStackTrace();
-                                                                Toast.makeText(view.getContext(), "Problème serveur, l'envoi a échoué", Toast.LENGTH_LONG).show();
-                                                            }
-
-                                                            @Override
-                                                            public void onResponse(Call call, Response response) throws IOException {
-                                                                //le retour est effectué dans un thread différent
-                                                                final String text = response.body().string();
-                                                                System.out.println(text);
-
-                                                                runOnUiThread(new Runnable() {
-                                                                    @Override
-                                                                    public void run() {
-                                                                        Toast.makeText(view.getContext(), text, Toast.LENGTH_LONG).show();
-                                                                    }
-                                                                });
-                                                            }
-                                                        });
-
 
                                                         dialog.dismiss();
-
-    /**                                                    HashMap postData = new HashMap();
-                                                        postData.put("adresse_codepostal", "test");
-                                                        postData.put("adresse_complement", "test");
-                                                        postData.put("adresse_geom", geom);
-                                                       // postData.put("adresse_id", String.valueOf(address_id));
-                                                        postData.put("adresse_latitude", String.valueOf(lat));
-                                                        postData.put("adresse_longitude", String.valueOf(lng));
-                                                        postData.put("adresse_nom", site_name.getText().toString());
-                                                        postData.put("adresse_numero", numero);
-                                                        postData.put("adresse_pays", pays);
-                                                        postData.put("adresse_rue", rue);
-                                                        postData.put("adresse_ville", ville);
-                                                       // postData.put("localisation_id", String.valueOf(lieu_id));
-                                                        postData.put("localisation_latitude", String.valueOf(lat));
-                                                        postData.put("localisation_longitude", String.valueOf(lng));
-                                                        postData.put("rose_o", String.valueOf(rose_o));
-                                                        postData.put("rose_v", String.valueOf(rose_v));
-                                                        postData.put("rose_t", String.valueOf(rose_t));
-                                                        postData.put("rose_a", String.valueOf(rose_a));
-                                                        PostResponseAsyncTask task = new PostResponseAsyncTask(EditActivity.this, postData);
-                                                        task.execute("http://95.85.32.82/mambiance/v1/marqueur/");*/
-
+                                                        
                                                         Toast.makeText(view.getContext(), "Enregistrement de l'adresse calculée effectué !", Toast.LENGTH_LONG).show();
 
                                                         finish(); //pour finir l'activité, l'enlever, et revenir à l'activité d'avant
@@ -786,7 +769,7 @@ public class EditActivity extends AppCompatActivity implements LocationListener,
 
 
                     }else {
-                        Toast.makeText(view.getContext(),"Veuillez ajouter une description de trois mots.",Toast.LENGTH_LONG).show();
+                        Toast.makeText(view.getContext(),"Veuillez ajouter une description.",Toast.LENGTH_LONG).show();
                     }
                 } else {
                     Toast.makeText(view.getContext(), "Veuillez ajouter une photo.", Toast.LENGTH_LONG).show();
@@ -1036,15 +1019,6 @@ public class EditActivity extends AppCompatActivity implements LocationListener,
         }
         return bool;
     }
-
-
-    @Override
-    public void processFinish(String result) {
-        Toast.makeText(EditActivity.this, result, Toast.LENGTH_LONG).show();
-    }
-
-
-
 
 }
 

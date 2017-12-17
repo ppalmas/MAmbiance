@@ -1042,7 +1042,7 @@ public class LocalDataSource {
      * @param mot_id
      * @param note_val
      * @param marqueur_id
-     * @return Curseur is the created Curseur
+     * @return PosedeNote is the created Note
      */
     public PossedeNote createPossedeNote(int note_val, long marqueur_id, long mot_id) {
         ContentValues values = new ContentValues();
@@ -1099,7 +1099,7 @@ public class LocalDataSource {
 
 
     /**
-     * convert a cursor to a Curseur
+     * convert a cursor to a Note(PossedeNote)
      *
      * @param cursor
      * @return PossedeNote

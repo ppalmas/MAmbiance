@@ -16,7 +16,6 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
     public static final String TABLE_POSSEDENOTE = "PossedeNote";
     public static final String TABLE_UTILISATEUR = "Utilisateur";
     public static final String TABLE_ADRESSE = "Adresse";
-    public static final String TABLE_CURSEUR = "Curseur";
     public static final String TABLE_MOT = "Mot";
     public static final String TABLE_IMAGE = "Image";
     public static final String TABLE_ROSEAMBIANCE = "Rose_ambiance";
@@ -37,13 +36,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
     public static String getTableLieu() {
         return TABLE_LIEU;
     }
-    /**
-     * get the name of Table Curseur
-     * @return String which is the name of table curseur
-     */
-    public static String getTableCurseur() {
-        return TABLE_CURSEUR;
-    }
+
     /**
      * get the name of Table Mot
      * @return String which is the name of table mot
@@ -328,7 +321,6 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_MARQUEUR + ";");
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_ROSEAMBIANCE + ";");
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_IMAGE + ";");
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_CURSEUR + ";");
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_MOT + "; ");
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_POSSEDENOTE + "; ");
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_UTILISATEUR + "; ");

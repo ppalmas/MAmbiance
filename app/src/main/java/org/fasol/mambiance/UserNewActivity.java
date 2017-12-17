@@ -35,7 +35,6 @@ public class UserNewActivity extends AppCompatActivity {
     private String prenom;
     private String email;
     private String mdp;
-    private String hashMdp;
     private String pseudo;
 
     private EditText u_nom;

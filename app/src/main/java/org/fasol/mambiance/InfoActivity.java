@@ -10,6 +10,10 @@ import android.view.MenuItem;
 public class InfoActivity extends AppCompatActivity {
 
 
+    /**
+     * Méthode création de l'instance
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

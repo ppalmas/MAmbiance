@@ -103,6 +103,7 @@ public class DisplayMarkerActivity extends AppCompatActivity {
         Bundle bundle = getIntent().getExtras();
         long marqueur_id = bundle.getLong("marqueur_id_select");
 
+
         // Récupère les objets liés au marqueur
         datasource.open();
 

@@ -43,6 +43,7 @@ public class MapMarkerActivity extends AppCompatActivity{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
+        //Utilisation de OSM
         org.osmdroid.tileprovider.constants.OpenStreetMapTileProviderConstants.setUserAgentValue(BuildConfig.APPLICATION_ID);
 
         org.osmdroid.tileprovider.constants.OpenStreetMapTileProviderConstants.setCachePath(this.getFilesDir().getAbsolutePath());
@@ -71,6 +72,7 @@ public class MapMarkerActivity extends AppCompatActivity{
         mMarkerOverlay=new ArrayList<OverlayItem>();
         ArrayList<Long> l_marqueurId = new ArrayList<Long>();
 
+        //Récupération des marqueurs
         datasource.open();
         Cursor c = datasource.getAllMarkerMap();
         c.moveToFirst();
@@ -82,6 +84,7 @@ public class MapMarkerActivity extends AppCompatActivity{
         c.close();
         datasource.close();
 
+        //Affichage
         MarkerIconOverlay mMarkerIconOverlay = new MarkerIconOverlay(mMarkerOverlay,
                 ContextCompat.getDrawable(getApplicationContext(),R.mipmap.ic_map_marker), this, l_marqueurId);
         this.mMapView.getOverlays().add(mMarkerIconOverlay);
@@ -135,10 +138,12 @@ public class MapMarkerActivity extends AppCompatActivity{
 
         switch (item.getItemId()) {
             case R.id.home:
+                finish();
                 intent = new Intent(this, MainActivity.class);
                 startActivity(intent);
                 return true;
             case R.id.allmarkers:
+                finish();
                 intent = new Intent(this, MapMarkerActivityAll.class);
                 startActivity(intent);
                 return true;

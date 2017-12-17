@@ -24,26 +24,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         datasource = new LocalDataSource(this);
-        datasource.open();
-
-        // drop tables et test ajout dans la BDD
-        /*datasource.clearLieu();
-        datasource.clearMarqueur();
-        datasource.clearCurseur();
-        datasource.clearImage();
-        datasource.clearMot();
-        datasource.clearRoseAmbiance();
-
-        /*Lieu lieu = datasource.createLieu("Parc à touristes","3 rue du trottoir 95000 PARIS",48.856667f,2.350833f);
-        Marqueur marqueur = datasource.createMarqueur(lieu.getLieu_id());
-        RoseAmbiance rose = datasource.createRoseAmbiance(.5f,-1.f,.25f,.0f,marqueur.getMarqueur_id());
-        Image image = datasource.createImage(marqueur.getMarqueur_id(), "drawable://parc_photo");
-        Mot mot = datasource.createMot("pouet",marqueur.getMarqueur_id());
-        Curseur c1 = datasource.createCurseur("Cozy", 2, marqueur.getMarqueur_id());
-        Curseur c2 = datasource.createCurseur("Palpitant", 5, marqueur.getMarqueur_id());
-        Curseur c3 = datasource.createCurseur("Formel", 8, marqueur.getMarqueur_id());*/
-
-        datasource.close();
 
         btn_user=(ImageButton)findViewById(R.id.btn_user);
         btn_edit=(ImageButton)findViewById(R.id.btn_edit);
@@ -101,6 +81,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v){
                 datasource.open();
+                //Si aucun utilisateur n'est enregistré dans la base locale, on lance l'activité NouvelUtilisateur
                 if (datasource.getUser0()==-2){
                     Intent secondeActiv = new Intent(MainActivity.this, UserNewActivity.class);
 
