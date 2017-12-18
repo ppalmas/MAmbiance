@@ -80,58 +80,62 @@ public class UserNewActivity extends AppCompatActivity {
         @Override
         public void onClick(final View view) {
             if (isFormularyCompleted(u_pseudo, u_mdp, u_mdp2, u_email)){
-                if (isMdpEqual(u_mdp, u_mdp2)){
-                    if (email_valid(u_email)) {
-                        nom = u_nom.getText().toString();
-                        prenom = u_prenom.getText().toString();
-                        email = u_email.getText().toString();
-                        mdp = u_mdp.getText().toString();
-                        pseudo = u_pseudo.getText().toString();
-                        datasource.open();
-                        datasource.createUtilisateur(nom, prenom, mdp, "254b34604b2f943b01d5e8f9df02fe27", pseudo, email, 0);
-                        datasource.close();
-                        //Envoi au serveur distant
-                        OkHttpClient client = new OkHttpClient();
-                        //Création de la requête
-                        MediaType mediaType = MediaType.parse("application/x-www-form-urlencoded");
-                        RequestBody body = RequestBody.create(mediaType, "pseudo=" + pseudo + "&password=" + mdp + "&email=" +
-                                email + "&nom=" + nom + "&prenom=" + prenom);
-                        Request request = new Request.Builder()
-                                .url("http://95.85.32.82/mambiance/v1/register")
-                                .post(body)
-                                .addHeader("Content-Type", "application/x-www-form-urlencoded")
-                                .addHeader("Cache-Control", "no-cache")
-                                .addHeader("Postman-Token", "3fa60859-6dd0-9e78-d6ac-d64aa9a65c99")
-                                .build();
+                if (isMdpLength(u_mdp, u_mdp2)) {
+                    if (isMdpEqual(u_mdp, u_mdp2)) {
+                        if (email_valid(u_email)) {
+                            nom = u_nom.getText().toString();
+                            prenom = u_prenom.getText().toString();
+                            email = u_email.getText().toString();
+                            mdp = u_mdp.getText().toString();
+                            pseudo = u_pseudo.getText().toString();
+                            datasource.open();
+                            datasource.createUtilisateur(nom, prenom, mdp, "254b34604b2f943b01d5e8f9df02fe27", pseudo, email, 0);
+                            datasource.close();
+                            //Envoi au serveur distant
+                            OkHttpClient client = new OkHttpClient();
+                            //Création de la requête
+                            MediaType mediaType = MediaType.parse("application/x-www-form-urlencoded");
+                            RequestBody body = RequestBody.create(mediaType, "pseudo=" + pseudo + "&password=" + mdp + "&email=" +
+                                    email + "&nom=" + nom + "&prenom=" + prenom);
+                            Request request = new Request.Builder()
+                                    .url("http://95.85.32.82/mambiance/v1/register")
+                                    .post(body)
+                                    .addHeader("Content-Type", "application/x-www-form-urlencoded")
+                                    .addHeader("Cache-Control", "no-cache")
+                                    .addHeader("Postman-Token", "3fa60859-6dd0-9e78-d6ac-d64aa9a65c99")
+                                    .build();
 
-                        //Envoi de la requête
-                        client.newCall(request).enqueue(new Callback() {
-                            public void onFailure(Call call, IOException e) {
-                                e.printStackTrace();
-                                Toast.makeText(view.getContext(), "Problème serveur, l'envoi a échoué", Toast.LENGTH_LONG).show();
-                            }
+                            //Envoi de la requête
+                            client.newCall(request).enqueue(new Callback() {
+                                public void onFailure(Call call, IOException e) {
+                                    e.printStackTrace();
+                                    Toast.makeText(view.getContext(), "Problème serveur, l'envoi a échoué", Toast.LENGTH_LONG).show();
+                                }
 
-                            @Override
-                            public void onResponse(Call call, Response response) throws IOException {
-                                //le retour est effectué dans un thread différent
-                                final String text = response.body().string();
-                                System.out.println(text);
+                                @Override
+                                public void onResponse(Call call, Response response) throws IOException {
+                                    //le retour est effectué dans un thread différent
+                                    final String text = response.body().string();
+                                    System.out.println(text);
 
-                                runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        Toast.makeText(view.getContext(), text, Toast.LENGTH_LONG).show();
-                                    }
-                                });
-                            }
-                        });
+                                    runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            Toast.makeText(view.getContext(), text, Toast.LENGTH_LONG).show();
+                                        }
+                                    });
+                                }
+                            });
 
-                        finish();
+                            finish();
+                        } else {
+                            Toast.makeText(view.getContext(), "Attention, veuillez entrer un email valide.", Toast.LENGTH_LONG).show();
+                        }
                     } else {
-                        Toast.makeText(view.getContext(),"Attention, veuillez entrer un email valide.",Toast.LENGTH_LONG).show();
+                        Toast.makeText(view.getContext(), "Attention, les mots de passe sont différents.", Toast.LENGTH_LONG).show();
                     }
                 } else {
-                    Toast.makeText(view.getContext(),"Attention, les mots de passe sont différents.",Toast.LENGTH_LONG).show();
+                    Toast.makeText(view.getContext(), "Veuillez entrer un mot de passe de 6 caractères minimum.", Toast.LENGTH_LONG).show();
                 }
             } else {
                 Toast.makeText(view.getContext(),"Attention, veuillez remplir toutes les cases obligatoires (*).",Toast.LENGTH_LONG).show();
@@ -191,6 +195,21 @@ public class UserNewActivity extends AppCompatActivity {
         String m = mdp.getText().toString();
         String m2 = mdp2.getText().toString();
         return (m.equals(m2));
+    }
+
+    /**
+     * Vérifie que la longueur du mot de passe est supérieure à 5 caractères.
+     * @param mdp
+     * @param mdp2
+     * @return
+     */
+    public boolean isMdpLength (EditText mdp, EditText mdp2) {
+        if (mdp.length() < 6) {
+            return false;
+        } else {
+            return true;
+
+        }
     }
 
     /**

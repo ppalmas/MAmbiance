@@ -30,7 +30,9 @@ public class LocalDataSource {
      */
     private MySQLiteHelper dbHelper;
 
-    //TODO Adddescription for javadoc
+    /**
+     * Définition des String allColumnsX avec X Table : définition d'un string comportant toutes les colonnes d'une table
+     */
     private String[] allColumnsMarqueur = {MySQLiteHelper.COLUMN_ID, MySQLiteHelper.COLUMN_DATECREATION, MySQLiteHelper.COLUMN_LIEUID,
             MySQLiteHelper.COLUMN_DESCRIPTION, MySQLiteHelper.COLUMN_USERID};
     private String[] allColumnsImage = {MySQLiteHelper.COLUMN_ID, MySQLiteHelper.COLUMN_IMAGEEMP, MySQLiteHelper.COLUMN_MARQUEURID};
@@ -953,11 +955,10 @@ public class LocalDataSource {
         values.put(MySQLiteHelper.COLUMN_PSEUDO, pseudo);
         values.put(MySQLiteHelper.COLUMN_STATUT, statut);
         values.put(MySQLiteHelper.COLUMN_CLEAPI, cleapi);
-//TODO date ne fonctionne pas
-
 
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date dateMnt = new Date(System.currentTimeMillis());
+        String dateMntConv = dateFormat.format(dateMnt);
         values.put(MySQLiteHelper.COLUMN_DATECREE, dateFormat.format(dateMnt));
 
         long insertId = database.insert(MySQLiteHelper.TABLE_UTILISATEUR, null, values);
@@ -992,7 +993,9 @@ public class LocalDataSource {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
         Date dateCreation = null;
         try {
-            dateCreation = dateFormat.parse(cursor.getString(1));
+            dateCreation = dateFormat.parse(cursor.getString(8));
+            String a = cursor.getString(8);
+            Date ab = dateFormat.parse(a);
         } catch (ParseException e) {
             e.printStackTrace();
         }

@@ -143,7 +143,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
      * upgrading the version force the database to be deleted and recreated
      */
     public static final String DATABASE_NAME = "local.db";
-    public static final int DATABASE_VERSION = 15;
+    public static final int DATABASE_VERSION = 16;
 
 
     /**
@@ -169,7 +169,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
             + COLUMN_PSEUDO + " text not null, "
             + COLUMN_STATUT + " INTEGER, "
             + COLUMN_CLEAPI + " text not null, "
-            + COLUMN_DATECREE + " TIMESTAMP " //TODO VERIFIER
+            + COLUMN_DATECREE + " DATE "
             + "); ";
 
     /**

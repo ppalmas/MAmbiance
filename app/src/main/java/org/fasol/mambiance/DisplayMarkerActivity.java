@@ -26,7 +26,7 @@ import static org.fasol.mambiance.MainActivity.datasource;
 
 
 public class DisplayMarkerActivity extends AppCompatActivity {
-//TODO interface
+
     // Champs à remplir
     private TextView site_name;
     private TextView description;

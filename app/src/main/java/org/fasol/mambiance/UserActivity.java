@@ -2,6 +2,7 @@ package org.fasol.mambiance;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.text.format.DateFormat;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.widget.EditText;
@@ -45,7 +46,7 @@ public class UserActivity extends AppCompatActivity{
             pseudo.setText(u.getPseudo());
             mail.setText(u.getEmail());
             if (!(u.getDate_cree()==null)){
-                datecreation.setText(u.getDate_cree().toString());
+                datecreation.setText(DateFormat.format("dd/MM/yyyy - HH:mm:ss", u.getDate_cree()));
             }
 
         }

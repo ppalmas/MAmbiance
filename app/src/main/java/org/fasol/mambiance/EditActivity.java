@@ -732,7 +732,7 @@ public class EditActivity extends AppCompatActivity implements LocationListener 
                                                         });
 
                                                         dialog.dismiss();
-                                                        
+
                                                         Toast.makeText(view.getContext(), "Enregistrement de l'adresse calculée effectué !", Toast.LENGTH_LONG).show();
 
                                                         finish(); //pour finir l'activité, l'enlever, et revenir à l'activité d'avant

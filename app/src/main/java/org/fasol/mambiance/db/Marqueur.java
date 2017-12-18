@@ -6,8 +6,7 @@ import android.content.ContentValues;
 
 public class Marqueur extends DataObject {
 
-	//TODO Ajout utilsiateur_id
-	//TODO ajout description ?
+
 	//Attributes
 	/**
 	 * long id of the object marqueur
@@ -123,13 +122,6 @@ public class Marqueur extends DataObject {
 	public void saveToLocal(LocalDataSource datasource) {
 		ContentValues values = new ContentValues();
 
-		//Cursor cursor = datasource.getDatabase().rawQuery(GETMAXMARQUEURID, null);
-		//cursor.moveToFirst();
-
-		//this.setMarqueur_id(1+cursor.getLong(0));
-		//TODO WTF	this.setMarqueur_id(Sync.getMaxId().get("Marqueur")+1);
-
-		//values.put(MySQLiteHelper.COLUMN_MARQUEURID, this.marqueur_id);
 		values.put(MySQLiteHelper.COLUMN_LIEUID, this.lieu_id);
 		values.put(MySQLiteHelper.COLUMN_DATECREATION, this.date_creation.toString());
 		values.put(MySQLiteHelper.COLUMN_DESCRIPTION, this.description.toString());
