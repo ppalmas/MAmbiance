@@ -20,7 +20,7 @@
         android:layout_marginLeft="8dp"
         android:layout_marginTop="5dp"
         android:layout_marginBottom="5dp"
-        android:text="Addresse associée ?"
+        android:text="@string/address_title"
         android:textSize="24sp"
         tools:text="Addresse associée ?" />
 
@@ -36,7 +36,7 @@
             android:layout_width="161dp"
             android:layout_height="wrap_content"
             android:layout_weight="0.2"
-            android:text="Numéro *" />
+            android:text="@string/ad_num" />
 
         <EditText
             android:id="@+id/a_numero"
@@ -58,7 +58,7 @@
             android:layout_width="161dp"
             android:layout_height="wrap_content"
             android:layout_weight="0.2"
-            android:text="Rue *" />
+            android:text="@string/ad_street" />
 
         <EditText
             android:id="@+id/a_rue"
@@ -80,7 +80,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="0.2"
             android:layout_marginLeft="2dp"
-            android:text="Ville *" />
+            android:text="@string/ad_city" />
 
         <EditText
             android:id="@+id/a_ville"
@@ -104,7 +104,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="0.2"
             android:layout_marginLeft="2dp"
-            android:text="Code Postal" />
+            android:text="@string/ad_postalcode" />
 
         <EditText
             android:id="@+id/a_codepostal"
@@ -128,7 +128,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="0.2"
             android:layout_marginLeft="2dp"
-            android:text="Pays *" />
+            android:text="@string/ad_country" />
 
         <EditText
             android:id="@+id/a_pays"
@@ -150,7 +150,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="0.2"
             android:layout_marginLeft="2dp"
-            android:text="Complément d'adresse" />
+            android:text="@string/ad_compl" />
 
         <EditText
             android:id="@+id/a_complement"

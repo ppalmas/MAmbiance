@@ -17,9 +17,8 @@
         android:layout_marginLeft="8dp"
         android:layout_marginTop="5dp"
         android:layout_marginBottom="5dp"
-        android:text="Nouvel utilisateur"
-        android:textSize="24sp"
-        tools:text="Nouvel utilisateur" />
+        android:text="@string/newuser"
+        android:textSize="24sp" />
 
 
     <LinearLayout
@@ -33,7 +32,7 @@
             android:layout_width="133dp"
             android:layout_height="wrap_content"
             android:layout_weight="0"
-            android:text="Nom" />
+            android:text="@string/newuser_name" />
 
         <EditText
             android:id="@+id/a_nom"
@@ -55,7 +54,7 @@
             android:layout_width="133dp"
             android:layout_height="wrap_content"
             android:layout_weight="0"
-            android:text="Prenom" />
+            android:text="@string/newuser_surname" />
 
         <EditText
             android:id="@+id/a_prenom"
@@ -77,7 +76,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="0"
             android:layout_marginLeft="0dp"
-            android:text="Mail *" />
+            android:text="@string/newuser_email" />
 
         <EditText
             android:id="@+id/a_mail"
@@ -101,7 +100,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="0"
             android:layout_marginLeft="0dp"
-            android:text="Pseudonyme *" />
+            android:text="@string/newuser_pseudo" />
 
         <EditText
             android:id="@+id/a_pseudo"
@@ -125,7 +124,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="0"
             android:layout_marginLeft="0dp"
-            android:text="Mot de passe *" />
+            android:text="@string/newuser_mdp" />
 
         <EditText
             android:inputType="textVisiblePassword"
@@ -149,7 +148,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="0"
             android:layout_marginLeft="2dp"
-            android:text="Confirmation du mot de passe *" />
+            android:text="@string/newuser_mdp2" />
 
         <EditText
             android:inputType="textVisiblePassword"
@@ -170,7 +169,7 @@
         android:id="@+id/button_save"
         android:layout_width="160dp"
         android:layout_height="wrap_content"
-        android:text="Enregistrer"
+        android:text="@string/save"
         android:layout_gravity="center_horizontal"/>
 
 

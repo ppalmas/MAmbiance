@@ -207,7 +207,8 @@ public class DisplayMarkerActivityAll extends AppCompatActivity {
                                 // Affichage des données dans les champs
                                 site_name.setText(markerList.get(1));
                                 description.setText(markerList.get(0));
-                                date.setText(DateFormat.format("dd/MM/yyyy - HH:mm:ss",marqueur.getDate_creation()));
+
+                              //date.setText(DateFormat.format("dd/MM/yyyy - HH:mm:ss",marqueur.getDate_creation()));
 
 
                                 for (int i=2;i<6;i++) {

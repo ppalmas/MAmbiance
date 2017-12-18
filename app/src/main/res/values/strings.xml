@@ -13,4 +13,27 @@
         Le projet a été encadré par Myriam SERVIERES et Vincent TOURRE enseignants de l'option Informatique à l'Ecole Centrale de Nantes.\n\n\n
         La première version de l'application a été réalisé par Abdelghafour BENKASSMI et Flore MASSOULLIE."
         </string>
+
+    <!--Strings for New User Activity-->
+    <string name="newuser">Nouvel Utilisateur</string>
+    <string name="newuser_surname">Prénom</string>
+    <string name="newuser_name">Nom</string>
+    <string name="newuser_email">Email *</string>
+    <string name="newuser_mdp">Mot de passe *</string>
+    <string name="newuser_mdp2">Confirmation du mot de passe *</string>
+    <string name="newuser_pseudo">Pseudonyme *</string>
+
+    <!--Strings for Profile Activity of User-->
+    <string name="user_email">Email</string>
+    <string name="user_pseudo">Pseudonyme</string>
+    <string name="user_profile">Profil de l\'utilisateur</string>
+
+    <!--Strings for the Popup address-->
+    <string name="address_title">Adresse associée ?</string>
+    <string name="ad_num">Numéro *</string>
+    <string name="ad_street">Rue *</string>
+    <string name="ad_city">Ville *</string>
+    <string name="ad_postalcode">Code Postal</string>
+    <string name="ad_country">Pays *</string>
+    <string name="ad_compl">Complément d'adresse</string>
 </resources>

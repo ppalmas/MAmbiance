@@ -17,9 +17,8 @@
         android:layout_marginLeft="8dp"
         android:layout_marginTop="5dp"
         android:layout_marginBottom="5dp"
-        android:text="Profil de l'utilisateur"
-        android:textSize="24sp"
-        tools:text="Profil de l'utilisateur" />
+        android:text="@string/user_profile"
+        android:textSize="24sp" />
 
 
     <LinearLayout
@@ -32,7 +31,7 @@
             android:id="@+id/text_nom"
             android:layout_width="133dp"
             android:layout_height="wrap_content"
-            android:text="Nom" />
+            android:text="@string/newuser_name" />
 
         <EditText
             android:id="@+id/a_nom"
@@ -52,7 +51,7 @@
             android:id="@+id/text_prenom"
             android:layout_width="133dp"
             android:layout_height="wrap_content"
-            android:text="Prenom" />
+            android:text="@string/newuser_surname" />
 
         <EditText
             android:id="@+id/a_prenom"
@@ -74,7 +73,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="2dp"
             android:layout_weight="0"
-            android:text="Mail" />
+            android:text="@string/user_email" />
 
         <EditText
             android:id="@+id/a_mail"
@@ -98,7 +97,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="0"
             android:layout_marginLeft="2dp"
-            android:text="Pseudonyme" />
+            android:text="@string/user_pseudo" />
 
         <EditText
             android:id="@+id/a_pseudo"
