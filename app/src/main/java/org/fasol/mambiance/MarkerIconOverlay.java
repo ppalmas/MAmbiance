@@ -21,8 +21,9 @@ public class MarkerIconOverlay extends ItemizedIconOverlay<OverlayItem> {
 
     private Context mContext;
     private ArrayList<Long> mL_marqueurId;
+    private int bool;//vaut 0 s'il s'agit de l'historique de l'appareil, 1 si c'est celui du serveur distant
 
-    public MarkerIconOverlay(List<OverlayItem> pList, Drawable pDefaultMarker, Context pContext, ArrayList<Long> l_marqueurId) {
+    public MarkerIconOverlay(List<OverlayItem> pList, Drawable pDefaultMarker, Context pContext, ArrayList<Long> l_marqueurId, int b) {
         super(pList, pDefaultMarker, new OnItemGestureListener<OverlayItem>() {
             @Override public boolean onItemSingleTapUp(final int index, final OverlayItem item) {
                 return false;
@@ -33,6 +34,7 @@ public class MarkerIconOverlay extends ItemizedIconOverlay<OverlayItem> {
         } , pContext);
         mContext=pContext;
         mL_marqueurId=l_marqueurId;
+        bool = b;
     }
 
     @Override
@@ -43,9 +45,17 @@ public class MarkerIconOverlay extends ItemizedIconOverlay<OverlayItem> {
         dialog.setPositiveButton("Details",
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
-                        Intent markerDisplayIntent = new Intent(mContext, DisplayMarkerActivity.class);
-                        markerDisplayIntent.putExtra("marqueur_id_select", mL_marqueurId.get(index));
-                        mContext.startActivity(markerDisplayIntent);
+
+                        if (bool==0){
+                            Intent markerDisplayIntent = new Intent(mContext, DisplayMarkerActivity.class);
+                            markerDisplayIntent.putExtra("marqueur_id_select", mL_marqueurId.get(index));
+                            mContext.startActivity(markerDisplayIntent);
+                        } else {
+                            Intent markerDisplayIntent = new Intent(mContext, DisplayMarkerActivityAll.class);
+                            markerDisplayIntent.putExtra("marqueur_id_select", mL_marqueurId.get(index));
+                            mContext.startActivity(markerDisplayIntent);
+                        }
+
                     }
                 });
         dialog.show();

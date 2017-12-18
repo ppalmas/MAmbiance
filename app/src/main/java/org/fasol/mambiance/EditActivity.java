@@ -218,7 +218,6 @@ public class EditActivity extends AppCompatActivity implements LocationListener 
 
         //Permissions
         locationManager = (LocationManager) getSystemService(this.LOCATION_SERVICE);
-//TODO: gérer le problème d'arrêt lorsque l'appli arrive pas à prendre des coordonnées car par allumé etc.
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             if (ActivityCompat.shouldShowRequestPermissionRationale(EditActivity.this,
                     Manifest.permission.ACCESS_FINE_LOCATION)) {
@@ -396,7 +395,7 @@ public class EditActivity extends AppCompatActivity implements LocationListener 
                                                                     String.valueOf(lng) + "&adresse_geom=" + geom +
                                                                     "&localisation_latitude=" + String.valueOf(lat)+ "&localisation_longitude="
                                                                     + String.valueOf(lng) + "&rose_o" + rose_o + "=&rose_t" + rose_t+
-                                                                    "=&rose_v=" + rose_v + "&rose_a=" + rose_a);
+                                                                    "=&rose_v=" + rose_v + "&rose_a=" + rose_a + "&marqueur_comment=" + description.getText().toString());
                                                             //Création requête
                                                             Request request_marqueur = new Request.Builder()
                                                                     .url("http://95.85.32.82/mambiance/v1/marqueur")
@@ -604,7 +603,7 @@ public class EditActivity extends AppCompatActivity implements LocationListener 
                                                                 String.valueOf(lng) + "&adresse_geom=" + geom +
                                                                 "&localisation_latitude=" + String.valueOf(lat)+ "&localisation_longitude="
                                                                 + String.valueOf(lng) + "&rose_o" + rose_o + "=&rose_t" + rose_t+
-                                                                "=&rose_v=" + rose_v + "&rose_a=" + rose_a);
+                                                                "=&rose_v=" + rose_v + "&rose_a=" + rose_a + "&marqueur_comment=" + description.getText().toString());
                                                         Request request_marqueur = new Request.Builder()
                                                                 .url("http://95.85.32.82/mambiance/v1/marqueur")
                                                                 .post(body_marqueur)

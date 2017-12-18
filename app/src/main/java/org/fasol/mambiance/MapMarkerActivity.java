@@ -86,7 +86,8 @@ public class MapMarkerActivity extends AppCompatActivity{
 
         //Affichage
         MarkerIconOverlay mMarkerIconOverlay = new MarkerIconOverlay(mMarkerOverlay,
-                ContextCompat.getDrawable(getApplicationContext(),R.mipmap.ic_map_marker), this, l_marqueurId);
+                ContextCompat.getDrawable(getApplicationContext(),R.mipmap.ic_map_marker), this, l_marqueurId, 0);//le booléen b vaut 0 car
+        // il s'agit de l'historique de l'appareil
         this.mMapView.getOverlays().add(mMarkerIconOverlay);
         mMapView.invalidate();
 

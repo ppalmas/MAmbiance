@@ -108,7 +108,6 @@ public class MapMarkerActivityAll extends AppCompatActivity {
         final ArrayList<HashMap<String, String>> markersList = new ArrayList<>();
 
         //Récupération des données sous format JSON
-        MediaType mediaType = MediaType.parse("application/json");
         //Création de la requête GET
         Request request = new Request.Builder()
                 .url("http://95.85.32.82/mambiance/v1/marqueur/all")
@@ -167,7 +166,7 @@ public class MapMarkerActivityAll extends AppCompatActivity {
                             for (int i = 0; i < markers.length(); i++) {
                                 JSONObject c = markers.getJSONObject(i);
 
-                                long id = c.getLong("adresse_id");
+                                long id = c.getLong("marqueur_id");
                                 String lat = c.getString("localisation_latitude");
                                 String longi = c.getString("localisation_longitude");
                                 float latitude = Float.parseFloat(lat);
@@ -203,7 +202,7 @@ public class MapMarkerActivityAll extends AppCompatActivity {
                         }
                         //Affichage des marqueurs récupérés
                         MarkerIconOverlay mMarkerIconOverlay = new MarkerIconOverlay(mMarkerOverlay,
-                                ContextCompat.getDrawable(getApplicationContext(),R.mipmap.ic_map_marker), MapMarkerActivityAll.this, l_marqueurId);
+                                ContextCompat.getDrawable(getApplicationContext(),R.mipmap.ic_map_marker), MapMarkerActivityAll.this, l_marqueurId, 1);
                         MapMarkerActivityAll.this.mMapView.getOverlays().add(mMarkerIconOverlay);
                     } else {
                         Log.e(TAG, "Couldn't get json from server.");
