@@ -2,6 +2,10 @@ package org.fasol.mambiance.db;
 
 import android.content.ContentValues;
 
+/**
+ * Classe pour l'objet Rose des Ambiances
+ */
+
 public class RoseAmbiance extends DataObject {
 
 

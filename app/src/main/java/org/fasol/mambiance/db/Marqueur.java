@@ -4,6 +4,9 @@ import java.util.Date;
 
 import android.content.ContentValues;
 
+/**
+ * Classe de l'objet Marqueur
+ */
 public class Marqueur extends DataObject {
 
 
@@ -26,6 +29,9 @@ public class Marqueur extends DataObject {
 	 */
 	private String description;
 
+	/**
+	 * long : id de l'utilisateur
+	 */
 	private long user_id;
 
 	//Getters

@@ -4,6 +4,7 @@ import android.content.ContentValues;
 
 /**
  * Created by Paola on 12/11/2017.
+ * Classe de l'objet Adresse
  */
 
 public class Adresse extends DataObject {

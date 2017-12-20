@@ -2,6 +2,7 @@ package org.fasol.mambiance;
 
 /**
  * Created by fasol on 27/11/16.
+ * Classe permettant de gérer la rose des ambiances
  */
 
 import android.content.Context;

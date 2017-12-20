@@ -1,5 +1,9 @@
 package org.fasol.mambiance.db;
 
+/**
+ * Classe DataObject
+ */
+
 public abstract class DataObject {
 	
 	//Attributes 

@@ -19,6 +19,7 @@ import static org.fasol.mambiance.MainActivity.datasource;
 
 /**
  * Created by fasol on 18/11/16.
+ * Classe permettant l'affichage de l'historique de l'appareil
  */
 
 public class HistoryActivity extends AppCompatActivity {

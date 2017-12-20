@@ -17,6 +17,9 @@ import android.widget.Toast;
 import org.fasol.mambiance.MainActivity;
 import org.slf4j.helpers.Util;
 
+/**
+ * Classe LocalDataSource : méthodes et requêtes à la base
+ */
 public class LocalDataSource {
     private static final String TAG = "localDataSource";
     //Database fields
@@ -944,13 +947,13 @@ public class LocalDataSource {
      *
      * @return User is the created Utilisateur
      */
-    public Utilisateur createUtilisateur(String nom, String prenom, String mdp, String cleapi, String pseudo, String email, int statut) {
+    public Utilisateur createUtilisateur(String nom, String prenom, String cleapi, String pseudo, String email, int statut) {
         ContentValues values = new ContentValues();
 
 
         values.put(MySQLiteHelper.COLUMN_USERNOM, nom);
         values.put(MySQLiteHelper.COLUMN_USERPRENOM, prenom);
-        values.put(MySQLiteHelper.COLUMN_MDP, mdp);
+        values.put(MySQLiteHelper.COLUMN_MDP, "");
         values.put(MySQLiteHelper.COLUMN_EMAIL, email);
         values.put(MySQLiteHelper.COLUMN_PSEUDO, pseudo);
         values.put(MySQLiteHelper.COLUMN_STATUT, statut);

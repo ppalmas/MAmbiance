@@ -7,6 +7,11 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
+/**
+ * Classe permettant d'afficher les informations liées à la conception de l'application
+ * (but, enjeux, mission...)
+ */
+
 public class InfoActivity extends AppCompatActivity {
 
 

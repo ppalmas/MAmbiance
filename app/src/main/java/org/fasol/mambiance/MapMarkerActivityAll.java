@@ -49,6 +49,7 @@ import static org.fasol.mambiance.MainActivity.datasource;
 
 /**
  * Created by Paola on 13/12/2017.
+ * Classe permettant d'afficher sur une carte tous les marqueurs de la base de données distante
  */
 
 public class MapMarkerActivityAll extends AppCompatActivity {

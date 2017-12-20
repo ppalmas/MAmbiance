@@ -29,6 +29,5 @@ dependencies {
     compile 'org.osmdroid:osmdroid-android:5.5:release@aar'
     compile 'org.osmdroid:osmdroid-third-party:5.5:release@aar'
     compile 'org.slf4j:slf4j-api:1.7.7@jar'
-    compile files('libs/GenAsync.jar')
     compile 'com.squareup.okhttp3:okhttp:3.9.1' //librairie pour faire http
 }

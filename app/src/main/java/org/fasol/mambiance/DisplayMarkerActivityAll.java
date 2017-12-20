@@ -32,6 +32,8 @@ import static org.fasol.mambiance.MainActivity.datasource;
 
 /**
  * Created by Paola on 18/12/2017.
+ * Classe permettant d'afficher les informations détaillées d'un marqueur du serveur
+ * choisi à partir de la carte globale des marqueurs
  */
 
 public class DisplayMarkerActivityAll extends AppCompatActivity {

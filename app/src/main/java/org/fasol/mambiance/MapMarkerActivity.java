@@ -22,6 +22,7 @@ import static org.fasol.mambiance.MainActivity.datasource;
 
 /**
  * Created by fasol on 18/11/16.
+ * Classe permettant d'afficher sur une carte les marqueurs enregistrés dans la base locale
  */
 
 public class MapMarkerActivity extends AppCompatActivity{

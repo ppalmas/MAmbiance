@@ -13,6 +13,7 @@ import static org.fasol.mambiance.MainActivity.datasource;
 
 /**
  * Created by Paola on 04/12/2017.
+ * Classe gérant le profil d'un utilisateur (utilisateur enregistré en base locale)
  */
 
 public class UserActivity extends AppCompatActivity{

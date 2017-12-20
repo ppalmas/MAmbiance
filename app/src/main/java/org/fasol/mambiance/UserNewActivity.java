@@ -27,6 +27,7 @@ import static org.fasol.mambiance.MainActivity.datasource;
 
 /**
  * Created by Paola on 20/11/2017.
+ * Classe gérant l'enregistrement/inscription d'un nouvel utilisateur
  */
 
 public class UserNewActivity extends AppCompatActivity {
@@ -46,6 +47,7 @@ public class UserNewActivity extends AppCompatActivity {
 
     private Button btn_save;
     //Variable finale et statique utilisée pour vérifier qu'une adresse mail est valide
+    //Toute variable de cette forme sera acceptée comme adresse mail
     public final static Pattern EMAIL_ADDRESS_PATTERN = Pattern.compile(
             "[a-zA-Z0-9\\+\\.\\_\\%\\-\\+]{1,256}" +
                     "\\@" +
@@ -73,7 +75,7 @@ public class UserNewActivity extends AppCompatActivity {
     }
 
     /**
-     * Méthode permettant d'enregistrer l'utilisateur dans la base de données locale de l'appareil
+     * Méthode permettant d'enregistrer l'utilisateur dans la base de données externe et locale
      * Récupère nom, prénom, pseudo, email, mot de passe, associe une clé API, un statut
      */
     private View.OnClickListener saveListener = new View.OnClickListener() {
@@ -88,12 +90,14 @@ public class UserNewActivity extends AppCompatActivity {
                             email = u_email.getText().toString();
                             mdp = u_mdp.getText().toString();
                             pseudo = u_pseudo.getText().toString();
+                            //Ajout de l'utilisateur dans la base de données locale
                             datasource.open();
-                            datasource.createUtilisateur(nom, prenom, mdp, "254b34604b2f943b01d5e8f9df02fe27", pseudo, email, 0);
+                            //Cle API entrée manuellement !!
+                            datasource.createUtilisateur(nom, prenom, "254b34604b2f943b01d5e8f9df02fe27", pseudo, email, 0);
                             datasource.close();
                             //Envoi au serveur distant
                             OkHttpClient client = new OkHttpClient();
-                            //Création de la requête
+                            //Création de la requête vers base de données externe
                             MediaType mediaType = MediaType.parse("application/x-www-form-urlencoded");
                             RequestBody body = RequestBody.create(mediaType, "pseudo=" + pseudo + "&password=" + mdp + "&email=" +
                                     email + "&nom=" + nom + "&prenom=" + prenom);

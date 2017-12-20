@@ -4,6 +4,7 @@ import android.content.ContentValues;
 
 /**
  * Created by Paola on 27/11/2017.
+ * Table PossedeNote
  */
 
 public class PossedeNote extends DataObject {

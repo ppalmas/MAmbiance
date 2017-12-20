@@ -5,6 +5,10 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+/**
+ * Classe MySQLite Helper : création des tables, colonnes...
+ *
+ */
 public class MySQLiteHelper extends SQLiteOpenHelper {
 
     private static final String TAG = "SQLite";
@@ -164,7 +168,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
             + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
             + COLUMN_USERNOM + " text, "
             + COLUMN_USERPRENOM + " text, "
-            + COLUMN_MDP + " text not null, "
+            + COLUMN_MDP + " text, "
             + COLUMN_EMAIL + " text not null, "
             + COLUMN_PSEUDO + " text not null, "
             + COLUMN_STATUT + " INTEGER, "

@@ -71,6 +71,7 @@ import static org.fasol.mambiance.MainActivity.datasource;
 
 /**
  * Created by fasol on 18/11/16.
+ * Classe permettant d'ajouter une ambiance (marqueur, lieu, adresse...)
  */
 
 public class EditActivity extends AppCompatActivity implements LocationListener {

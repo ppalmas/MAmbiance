@@ -10,11 +10,15 @@ import android.view.View;
 import android.widget.ImageButton;
 
 import org.fasol.mambiance.db.LocalDataSource;
-import org.fasol.mambiance.db.Utilisateur;
+
+/**
+ * Classe main, activité principale lancée au démarrage de l'application
+ * et comportant les tuiles
+ */
 
 public class MainActivity extends AppCompatActivity {
 
-    private ImageButton btn_user=null, btn_history=null, btn_map=null, btn_info=null, btn_edit=null, btn_param=null;
+    private ImageButton btn_user=null, btn_history=null, btn_map=null, btn_info=null, btn_edit=null;
 
     public static LocalDataSource datasource;
 

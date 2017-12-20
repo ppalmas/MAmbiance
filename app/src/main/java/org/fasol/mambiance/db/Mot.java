@@ -2,6 +2,10 @@ package org.fasol.mambiance.db;
 
 import android.content.ContentValues;
 
+/**
+ * Classe objet Mot
+ */
+
 public class Mot extends DataObject {
 
 

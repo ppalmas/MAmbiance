@@ -6,32 +6,76 @@ import java.util.Date;
 
 /**
  * Created by Paola on 25/11/2017.
+ * Classe pour gérer l'objet Utilisateur
  */
 
 public class Utilisateur extends DataObject {
 //Atributes
+    /**
+     * id de l'utilisateur
+     */
     private long user_id;
+    /**
+     * nom de l'utilisateur (facultatif à entrer)
+     */
     private String nom;
+    /**
+     * prénom de l'utilisateur (facultatif à entrer)
+     */
     private String prenom;
+    /**
+     * Mot de passe de l'utilisateur (pas enregistré en local actuellement)
+     */
     private String mdp;
+    /**
+     * Clé API créée dans la base de données distante
+     */
     private String cleapi;
+    /**
+     * Email de l'utilisateur (obligatoire)
+     */
     private String email;
+    /**
+     * Date de création du compte utilisateur
+     */
     private Date date_cree;
+    /**
+     * Pseudo de l'utilisateur
+     */
     private String pseudo;
+    /**
+     * Statut de l'utilisateur (pour gérer la connexion avec base de données distante)
+     */
     private int statut;
 
+    /**
+     * Getter user id
+     * @return id
+     */
     public long getUser_id() {
         return user_id;
     }
 
+    /**
+     * Setter user id
+     * @param user_id
+     */
     public void setUser_id(long user_id) {
         this.user_id = user_id;
     }
 
+    /**
+     * Getter Nom de l'utilisateur
+     * @return
+     */
     public String getNom() {
         return nom;
     }
 
+    /**
+     * Setter nom
+     * @param nom
+     */
     public void setNom(String nom) {
         this.nom = nom;
     }
