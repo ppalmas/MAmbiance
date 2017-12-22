@@ -245,13 +245,6 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
             + COLUMN_MOTBOOLEAN + " BOOLEAN "
             + "); ";
 
-
-/**
-    private static final String DATABASE_ADDUSER_1 = "INSERT INTO " + TABLE_UTILISATEUR + " VALUES ("
-            + "'1', '', 'Paola', 'motdepasse', 'paolapalmas@hotmail.fr', 'Paola', 'statut', 'cle', '04-12-2017 00:00:00'"
-            + "); ";
- **/
-
     /**
      * queries to add some words to the table Mot
      */
@@ -272,7 +265,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
             + "); ";
 
     private static final String DATABASE_ADDMOTS_5 = "INSERT INTO " + TABLE_MOT + " VALUES ("
-            + "'5', 'Sécurisant', '1'"
+            + "'5', 'Securisant', '1'"
             + "); ";
 
     private static final String DATABASE_ADDMOTS_6 = "INSERT INTO " + TABLE_MOT + " VALUES ("
@@ -313,7 +306,6 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         database.execSQL(addMots5());
         database.execSQL(addMots6());
         database.execSQL(addMots7());
-       // database.execSQL(getDatabaseAdduser1());
 
     }
 
@@ -403,6 +395,10 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         return DATABASE_CREATE7;
     }
 
+    /**
+     * Getter for createquery of related number
+     * @return the query as String
+     */
    public static String getDatabaseCreate10() {
         return DATABASE_CREATE10;
     }

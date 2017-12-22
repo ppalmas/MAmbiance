@@ -306,6 +306,8 @@ public class EditActivity extends AppCompatActivity implements LocationListener 
                                     builderSingle.setMessage(l_address.get(0).getAddressLine(0) + " " +
                                             l_address.get(0).getPostalCode() + " " + l_address.get(0).getLocality());
 
+
+
                                     // bouton recalculer
                                     builderSingle.setNegativeButton(
                                             "recalculer",
@@ -336,6 +338,9 @@ public class EditActivity extends AppCompatActivity implements LocationListener 
 
                                                             EditActivity.this.adresse = finalL_address.get(0).getAddressLine(0) + " " +
                                                                     finalL_address.get(0).getPostalCode() + " " + finalL_address.get(0).getLocality();
+                                                            //Coordonnées de l'adresse entrée par l'utilisateur
+                                                            double lat_ad = finalL_address.get(0).getLatitude();
+                                                            double long_ad = finalL_address.get(0).getLongitude();
 
                                                             //Ouverture base de données (LocalDataSource)
                                                             datasource.open();
@@ -392,8 +397,8 @@ public class EditActivity extends AppCompatActivity implements LocationListener 
                                                                     "&adresse_nom=" + site_name.getText().toString() + "&adresse_rue=" +
                                                                     rue + "&adresse_ville=" + ville + "&adresse_codepostal=" + code_postal +
                                                                     "&adresse_pays=" + pays + "&adresse_complement=" + complement +
-                                                                    "&adresse_latitude=" + String.valueOf(lat) + "&adresse_longitude="+
-                                                                    String.valueOf(lng) + "&adresse_geom=" + geom +
+                                                                    "&adresse_latitude=" + String.valueOf(lat_ad) + "&adresse_longitude="+
+                                                                    String.valueOf(long_ad) + "&adresse_geom=" + geom +
                                                                     "&localisation_latitude=" + String.valueOf(lat)+ "&localisation_longitude="
                                                                     + String.valueOf(lng) + "&rose_o" + rose_o + "=&rose_t" + rose_t+
                                                                     "=&rose_v=" + rose_v + "&rose_a=" + rose_a + "&marqueur_comment=" + description.getText().toString());
@@ -549,6 +554,10 @@ public class EditActivity extends AppCompatActivity implements LocationListener 
 
                                                         EditActivity.this.adresse = finalL_address.get(0).getAddressLine(0) + " " +
                                                                 finalL_address.get(0).getPostalCode() + " " + finalL_address.get(0).getLocality();
+                                                        //Coordonnées de l'adresse calculée
+                                                        double lat_ad = finalL_address.get(0).getLatitude();
+                                                        double lng_ad = finalL_address.get(0).getLongitude();
+
                                                         //Récupération de l'adresse
                                                         String[] rue_split = finalL_address.get(0).getAddressLine(0).split(",");
                                                         rue = rue_split[0];
@@ -600,8 +609,8 @@ public class EditActivity extends AppCompatActivity implements LocationListener 
                                                                 "&adresse_nom=" + site_name.getText().toString() + "&adresse_rue=" +
                                                                 rue + "&adresse_ville=" + ville + "&adresse_codepostal=" + code_postal +
                                                                 "&adresse_pays=" + pays + "&adresse_complement=" + complement +
-                                                                "&adresse_latitude=" + String.valueOf(lat) + "&adresse_longitude="+
-                                                                String.valueOf(lng) + "&adresse_geom=" + geom +
+                                                                "&adresse_latitude=" + String.valueOf(lat_ad) + "&adresse_longitude="+
+                                                                String.valueOf(lng_ad) + "&adresse_geom=" + geom +
                                                                 "&localisation_latitude=" + String.valueOf(lat)+ "&localisation_longitude="
                                                                 + String.valueOf(lng) + "&rose_o" + rose_o + "=&rose_t" + rose_t+
                                                                 "=&rose_v=" + rose_v + "&rose_a=" + rose_a + "&marqueur_comment=" + description.getText().toString());

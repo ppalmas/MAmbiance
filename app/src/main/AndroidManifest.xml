@@ -3,13 +3,14 @@
     package="org.fasol.mambiance">
 
     <!--<uses-permission android:name="android.permission.CAMERA" /> -->
+    <!--autorisations de caméra et d'écriture en stockage interne-->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         android:maxSdkVersion="18"/>
 
     <uses-feature android:name="android.hardware.camera.any"
         android:required="true"/>
 
-    <!-- Permission needed for OpenStreetMap with osmdroid-->
+    <!-- Permission needed for OpenStreetMap with osmdroid AND geocoder-->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />

@@ -79,6 +79,7 @@ public class MapMarkerActivity extends AppCompatActivity{
         c.moveToFirst();
         for(int i=0;i<c.getCount();i++) {
             l_marqueurId.add(c.getLong(7));
+            //Attention, on affiche les coordonnées de la localisation, pas de l'adresse
             mMarkerOverlay.add(new OverlayItem(c.getString(0), c.getString(8), new GeoPoint(c.getFloat(5), c.getFloat(6))));
             c.moveToNext();
         }
